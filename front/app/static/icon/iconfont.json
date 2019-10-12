@@ -1,0 +1,149 @@
+{
+  "id": "1373109",
+  "name": "kkqt",
+  "font_family": "iconfont",
+  "css_prefix_text": "kk-",
+  "description": "夸夸其谈项目图标库",
+  "glyphs": [
+    {
+      "icon_id": "28197",
+      "name": "分享",
+      "font_class": "share",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "810917",
+      "name": "下载",
+      "font_class": "xiazai",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "2279442",
+      "name": "踩",
+      "font_class": "zan",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "2668409",
+      "name": "money",
+      "font_class": "money",
+      "unicode": "e690",
+      "unicode_decimal": 59024
+    },
+    {
+      "icon_id": "3423786",
+      "name": "玩",
+      "font_class": "wan",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "3926267",
+      "name": "加",
+      "font_class": "jia",
+      "unicode": "e67a",
+      "unicode_decimal": 59002
+    },
+    {
+      "icon_id": "5162650",
+      "name": "上 传",
+      "font_class": "shangchuan",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "5593086",
+      "name": "收 藏",
+      "font_class": "shoucang1",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "6565011",
+      "name": "微信 支付",
+      "font_class": "weixinzhifu",
+      "unicode": "e681",
+      "unicode_decimal": 59009
+    },
+    {
+      "icon_id": "6919135",
+      "name": "锁",
+      "font_class": "suo",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "7179155",
+      "name": "朋友圈",
+      "font_class": "friendzone",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "8323515",
+      "name": "支付宝",
+      "font_class": "big-Pay",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "8367125",
+      "name": "制作",
+      "font_class": "zhizuo",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "8779915",
+      "name": "we-chat-colour",
+      "font_class": "we-chat-colour",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "8882026",
+      "name": "购物",
+      "font_class": "gouwu",
+      "unicode": "e6a6",
+      "unicode_decimal": 59046
+    },
+    {
+      "icon_id": "9213853",
+      "name": "头条",
+      "font_class": "toutiao",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "9704704",
+      "name": "夸赞",
+      "font_class": "kuazan",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "9849672",
+      "name": "分 享",
+      "font_class": "fenxiang",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "10154216",
+      "name": "下一步",
+      "font_class": "xiayibu",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "10176559",
+      "name": "点赞",
+      "font_class": "dianzan",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    }
+  ]
+}

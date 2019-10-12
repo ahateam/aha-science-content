@@ -1,0 +1,91 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/vip/vip",
+			"style": {
+				"navigationBarTitleText": "专题"
+			}
+		}, {
+			"path": "pages/index/articleView/articleView",
+			"style": {
+				"navigationBarTitleText": "文章详细"
+			}
+		}, {
+			"path": "pages/index/videoView/videoView",
+			"style": {
+				"navigationBarTitleText": "视频详细"
+			}
+		}, {
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		}, {
+			"path": "pages/user/userLogin/userLogin",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor": "#FFF",
+				"navigationBarTextStyle": "black"
+			}
+		}, {
+			"path": "pages/user/userLogin/forget",
+			"style": {
+				"navigationBarTitleText": "忘记密码",
+				"navigationBarBackgroundColor": "#FFF",
+				"navigationBarTextStyle": "black"
+			}
+		}, {
+			"path": "pages/user/userLogin/register",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"navigationBarBackgroundColor": "#FFF",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/vip/courseView/courseView",
+			"style": {
+				"navigationBarTitleText": "内容列表",
+				"navigationBarBackgroundColor": "#FFF",
+				"navigationBarTextStyle": "black"
+			}
+		}
+	],
+	"tabBar": {
+		"color": "#C0C4CC",
+		"selectedColor": "#fa436a",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tab-home.png",
+				"selectedIconPath": "static/tab-home-current.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/vip/vip",
+				"iconPath": "static/tab-vip.png",
+				"selectedIconPath": "static/tab-Vip-current.png",
+				"text": "专题"
+			},
+			{
+				"pagePath": "pages/user/user",
+				"iconPath": "static/tab-user.png",
+				"selectedIconPath": "static/tab-user-current.png",
+				"text": "专题"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "掌上科普",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
