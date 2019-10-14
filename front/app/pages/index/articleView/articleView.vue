@@ -43,13 +43,6 @@
 								<text>朋友圈</text>
 							</button>
 						</view>
-
-						<view class="action-item">
-							<button type="primary">
-								<i class="yticon iconfont kk-shoucang1"></i>
-								<text>收藏</text>
-							</button>
-						</view>
 					</view>
 					<!-- 点赞分享end -->
 				</view>

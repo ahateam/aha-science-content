@@ -7,15 +7,15 @@
 			</view>
 			<!-- 主体表单 -->
 			<view class="main">
-				<wInput v-model="phoneData" type="text" maxlength="20" placeholder="用户名/电话"></wInput>
-				<wInput v-model="passData" type="password" maxlength="20" placeholder="密码"></wInput>
+				<wInput v-model="phoneData" type="text" maxlength="11" placeholder="用户名/电话"></wInput>
+				<wInput v-model="passData" type="password" maxlength="11" placeholder="密码"></wInput>
 			</view>
 			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin()"></wButton>
 
 			<!-- 其他登录 -->
 			<view class="other_login cuIcon" style="margin-top: 206upx;">
 				<view class="login_icon">
-					<button class="cuIcon-weixin otherBtn" @click="login_weixin" open-type="getUserInfo" @getuserinfo="mpWxLogin"></button>
+					<button class="cuIcon-weixin otherBtn" @click="login_weixin" open-type="getUserInfo"></button>
 				</view>
 				<view class="login_icon">
 					<button class="iconfont kk-big-Pay otherBtn" @click="login_alipay"></button>
@@ -67,7 +67,6 @@
 					return
 				}
 				this.isRotate = true
-
 			},
 
 			getProvider() {
@@ -114,100 +113,9 @@
 
 			//头条登录
 			login_toutiao() {
-				// #ifdef APP-PLUS
 				this.appToutiaoLogin()
-				// #endif
-				// #ifdef MP
-				if (this.providerList[0].id == this.$constData.providerList[1].id) {
-					this.mpToutiaoLogin()
-				}else{
-					uni.showToast({
-						title:'暂不支持此方式登录',
-						icon:'none'
-					})
-				}
-				// #endif
 			},
 
-			mpToutiaoLogin() {
-				uni.showLoading({
-					title: '登录中'
-				})
-				uni.login({
-					provider: 'alipay',
-					scopes: 'auth_user',
-					success: (res) => {
-						this.ttGetSessionkey(res.code)
-					},
-					fail: (err) => {
-						console.log('login fail:', err);
-					}
-				})
-			},
-			
-			ttGetSessionkey(code){
-				let cnt = {
-					code: code
-				}
-				this.$api.ttGetSessionkey(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						console.log(this.$util.tryParseJson(res.data.c))
-						let openId = this.$util.tryParseJson(res.data.c).openid
-						uni.setStorageSync('openId', openId)
-						this.loginByTtOpenId(openId)
-					}
-				})
-			},
-			
-			//头条登录
-			loginByTtOpenId(openId) {
-				uni.getUserInfo({
-					provider: 'weixin',
-					success: (infoRes) => {
-						let data = {
-							userHead: infoRes.userInfo.avatarUrl
-						}
-						let cnt = {
-							ttOpenId: openId,
-							name: infoRes.userInfo.nickName,
-							ext: data
-						}
-						this.ttLoginApi(cnt)
-					}
-				})
-			},
-			ttLoginApi(cnt) {
-				this.$api.loginByTtOpenId(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let userData = this.$util.tryParseJson(res.data.c)
-						console.log(userData)
-						let userId = userData.id
-						let userName = userData.name
-						let userHead = this.$util.tryParseJson(userData.ext).userHead
-			
-						/* 将用户信息存至本地 */
-						uni.setStorageSync('userId', userId)
-						uni.setStorageSync('userName', userName)
-						uni.setStorageSync('userHead', userHead)
-						/* end */
-						uni.hideLoading()
-						uni.switchTab({
-							url:'/pages/user/user'
-						})
-						uni.showToast({
-							title: '已登录！',
-							duration: 1000
-						})
-					} else {
-						uni.showToast({
-							title: '服务器错误！',
-							duration: 1000,
-							icon: 'none'
-						})
-					}
-				})
-			},
-			
 			//app头条登录
 			appToutiaoLogin() {
 				uni.showToast({
@@ -218,100 +126,7 @@
 
 			//支付宝登录
 			login_alipay() {
-				// #ifdef APP-PLUS
 				this.appAlipayLogin()
-				// #endif
-				// #ifdef MP
-				if (this.providerList[0].id == this.$constData.providerList[5].id) {
-					this.mpAlipayLogin()
-				} else {
-					uni.showToast({
-						title: '暂不支持此方式登录',
-						icon: 'none'
-					})
-				}
-				// #endif
-			},
-
-			mpAlipayLogin() {
-				uni.showLoading({
-					title: '登录中'
-				})
-				uni.login({
-					provider: 'alipay',
-					scopes: 'auth_user',
-					success: (res) => {
-						this.alipayGetSessionkey(res.code)
-					},
-					fail: (err) => {
-						console.log('login fail:', err);
-					}
-				})
-			},
-
-			alipayGetSessionkey(code) {
-				let cnt = {
-					code: code
-				}
-				this.$api.alipayGetSessionkey(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						console.log(this.$util.tryParseJson(res.data.c))
-						let userId = this.$util.tryParseJson(res.data.c).userId
-						uni.setStorageSync('openId', userId)
-						this.loginAlipay(userId)
-					}
-				})
-			},
-
-			loginAlipay(userId) {
-				uni.getUserInfo({
-					provider: 'weixin',
-					success: (infoRes) => {
-						let data = {
-							userHead: infoRes.userInfo.avatarUrl
-						}
-						data = JSON.stringify(data)
-						let cnt = {
-							user_id: userId,
-							name: infoRes.userInfo.nickName,
-							ext: data
-						}
-						this.loginByAlipayOpenId(cnt)
-					}
-				})
-			},
-
-			//支付宝登录
-			loginByAlipayOpenId(cnt) {
-				this.$api.loginByAlipayOpenId(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let userData = this.$util.tryParseJson(res.data.c)
-						console.log(userData)
-						let userId = userData.id
-						let userName = userData.name
-						let userHead = this.$util.tryParseJson(userData.ext).userHead
-
-						/* 将用户信息存至本地 */
-						uni.setStorageSync('userId', userId)
-						uni.setStorageSync('userName', userName)
-						uni.setStorageSync('userHead', userHead)
-						/* end */
-						uni.hideLoading()
-						uni.switchTab({
-							url: '/pages/user/user'
-						})
-						uni.showToast({
-							title: '已登录！',
-							duration: 1000
-						})
-					} else {
-						uni.showToast({
-							title: '服务器错误！',
-							duration: 1000,
-							icon: 'none'
-						})
-					}
-				})
 			},
 
 			//支付宝app登录
@@ -323,19 +138,7 @@
 			},
 
 			login_weixin() {
-				// #ifdef APP-PLUS
 				this.appWxLogin()
-				// #endif
-				// #ifdef MP
-				if (this.providerList[0].id == this.$constData.providerList[0].id) {
-					return
-				} else {
-					uni.showToast({
-						title: '暂不支持此方式登录',
-						icon: 'none'
-					})
-				}
-				// #endif
 			},
 
 			//微信app登录
@@ -371,94 +174,6 @@
 					}
 				})
 			},
-
-			//微信小程序登录
-			mpWxLogin() {
-				uni.showLoading({
-					title: '登录中'
-				})
-				uni.login({ //通过login获取临时登录凭证code
-					provider: 'weixin',
-					success: (res) => {
-						console.log(res)
-						let code = res.code
-						let cnt = {
-							code: code, // String code
-						}
-						this.getUserInfo(cnt)
-					},
-					fail: function(error) {
-						uni.showToast({
-							title: error,
-							icon: 'none',
-							duration: 1000,
-						})
-					}
-				})
-			},
-
-			//将code传给后端，获取openId以及用户头像等其他信息
-			getUserInfo(cnt) {
-				this.$api.getAccessToken(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let userInfo = JSON.parse(res.data.c)
-						console.log(userInfo)
-						let openId = userInfo.openid
-						uni.setStorageSync('openId', openId)
-						uni.getUserInfo({
-							success: (res) => {
-								console.log(res)
-								console.log(openId)
-								let userHead = res.userInfo.avatarUrl
-								let userName = res.userInfo.nickName
-								let other = {
-									userHead: userHead
-								}
-								let cnt1 = {
-									wxOpenId: openId, // String 微信openId
-									name: userName, // string 用户名
-									ext: JSON.stringify(other), //其他信息
-								}
-								this.wxLoginEnd(cnt1)
-							},
-						})
-					} else {
-						uni.showToast({
-							title: res.data.rc,
-							icon: 'none',
-							duration: 1000,
-						})
-					}
-				})
-			},
-
-			wxLoginEnd(cnt) {
-				/* 将用户信息上传至服务器获取登录id */
-				this.$api.loginByWxOpenId(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let userData = this.$util.tryParseJson(res.data.c)
-						console.log(userData)
-						let userId = userData.id
-						let userName = userData.name
-						let userHead = this.$util.tryParseJson(userData.ext).userHead
-						/* 将用户信息存至本地 */
-						uni.setStorageSync('userId', userId)
-						uni.setStorageSync('userName', userName)
-						uni.setStorageSync('userHead', userHead)
-						uni.hideLoading()
-						uni.switchTab({
-							url: '/pages/user/user'
-						})
-						uni.showToast({
-							title: '已登录！',
-							duration: 1000
-						});
-					} else {
-						console.log(res.data.c)
-					}
-				})
-			},
-
 		},
 
 	}

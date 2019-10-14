@@ -1,26 +1,11 @@
 <template>
 	<view class="body">
-		<nav-bar>
-			<view slot="left" class="search_box" @click="searchBtn">
-				<text class="iconfont kk-sousuo"></text>
-				<text class="prompt">搜索(用户、资讯)</text>
-			</view>
-		</nav-bar>
 		<!-- 顶部选项卡 -->
 		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
 			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
 			 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
 		</scroll-view>
 		<view style="padding-top: 90upx;"></view>
-
-		<!-- 广告轮播图 -->
-		<uni-swiper-dot :info="info" :current="current" field="title" :mode="mode" :dotsStyles="dotsStyles" v-if="info.length > 1">
-			<swiper class="swiper-box" @change="change" autoplay>
-				<swiper-item v-for="(item ,index) in info" :key="index">
-					<image style="width: 100%;height: 100%;" :src="item.content" mode="aspectFill"></image>
-				</swiper-item>
-			</swiper>
-		</uni-swiper-dot>
 
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
@@ -51,7 +36,6 @@
 	import threeImg from '@/components/article/threeImg.vue'
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
 	import uniSwiperDot from "@/components/uni-swiper-dot/uni-swiper-dot.vue"
-	import navBar from '@/components/zhouWei-navBar/index.vue'
 
 	let windowWidth = 0
 
@@ -62,31 +46,12 @@
 			rightVideo,
 			threeImg,
 			uniLoadMore,
-			uniSwiperDot,
-			navBar
+			uniSwiperDot
 		},
 		data() {
 			return {
 
 				constData: this.$constData, //全局变量引入，防止头条html中报错
-
-				/* 广告轮播图 */
-				info: [{
-					content: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg',
-					title: '标题1'
-				}, {
-					content: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg',
-					title: '标题2'
-				}, {
-					content: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg',
-					title: '标题3'
-				}],
-				current: 0,
-				mode: 'nav',
-				dotsStyles: {
-					backgroundColor: 'rgba(171,220,255,0.5)',
-				},
-				/* 轮播图end */
 
 				tagsList: [{
 						name: '全部'
@@ -101,38 +66,13 @@
 				userId: '',
 
 				contents: [{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 1
-					},
-					{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 1
-					},
-					{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 1
-					},
-					{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 1
-					}
-				], //显示列表
+					title: '知乎最精辟的50条段子，已笑喷！',
+					imgList: [{
+						src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
+					}],
+					type: 5,
+					show: 1
+				}], //显示列表
 				tagName: '', //当前选中标签名字
 
 				//上拉加载 ---分页
@@ -145,14 +85,14 @@
 		},
 		onLoad() {
 
-			let cnt = {
-				moduleId: this.constData.module, // String 隶属
-				status: this.constData.tagStatus[1].key, // Byte 标签状态
-				group: this.constData.tagGroupType[0].val, // String 标签
-				count: 500, // Integer 
-				offset: 0, // Integer 
-			}
-			this.getTagsList(cnt)
+			// let cnt = {
+			// 	moduleId: this.constData.module, // String 隶属
+			// 	status: this.constData.tagStatus[1].key, // Byte 标签状态
+			// 	group: this.constData.tagGroupType[0].val, // String 标签
+			// 	count: 500, // Integer 
+			// 	offset: 0, // Integer 
+			// }
+			// this.getTagsList(cnt)
 
 			windowWidth = uni.getSystemInfoSync().windowWidth;
 			if (!uni.getStorageSync('userId')) {
@@ -163,13 +103,6 @@
 		},
 		methods: {
 			
-			searchBtn(){
-				uni.navigateTo({
-					url:'/pages/index/search/search',
-					 "animationType": "none",
-				})
-			},
-
 			// 轮播图改变触发
 			change(e) {
 				this.current = e.detail.current;
@@ -419,29 +352,6 @@
 </script>
 
 <style lang="scss" scoped>
-	// 头部导航
-	.search_box {
-		margin-left: 64upx;
-		width: 500upx;
-		height: 64upx;
-		background-color: #f5f5f5;
-		border-radius: 32upx;
-		display: flex;
-		align-items: center;
-		padding: 0upx 40upx;
-		color: #cccccc;
-	
-		.prompt {
-			margin-left: 10upx;
-			font-size: 28upx;
-		}
-		.icon_search {
-			width: 29upx;
-			height: 28upx;
-			margin-right: 20upx;
-		}
-	}
-	
 	.body {
 		background-color: #f8f8f8;
 		min-height: 100vh;
@@ -451,6 +361,7 @@
 	/* 顶部tabbar */
 	.nav-bar {
 		position: fixed;
+		top: 0;
 		z-index: 10;
 		height: 90upx;
 		white-space: nowrap;
