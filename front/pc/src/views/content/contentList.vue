@@ -1,42 +1,26 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			信息信息表付个
+			图文管理
 		</el-row>
 		<el-row class="content-box">
 			<el-row>
 				<el-col :span="8">
 					<el-form label-width="80px">
-						<el-form-item label="类型">
+						<el-form-item label="选择类型:">
 							<el-select v-model="searchData.type" placeholder="请选择类型">
 								<el-option v-for="(item,index) in typeList" :key="index" :label="item.name" :value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>
 				</el-col>
-				<el-col :span="8">
-					<el-form label-width="80px">
-						<el-form-item label="状态">
-							<el-select v-model="searchData.status" placeholder="请选择状态">
-								<el-option v-for="(item,index) in statusList" :key="index" :label="item.name" :value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
-				</el-col>
-				<el-col :span="8">
-					<el-form label-width="80px">
-						<el-form-item label="付费">
-							<el-select v-model="searchData.power" placeholder="请选择付费">
-								<el-option v-for="(item,index) in powerList" :key="index" :label="item.name" :value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
-				</el-col>
 			</el-row>
-
 			<el-row>
-				<el-button type="primary" @click="searchBtn">查询</el-button>
-				<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
+				<el-col >
+					<el-button type="primary" @click="searchBtn">查询</el-button>
+					<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
+					<el-button type="primary" @click="createContent" style="float: right;">发布图文</el-button>
+				</el-col>
 			</el-row>
 
 		</el-row>
@@ -46,11 +30,7 @@
 				</el-table-column>
 				<el-table-column prop="type" label="类型" :formatter="typeFliter">
 				</el-table-column>
-				<el-table-column prop="power" label="付费" :formatter="powerFliter">
-				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
-				</el-table-column>
-				<el-table-column prop="status" label="状态" :formatter="statusFliter">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
@@ -214,7 +194,7 @@
 				})
 			},
 			//编辑修改
-			updateBtn(info){
+			updateBtn(info) {
 				this.$router.push({
 					path: '/editContent',
 					name: 'editContent',
@@ -236,6 +216,9 @@
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
+			},
+			createContent(){
+				this.$router.push('/addContent')
 			}
 		},
 		mounted() {

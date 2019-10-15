@@ -42,8 +42,11 @@ const  menu=[
         icon:'course_shouye',
         child:[
            {
-               path:'/taskList',
+               path:'/homeTag',
                title:'标签列表'
+           }, {
+               path:'/tagGroup',
+               title:'新建分组'
            }
         ]
     },

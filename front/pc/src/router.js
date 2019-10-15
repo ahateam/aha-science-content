@@ -30,8 +30,7 @@ const userInfo = () => import('./views/user/userInfo')
 
 //标签
 const homeTag = () => import('./views/tag/homeTag')
-const vipTag = () => import('./views/tag/vipTag')
-const channelTag = () => import('./views/tag/channelTag')
+const tagGroup = () => import('./views/tag/tagGroup')
 
 Vue.use(Router)
 
@@ -145,14 +144,9 @@ export default new Router({
 				    component: homeTag
 				},
 				{
-				    path: '/vipTag',
-				    name: 'vipTag',
-				    component: vipTag
-				},
-				{
-				    path: '/channelTag',
-				    name: 'channelTag',
-				    component: channelTag
+				    path: '/tagGroup',
+				    name: 'tagGroup',
+				    component: tagGroup
 				},
             ]
         },

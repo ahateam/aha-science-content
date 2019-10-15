@@ -25,7 +25,6 @@
         </div>
 
         <el-col :span="24" class="row-box1">
-            <el-button type="primary" @click="goEdit">修改内容信息</el-button>
             <el-button @click="goBack()">返回上一层</el-button>
         </el-col>
     </div>
@@ -44,24 +43,7 @@
             goBack() {
                 this.$router.go(-1)
             },
-            goEdit() {
-                let that = this
-                if (that.contentInfo.type != '3') {
-                    this.$router.push({
-                        name: `editContent`,
-                        params: {
-                            info: that.contentInfo
-                        }
-                    })
-                } else {
-                    this.$router.push({
-                        name: `editVideo`,
-                        params: {
-                            info: that.contentInfo
-                        }
-                    })
-                }
-            },
+            
         },
         mounted() {
             this.contentInfo = this.$route.params.info

@@ -44,18 +44,13 @@ api.banChannel = function (cnt,callback) {
 }
 
 
-//获取任务列表
-api.getTasks= function (cnt,callback) {
-    util.call(baseUrl+'/task/getTasks', cnt, callback)
+//查询标签分组
+api.getContentTagGroup = function (cnt,callback) {
+    util.call(baseUrl+'/contentTag/getContentTagGroup', cnt, callback)
 }
-
-//删除任务
-api.delTask= function (cnt,callback) {
-    util.call(baseUrl+'/task/delTask', cnt, callback)
-}
-//审核任务
-api.auditContent= function (cnt,callback) {
-    util.call(baseUrl+'/content/auditContent', cnt, callback)
+//创建标签分组
+api.createContentTagGroup = function (cnt,callback) {
+    util.call(baseUrl+'/contentTag/createContentTagGroup', cnt, callback)
 }
 
 
@@ -116,6 +111,11 @@ api.updateChannelContentTag = function (cnt,callback) {
 api.editChannel = function (cnt,callback) {
     util.call(baseUrl+'/channel/editChannel', cnt, callback)
 }
+		
+		
+		
+		
+		
 		
 
 export default api
