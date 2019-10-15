@@ -50,14 +50,6 @@ constData.typeList = [{
 		value: 4
 	},
 	{
-		name: '纯文本',
-		value: 0
-	},
-	{
-		name: '帖子',
-		value: 6
-	},
-	{
 		name: '活动',
 		value: 8
 	},

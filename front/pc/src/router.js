@@ -14,7 +14,7 @@ const editContent = () => import('./views/content/editContent')
 const editVideo = () => import('./views/content/editVideo')
 const addVideoContent = ()=>import('./views/addContent/addVideoContent')
 
-//专栏
+//专题
 const svipList = () => import('./views/svip/svipList')
 const svipInfoList = () => import('./views/svip/svipInfoList')
 const addSvip = () => import('./views/svip/addSvip')
@@ -22,17 +22,8 @@ const addSvipTag = () => import('./views/svip/addSvipTag')
 const svipTagList = () => import('./views/svip/svipTagList')
 const editSvipTagList = () => import('./views/svip/editSvipTagList')
 
-//任务墙
-const taskList = () => import('./views/taskPage/taskList')
-const taskInfo = () => import('./views/taskPage/taskInfo')
-const examineTask = () => import('./views/taskPage/examineTask')
-
-
-//模板
-const templateList = () => import('./views/template/templateList')
-const templateInfo = () => import('./views/template/templateInfo')
-const addTemplate = () => import('./views/template/addTemplate')
-
+const activityList = () => import('./views/activity/activityList')
+const addActivity = () => import('./views/activity/addActivity')
 //用户
 const userList = () => import('./views/user/userList')
 const userInfo = () => import('./views/user/userInfo')
@@ -121,38 +112,20 @@ export default new Router({
                     name: 'editSvipTagList',
                     component: editSvipTagList
                 },
-                //任务墙
+				//活动
                 {
-                    path: '/taskInfo',
-                    name: 'taskInfo',
-                    component: taskInfo
+                    path: '/activityList',
+                    name: 'activityList',
+                    component: activityList
+                }, {
+                    path: '/addActivity',
+                    name: 'addActivity',
+                    component: addActivity
                 },
-                {
-                    path: '/taskList',
-                    name: 'taskList',
-                    component: taskList
-                },
-                {
-                    path: '/examineTask',
-                    name: 'examineTask',
-                    component: examineTask
-                },
-                //模板
-                {
-                    path: '/templateList',
-                    name: 'templateList',
-                    component: templateList
-                },
-                {
-                    path: '/templateInfo',
-                    name: 'templateInfo',
-                    component: templateInfo
-                },
-                {
-                    path: '/addTemplate',
-                    name: 'addTemplate',
-                    component: addTemplate
-                },
+
+
+
+
 
                 //用户
                 {
