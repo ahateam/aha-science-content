@@ -1,11 +1,13 @@
 <template>
 	<view class="body">
+		<!-- 自定义导航栏 -->
 		<nav-bar>
 			<view slot="left" class="search_box" @click="searchBtn">
 				<text class="iconfont kk-sousuo"></text>
 				<text class="prompt">搜索(用户、资讯)</text>
 			</view>
 		</nav-bar>
+
 		<!-- 顶部选项卡 -->
 		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
 			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
@@ -22,24 +24,28 @@
 			</swiper>
 		</uni-swiper-dot>
 
+		<!-- 内容列表 -->
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
-			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
+
+			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
 				<view v-if="item.show == constData.contentShow[0].key">
-					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></trans-video>
+					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[1].key">
-					<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></right-video>
+					<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" time="1小时前" :type="item.type"></three-img>
+					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
 				</view>
 			</view>
+
 			<view v-else-if="item.type == constData.contentType[0].key">
-				<only-text :title="item.title" :upName="item.user.name" time="1小时前"></only-text>
+				<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
 			</view>
 		</view>
+
 		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>
@@ -106,31 +112,17 @@
 							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
 						}, ],
 						type: 5,
-						show: 1
+						show: 0,
+						time: '2019-10-15'
 					},
 					{
-						title: '知乎最精辟的50条段子，已笑喷！',
+						title: '2019遵义科技展！',
 						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
+							src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131870991&di=301a093c74713a49ef7a2d5f74fc74ae&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170923%2F8eaf9c4654874b2dbc2154780b97c9df.jpeg'
 						}, ],
-						type: 5,
-						show: 1
-					},
-					{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 1
-					},
-					{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 1
+						type: 6,
+						show: 1,
+						time: '2019-10-15'
 					}
 				], //显示列表
 				tagName: '', //当前选中标签名字
@@ -154,6 +146,13 @@
 			}
 			this.getTagsList(cnt)
 
+			let cnt1 = {
+				moduleId: this.$constData.module, // Long 模块编号
+				count: 10, // int 
+				offset: 0, // int 
+			}
+			this.getAdverts(cnt1)
+
 			windowWidth = uni.getSystemInfoSync().windowWidth;
 			if (!uni.getStorageSync('userId')) {
 				uni.setStorageSync('userId', '1234567890')
@@ -162,11 +161,23 @@
 			this.userId = uni.getStorageSync('userId')
 		},
 		methods: {
-			
-			searchBtn(){
+
+			//查询广告
+			getAdverts(cnt) {
+				this.$api.getAdverts(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						console.log(this.$util.tryParseJson(res.data.c))
+					} else {
+						console.log('Error')
+					}
+				})
+			},
+
+			//跳转搜索页
+			searchBtn() {
 				uni.navigateTo({
-					url:'/pages/index/search/search',
-					 "animationType": "none",
+					url: '/pages/index/search/search',
+					"animationType": "none",
 				})
 			},
 
@@ -224,8 +235,6 @@
 							tagsList[i].page = 1
 						}
 						this.tagsList = tagsList
-						console.log('标签列表:')
-						console.log(this.tagsList)
 						let cnt1 = {
 							module: this.constData.module, // String 所属模块
 							status: parseInt(this.constData.contentStatus[4].key),
@@ -267,6 +276,11 @@
 								// 	list[i].type = 999
 								// }
 							}
+							let time = new Date(list[i].createTime)
+							let y = time.getFullYear()
+							let m = 1 * time.getMonth() + 1
+							let d = time.getDate()
+							list[i].time = `${y}-${m}-${d}`
 						}
 						this.tryDataList(list)
 						uni.stopPullDownRefresh()
@@ -352,29 +366,17 @@
 			/* 跳转至详情 */
 			navToInfo(info) {
 				if (info.type == this.constData.contentType[2].key || info.type == this.constData.contentType[0].key) {
-					if (info.upChannelId) {
-						uni.navigateTo({
-							url: `/pages/vip/column/details/details?id=${info.id}`
-						})
-					} else {
-						uni.navigateTo({
-							url: `/pages/index/articleView/articleView?id=${info.id}`
-						})
-					}
-
+					uni.navigateTo({
+						url: `/pages/index/articleView/articleView?id=${info.id}`
+					})
 				} else if (info.type == this.constData.contentType[1].key) {
-					// uni.navigateTo({
-					// 	url: `/pages/index/videoView/videoView?id=${info.id}&id1=${info._id}`
-					// })
-					if (info.upChannelId) {
-						uni.navigateTo({
-							url: `/pages/vip/column/detailsVideo/detailsVideo?id=${info.id}`
-						})
-					} else {
-						uni.navigateTo({
-							url: `/pages/index/videoView/videoView?id=${info.id}`
-						})
-					}
+					uni.navigateTo({
+						url: `/pages/index/videoView/videoView?id=${info.id}`
+					})
+				} else if (info.type == this.constData.contentType[3].key) {
+					uni.navigateTo({
+						url: `/pages/index/activity/activity?id=${info.id}`
+					})
 				}
 			}
 		},
@@ -430,18 +432,19 @@
 		align-items: center;
 		padding: 0upx 40upx;
 		color: #cccccc;
-	
+
 		.prompt {
 			margin-left: 10upx;
 			font-size: 28upx;
 		}
+
 		.icon_search {
 			width: 29upx;
 			height: 28upx;
 			margin-right: 20upx;
 		}
 	}
-	
+
 	.body {
 		background-color: #f8f8f8;
 		min-height: 100vh;
