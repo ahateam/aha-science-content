@@ -42,18 +42,6 @@ constData.typeList = [{
 		value: 5
 	},
 	{
-		name: '音频',
-		value: 1
-	},
-	{
-		name: '短视频',
-		value: 2
-	},
-	{
-		name: '视频',
-		value: 3
-	},
-	{
 		name: '直播',
 		value: 4
 	},
@@ -66,8 +54,8 @@ constData.typeList = [{
 		value: 6
 	},
 	{
-		name: '集合',
-		value: 7
+		name: '活动',
+		value: 8
 	},
 ]
 
