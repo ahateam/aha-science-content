@@ -1,0 +1,261 @@
+<template>
+	<div>
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<span class="title-box"> 输入标题：</span>
+				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px">
+				</el-input>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<span class="title-box">输入简介：</span>
+				<el-input placeholder="请输入简介" v-model="text" style="display: inline-block;width: 400px">
+				</el-input>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<span class="title-box"> 视频地址：</span>
+				<el-input placeholder="请输入网络视频地址" v-model="src" style="display: inline-block;width: 400px">
+				</el-input>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<span class="title-box"> 封面地址：</span>
+				<el-input placeholder="请输入封面图片地址" v-model="imgSrc" style="display: inline-block;width: 400px">
+				</el-input>
+			</el-col>
+		</el-row>
+		<el-row style="margin-bottom: 10px">
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="展示样式">
+						<el-select v-model="show" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in showList" :key="item.value" :label="item.name" :value="item.value">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="是否付费">
+						<el-select v-model="power" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in powerList" :key="item.value" :label="item.name" :value="item.value">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="初始状态">
+						<el-select v-model="status" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in statusList" :key="item.value" :label="item.name" :value="item.value">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="首页标签">
+						<el-select v-model="homeTagName" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in homeTag" :key="item.name" :label="item.title" :value="item.name">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="选择专栏">
+						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" @change="getChannelContentTag">
+							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="所属课程">
+						<el-select v-model="channelTagName" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in channelContentTag" :key="item.id" :label="item.title" :value="item.name">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+		</el-row>
+		<el-row style="margin-top: 20px">
+			<el-button type="primary" @click="addContent" style="margin: 0 auto;display: block;padding: 15px 50px">提交
+			</el-button>
+		</el-row>
+		<div style="text-align: center;margin-top: 20px;">
+			<iframe :src="src" width="500px" height="300px"></iframe>
+			<iframe :src="imgSrc" width="500px" height="300px"></iframe>
+		</div>
+	</div>
+</template>
+
+<script>
+	export default {
+		name: "addVideoContent",
+		data() {
+			return {
+				channelTagName: '',
+				channelContentTag: '',
+				homeTagName: '',
+				homeTag: '',
+				channelList: [{
+					title: '',
+					id: 0,
+				}],
+				status: '',
+				powerList: this.$constData.powerList,
+				statusList: this.$constData.statusList,
+				conType: '',
+				power: '',
+				text: '',
+				title: '',
+				userId: 400795534052038,
+				//展示样式
+				showList: [{
+						name: '竖屏',
+						value: 2,
+					},
+					{
+						name: '右侧',
+						value: 1,
+					},
+					{
+						name: '底部',
+						value: 0,
+					}
+				],
+				show: 0,
+				upChannelId: '',
+				paid: 0,
+				tag: '',
+				paidIndex: false,
+				typeList: this.$constData.typeList,
+				videoSrc: [],
+				src: '',
+				imgSrc: '',
+			}
+		},
+		methods: {
+			addContent() {
+				let that = this
+				let dataUrl = {
+					url: this.src,
+					text: this.text,
+					show: this.show,
+					imgSrc: this.imgSrc
+				}
+				let cid = `{"homeCotent":["${this.homeTagName}"]}`
+				if (this.upChannelId != '' && this.channelTagName != '') {
+					cid = `{"t${this.upChannelId}":["${this.channelTagName}"],"homeCotent":["${this.homeTagName}"]}`
+				}
+				let cnt = {
+					module: this.$constData.module,
+					type: 3,
+					status: this.status,
+					power: this.power,
+					upUserId: 401770184378345,
+					upChannelId: this.upChannelId,
+					tags: JSON.parse(cid),
+					title: this.title,
+					data: dataUrl,
+				}
+				if (this.upChannelId != '') {
+					cnt.upChannelId = this.upChannelId
+				}
+				this.$api.addContent(cnt, (res => {
+					if (res.data.rc == that.$util.RC.SUCCESS) {
+						that.$message({
+							message: '添加成功',
+							type: 'success'
+						});
+						that.$router.push('/contentList')
+					} else {
+						this.$message({
+							message: res.data.c,
+							type: 'warning'
+						});
+					}
+				}))
+			},
+			getChannels() {
+				let cnt = {
+					module: this.$constData.module,
+					status: 0,
+					//tags: tags, 
+					count: 20,
+					offset: 0,
+				};
+				this.$api.getChannels(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.channelList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+			getHomeTag() {
+				let cnt = {
+					moduleId: this.$constData.module,
+					status: 1,
+					group: '首页',
+					count: 20,
+					offset: 0,
+				};
+				this.$api.getContentTag(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.homeTag = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+			getChannelContentTag() {
+				this.channelTagName = ''
+				let cnt = {
+					moduleId: this.$constData.module,
+					channelId: this.upChannelId,
+					status: 4,
+					count: 20,
+					offset: 0,
+				};
+				this.$api.getChannelContentTag(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.channelContentTag = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+		},
+		mounted() {
+			this.getHomeTag()
+			this.getChannels()
+			let info = this.$route.params.info
+			if (info != undefined) {
+				this.upChannelId = info.id
+				this.paidIndex = true
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.title-box {
+		font-size: 1.6rem;
+		line-height: 40px;
+		letter-spacing: 2px;
+		font-weight: 600;
+		color: #666;
+		text-align: right;
+	}
+</style>
