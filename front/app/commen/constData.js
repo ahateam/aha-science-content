@@ -158,7 +158,7 @@ constData.contentType = [{
 	key: '5',
 	val: '图文'
 },{
-	key: '6',
+	key: '8',
 	val: '科普活动'
 }]
 

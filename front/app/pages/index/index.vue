@@ -120,7 +120,7 @@
 						imgList: [{
 							src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131870991&di=301a093c74713a49ef7a2d5f74fc74ae&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170923%2F8eaf9c4654874b2dbc2154780b97c9df.jpeg'
 						}, ],
-						type: 6,
+						type: 8,
 						show: 1,
 						time: '2019-10-15'
 					}
@@ -263,7 +263,7 @@
 						for (let i = 0; i < list.length; i++) {
 							let show = this.$util.tryParseJson(list[i].data).show
 							list[i].show = show
-							if (list[i].type == this.$constData.contentType[2].key) {
+							if (list[i].type == this.$constData.contentType[2].key||list[i].type == this.$constData.contentType[3].key) {
 								let imgList = this.$util.tryParseJson(list[i].data).imgList
 								list[i].imgList = imgList
 							}
@@ -375,7 +375,7 @@
 					})
 				} else if (info.type == this.constData.contentType[3].key) {
 					uni.navigateTo({
-						url: `/pages/index/activity/activity?id=${info.id}`
+						url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
 					})
 				}
 			}

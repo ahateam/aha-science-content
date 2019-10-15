@@ -24,7 +24,7 @@
 				{{time}}
 			</view>
 		</view>
-		
+
 		<view class="fixBox">
 			<button class="signUpBtn" type="primary">报名</button>
 		</view>
@@ -43,6 +43,9 @@
 		},
 		data() {
 			return {
+				contentId: '', //活动id
+				placeId: '', //基地id
+
 				imgSrc: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1048618502,452709363&fm=26&gp=0.jpg',
 				placeTitle: '遵义科技基地',
 				placeInfo: '《遵义科技》主办单位遵义市科学技术局 遵义市生产力促进中心。本刊坚持为社会主义服务的方向，坚持以马克思列宁主义、毛泽东思想和邓小平理论为指导，贯彻“百花齐放、百家争鸣”和“古为今用、洋为中用”的方针，坚持实事求是、理论与实际相结合的严谨学风，传播先进的科学文化知识，弘扬民族优秀科学文化，促进国际科学文化交流，探索防灾科技教育、教学及管理诸方面的规律，活跃教学与科研的学术风气，为教学与科研服务。',
@@ -52,7 +55,44 @@
 				isRotate: 'false'
 			}
 		},
+		onLoad(res) {
+			this.contentId = res.contentId
+			this.placeId = res.placeId
+			let cnt = {
+				id: this.contentId, // String 内容编号
+			}
+			this.getContent(cnt)
+			let cnt1 = {
+				moduleId: this.$constData.module, // Long 模块编号
+				id: this.placeId, // Long id
+			}
+			this.getTourBase(cnt1)
+		},
 		methods: {
+			//获取基地详情
+			getTourBase(cnt){
+				this.$api.getTourBase(cnt,(res)=>{
+					if(res.data.rc == this.$util.RC.SUCCESS){
+						console.log('基地详情------------------------↓')
+						console.log(this.$util.tryParseJson(res.data.c))
+					}else{
+						console.log('error')
+					}
+				})
+			},
+			
+			//获取活动详情
+			getContent(cnt) {
+				this.$api.getContentById(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						console.log(this.$util.tryParseJson(res.data.c))
+					} else {
+						console.log('Error')
+					}
+				})
+			},
+
+			//跳转报名
 			signUp() {
 
 			},
@@ -123,8 +163,8 @@
 		height: 100rpx;
 		border-radius: 2.5rem;
 	}
-	
-	.fixBox{
+
+	.fixBox {
 		position: fixed;
 		bottom: 20upx;
 		width: 100%;
