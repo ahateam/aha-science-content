@@ -5,6 +5,8 @@ import login from './views/login'
 
 //内容
 const contentList = () => import('./views/content/contentList')
+const imageTextContentList = () => import('./views/content/imageTextContentList')
+
 const contentInfo = () => import('./views/content/contentInfo')
 const examineList = () => import('./views/content/examineList')
 const addContent = () => import('./views/addContent/addContent')

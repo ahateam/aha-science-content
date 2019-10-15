@@ -2,91 +2,103 @@
 const  menu=[
     {
 
-        title:'内容',
+        title:'内容管理',
         icon:'course_shouye',
         child:[
             {
-                path:'/contentList',
-                title:'内容列表',
+                path:'/ContentList',
+                title:'图文管理',
             },
             {
-                path:'/examineList',
-                title:'审核列表',
+                path:'/videoContentList',
+                title:'视频管理',
             },
             {
-                path:'/addContent',
-                title:'添加内容',
+                path:'/channelList',
+                title:'专题管理',
             },
             {
-                path:'/addVideoContent',
-                title:'添加视频'
+                path:'/replyList',
+                title:'评论管理'
             }
         ]
     },
     {
-        title:'专栏',
+        title:'活动管理',
         icon:'course_shouye',
         child:[
             {
-                path:'/svipList',
-                title:'专栏列表'
+                path:'/activityList',
+                title:'活动管理'
             },
             {
-                path:'/addSvip',
-                title:'添加专栏'
-            },
-            {
-                path:'/addSvipTag',
-                title:'添加课程'
-            },
+                path:'/addActivity',
+                title:'发布活动'
+            }
+        ]
+    },
+    {
+        title:'标签管理',
+        icon:'course_shouye',
+        child:[
+           {
+               path:'/taskList',
+               title:'标签列表'
+           }
+        ]
+    },
+    {
+        title:'广告管理',
+        icon:'course_shouye',
+        child:[
 			{
-			    path:'/svipTagList',
-			    title:'课程列表'
-			}
-			
-        ]
+			    path:'/advertList',
+			    title:'广告列表'
+			},{
+			    path:'/addAdvert',
+			    title:'发布广告'
+			},
+		],
     },
     {
-        title:'任务墙',
+        title:'用户管理',
         icon:'course_shouye',
         child:[
-            {
-                path:'/taskList',
-                title:'任务列表'
-            },
-            {
-                path:'/examineTask',
-                title:'任务审核'
-            }
-        ]
-    },
-    {
-        path:'/templateList',
-        title:'任务模板',
-        icon:'course_shouye',
-        child:[],
-    },
-    {
-        path:'/userList',
-        title:'用户',
-        icon:'course_shouye',
-        child:[]
+			{
+			    path:'/adminList',
+			    title:'管理员管理'
+			},{
+			    path:'/insiderList',
+			    title:'内部人员管理'
+			},{
+			    path:'/userList',
+			    title:'用户管理'
+			},{
+			    path:'/userInfo',
+			    title:'用户详情'
+			},
+		]
     },
 	{ 
-	    title:'标签',
+	    title:'审核管理',
 	    icon:'course_shouye',
 	    child:[
 	        {
-	            path:'/homeTag',
-	            title:'首页内容标签'
+	            path:'/insiderExamineList',
+	            title:'内部人员审核'
+	        }
+	    ]
+	},{ 
+	    title:'数据统计',
+	    icon:'course_shouye',
+	    child:[
+	        {
+	            path:'/interestTagList',
+	            title:'用户兴趣标签'
 	        },
 	        {
-	            path:'/vipTag',
-	            title:'vip页标签'
-	        },
-	        {
-	            path:'/channelTag',
-	            title:'模板标签'
+	            path:'/enrollList',
+	            title:'活动报名'
 	        }
 	    ]
 	},

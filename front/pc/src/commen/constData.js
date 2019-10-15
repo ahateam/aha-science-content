@@ -3,7 +3,7 @@
 const constData = {}
 
 constData.module = 1180,
-constData.chnnelTagmodule = 11805
+constData.chnnelTagmodule = 11705
 
 /**contentList*/
 constData.statusList = [{
