@@ -42,6 +42,10 @@ constData.typeList = [{
 		value: 5
 	},
 	{
+		name: '视频',
+		value: 3
+	},
+	{
 		name: '直播',
 		value: 4
 	},
