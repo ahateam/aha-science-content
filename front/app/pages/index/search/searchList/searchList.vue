@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<!-- 导航栏 -->
 		<navBar>
 			<view class="search" @click="navBack">
 				<!-- #ifdef APP-PLUS -->
@@ -9,6 +10,8 @@
 				<image src="/static/zy-search/search.png" mode="aspectFit" class="search-icon"></image>
 			</view>
 		</navBar>
+		
+		<!-- 搜索内容列表 -->
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
 				<view v-if="item.show == constData.contentShow[0].key">
@@ -27,6 +30,7 @@
 				<only-text :title="item.title" :upName="item.user.name" time="1小时前"></only-text>
 			</view>
 		</view>
+		
 		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>

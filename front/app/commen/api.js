@@ -51,6 +51,16 @@ api.getChannelContentTagPower = function(cnt, callback) {
 }
 
 /************************ 用户相关接口 **************************/
+//注册 
+api.register = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/register', cnt, callback)
+}
+
+//平台账号登录（手机号） 
+api.login = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/login', cnt, callback)
+}
+
 //根据id获取用户
 api.getUserById = function(cnt, callback) {
 	util.call(baseUrl + '/weixin/getUserById', cnt, callback)
@@ -104,50 +114,25 @@ api.getCommentByContentId = function(cnt, callback) {
 api.createReply = function(cnt, callback) {
 	util.call(baseUrl + '/reply/createReply', cnt, callback)
 }
-/************************************模板相关 */
-//获取模板列表 
-api.getTemplates = function(cnt, callback) {
-	util.call(baseUrl + '/task/getTemplates', cnt, callback)
+
+/* 科普活动 */
+//查询科普基地详情 
+api.getTourBase = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getTourBase', cnt, callback)
 }
 
-//获取模板
-api.getTemplate = function(cnt, callback) {
-	util.call(baseUrl + '/task/getTemplate', cnt, callback)
+//查询科普基地的景点 
+api.getTourBases = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getTourBases', cnt, callback)
 }
 
-/* 支付相关 ****************************************/
-//支付宝小程序支付 
-api.creatAlipayAppletOrder = function(cnt, callback) {
-	util.call(baseUrl + '/alipay/creatAlipayAppletOrder', cnt, callback)
+//活动报名 
+api.createEnroll = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/createEnroll', cnt, callback)
 }
-
-//支付宝app支付
-api.creatAlipayOrder = function(cnt, callback) {
-	util.call(baseUrl + '/alipay/creatAlipayOrder', cnt, callback)
-}
-
-//微信小程序支付 
-api.doUnifiedOrder = function(cnt, callback) {
-	util.call(baseUrl + '/wxpay/doUnifiedOrder', cnt, callback)
-}
-
-//购买课程 
-api.PayChannelContentTag = function(cnt, callback) {
-	util.call(baseUrl + '/channel/PayChannelContentTag', cnt, callback)
-}
-
-//获取订单信息 
-api.getPayOrderByUserId = function(cnt, callback) {
-	util.call(baseUrl + '/task/getPayOrderByUserId', cnt, callback)
-}
-
-//查询用户购买的课程 
-api.getPayChannel = function(cnt, callback) {
-	util.call(baseUrl + '/task/getPayChannel', cnt, callback)
-}
-
-//更新订单信息  
-api.updatePayOrder = function(cnt, callback) {
-	util.call(baseUrl + '/task/updatePayOrder', cnt, callback)
+/* 广告 */
+//查询广告 
+api.getAdverts = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getAdverts', cnt, callback)
 }
 export default api

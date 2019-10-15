@@ -10,7 +10,7 @@
 				<wInput v-model="phoneData" type="text" maxlength="11" placeholder="用户名/电话"></wInput>
 				<wInput v-model="passData" type="password" maxlength="11" placeholder="密码"></wInput>
 			</view>
-			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin()"></wButton>
+			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin"></wButton>
 
 			<!-- 其他登录 -->
 			<view class="other_login cuIcon" style="margin-top: 206upx;">
@@ -57,16 +57,60 @@
 				providerList: [], //登录服务商列表
 			};
 		},
-		onLoad() {
+		onLoad(res) {
 			this.getProvider()
+			if (res.phoneData) {
+				this.phoneData = res.phoneData
+				this.passData = res.passData
+				this.startLogin()
+			}
 		},
 		methods: {
-
+			
+			//登录按钮触发
 			startLogin() {
 				if (this.isRotate) {
 					return
 				}
+				if (this.phoneData.length != 11) {
+					uni.showToast({
+						title: '请输入正确的账号',
+						icon: 'none'
+					})
+					return
+				}
 				this.isRotate = true
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					phone: this.phoneData, // String 手机号
+					pwd: this.passData, // String 密码
+				}
+				this.login(cnt)
+			},
+			
+			//账号密码登录
+			login(cnt){
+				this.$api.login(cnt,(res)=>{
+					if(res.data.rc == this.$util.RC.SUCCESS){
+						let userInfo = this.$util.tryParseJson(res.data.c)
+						uni.setStorageSync('userHead',userInfo.head)
+						uni.setStorageSync('userId',userInfo.id)
+						uni.setStorageSync('userName',userInfo.name)
+						uni.switchTab({
+							url:'/pages/user/user'
+						})
+						uni.showToast({
+							title:'已登录'
+						})
+					}else{
+						uni.showToast({
+							title:'账号或密码错误！',
+							icon:'none',
+							position:'bottom'
+						})
+						this.isRotate = false
+					}
+				})
 			},
 
 			getProvider() {
@@ -171,6 +215,32 @@
 							ext: data
 						}
 						this.wxLoginEnd(cnt)
+					}
+				})
+			},
+			wxLoginEnd(cnt) {
+				/* 将用户信息上传至服务器获取登录id */
+				this.$api.loginByWxOpenId(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let userData = this.$util.tryParseJson(res.data.c)
+						console.log(userData)
+						let userId = userData.id
+						let userName = userData.name
+						let userHead = this.$util.tryParseJson(userData.ext).userHead
+						/* 将用户信息存至本地 */
+						uni.setStorageSync('userId', userId)
+						uni.setStorageSync('userName', userName)
+						uni.setStorageSync('userHead', userHead)
+						uni.hideLoading()
+						uni.switchTab({
+							url: '/pages/user/user'
+						})
+						uni.showToast({
+							title: '已登录！',
+							duration: 1000
+						});
+					} else {
+						console.log(res.data.c)
 					}
 				})
 			},

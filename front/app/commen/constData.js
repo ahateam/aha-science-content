@@ -157,6 +157,9 @@ constData.contentType = [{
 }, {
 	key: '5',
 	val: '图文'
+},{
+	key: '6',
+	val: '科普活动'
 }]
 
 /* 是否付费 */

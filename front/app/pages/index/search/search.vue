@@ -5,7 +5,7 @@
 				<!-- #ifdef APP-PLUS -->
 				<image src="/static/zy-search/voice.png" mode="aspectFit" @click="startRecognize()" class="voice-icon"></image>
 				<!-- #endif -->
-				<input maxlength="20" focus type="text" value="" confirm-type="search" @confirm="searchStart()" placeholder="请输入关键词搜索"
+				<input focus maxlength="20" type="text" confirm-type="search" @confirm="searchStart()" placeholder="请输入关键词搜索"
 				 v-model.trim="searchText" />
 				<image src="/static/zy-search/search.png" mode="aspectFit" @click="searchStart()" class="search-icon"></image>
 			</view>
@@ -89,7 +89,7 @@
 							console.log('-------------------------')
 							uni.navigateTo({
 								url: `/pages/index/search/searchList/searchList?value=${this.searchText}`,
-								 "animationType": "none",
+								"animationType": "none",
 							})
 							if (list.length > 5) {
 								for (let item of list) {

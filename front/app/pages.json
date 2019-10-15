@@ -76,6 +76,13 @@
 				"navigationStyle": "custom"
 			}
         }
+        ,{
+            "path" : "pages/index/activity/activity",
+            "style" : {
+				"navigationBarTitleText": "活动",
+				"navigationStyle": "custom"
+			}
+        }
     ],
 	"tabBar": {
 		"color": "#C0C4CC",
