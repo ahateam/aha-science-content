@@ -32,8 +32,6 @@
 						</div>
 					</div>
 				</el-header>
-				
-				
 				<el-main :style="mainBoxStyle" >
 					<div class="main" >
 						<router-view v-if="isRouterActive"></router-view>
@@ -41,9 +39,6 @@
 				</el-main>
 			</el-container>
 		</el-container>
-
-
-
 	</div>
 </template>
 

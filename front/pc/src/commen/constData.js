@@ -3,7 +3,7 @@
 const constData = {}
 
 constData.module = 1180,
-constData.chnnelTagmodule = 11705
+	constData.chnnelTagmodule = 11705
 
 /**contentList*/
 constData.statusList = [{
@@ -16,7 +16,7 @@ constData.statusList = [{
 	}, {
 		name: '已关闭',
 		value: 3,
-	},  {
+	}, {
 		name: '已发布',
 		value: 4,
 	},
@@ -115,7 +115,7 @@ constData.templateType = [{
 		value: 4,
 	}
 ]
-constData.tagstatus =  [{
+constData.tagstatus = [{
 		name: '启用',
 		value: 1,
 	},
@@ -124,5 +124,16 @@ constData.tagstatus =  [{
 		value: 0,
 	}
 ]
+
+constData.authList = [{
+	name: '管理员权限',
+	id: '3'
+}, {
+	name: '内部人员权限',
+	id: '2'
+}, {
+	name: '普通用户权限',
+	id: '1'
+}]
 
 export default constData

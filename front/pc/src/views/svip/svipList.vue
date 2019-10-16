@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			专栏信息表
+			专题
 		</el-row>
 		<el-row class="content-box">
 			<el-row>
 				<el-col :span="8">
 					<el-form label-width="80px">
-						<el-form-item label="状态">
+						<el-form-item label="选择状态">
 							<el-select v-model="searchData.status" placeholder="请选择状态">
 								<el-option v-for="(item,index) in generalStatus" :key="index" :label="item.name" :value="item.value"></el-option>
 							</el-select>
@@ -18,6 +18,7 @@
 			<el-row>
 				<el-button type="primary" @click="searchBtn">查询</el-button>
 				<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
+				<el-button type="primary" @click="addSvip" style="float: right;">发布专题</el-button>
 			</el-row>
 		</el-row>
 		<el-row class="table-box">
@@ -213,6 +214,9 @@
 					}
 				})
 			},
+			addSvip(){
+				this.$router.push('/addSvip')
+			}
 		},
 		mounted() {
 			//获取内容列表

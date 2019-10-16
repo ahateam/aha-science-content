@@ -122,7 +122,7 @@
 			getContentTag() {
 				let cnt = {
 					moduleId: this.$constData.module,
-					group: 'vip',
+					group: '专题',
 					status: 1,
 					count: 20,
 					offset: 0,

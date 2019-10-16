@@ -63,13 +63,13 @@ api.getTags = function (cnt, callback) {
     util.call(baseUrl + '/contentTag/getContentTag', cnt, callback)
 }
 
-//获取模板列表
-api.getTemplates = function (cnt, callback) {
-    util.call(baseUrl + '/task/getTemplates', cnt, callback)
+//获取评论
+api.getReplyList = function (cnt, callback) {
+    util.call(baseUrl + '/reply/getReplyList', cnt, callback)
 }
-//删除模板列表
-api.delemplates = function (cnt, callback) {
-    util.call(baseUrl + '/task/delemplates', cnt, callback)
+//删除评论
+api.delReply = function (cnt, callback) {
+    util.call(baseUrl + '/reply/delReply', cnt, callback)
 }
 //添加模板
 api.addTemplate = function (cnt, callback) {
@@ -87,21 +87,21 @@ api.createContentTag = function (cnt, callback) {
 api.editteContentTag = function (cnt, callback) {
     util.call(baseUrl + '/contentTag/editteContentTag', cnt, callback)
 }
-//获取课程
-api.getChannelContentTag = function (cnt, callback) {
-    util.call(baseUrl + '/channelTag/getChannelContentTag', cnt, callback)
+//获取用户
+api.getUsers = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/getUsers', cnt, callback)
 }
-//获取课程
-api.getChannelContentTag = function (cnt, callback) {
-    util.call(baseUrl + '/channelTag/getChannelContentTag', cnt, callback)
+//封禁用户
+api.closeUser = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/closeUser', cnt, callback)
 }
-//创建课程
-api.createChannelContentTag = function (cnt, callback) {
-    util.call(baseUrl + '/channelTag/createChannelContentTag', cnt, callback)
+//修改用户信息
+api.updateUserInfo = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/updateUserInfo', cnt, callback)
 }
-//查询课程
-api.getChannelContentTag = function (cnt, callback) {
-    util.call(baseUrl + '/channelTag/getChannelContentTag', cnt, callback)
+//用户登录
+api.login = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/login', cnt, callback)
 }
 //修改课程
 api.updateChannelContentTag = function (cnt, callback) {
