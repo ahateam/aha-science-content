@@ -3,7 +3,7 @@
         <el-row style="padding: 20px">
             <el-col :span="2" style="min-height: 20px"></el-col>
             <el-col :span="20">
-                <span class="title-box"> 标题：</span>
+                <span class="title-box"> 活动标题：</span>
                 <el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
             </el-col>
         </el-row>
@@ -11,7 +11,15 @@
         <el-row style="padding: 20px">
             <el-col :span="2" style="min-height: 20px"></el-col>
             <el-col :span="20">
-                <span class="title-box"> 地点：</span>
+                <span class="title-box"> 活动简介：</span>
+                <el-input type="textarea" placeholder="请输入标题" autosize v-model="info" style="display: inline-block;width: 400px"></el-input>
+            </el-col>
+        </el-row>
+
+        <el-row style="padding: 20px">
+            <el-col :span="2" style="min-height: 20px"></el-col>
+            <el-col :span="20">
+                <span class="title-box"> 活动地点：</span>
                 <el-input placeholder="请输入活动地点" v-model="address" style="display: inline-block;width: 400px"></el-input>
             </el-col>
         </el-row>
@@ -43,7 +51,7 @@
             <el-col :span="2" style="min-height: 20px"></el-col>
             <el-col :span="20">
                     <span class="title-box"> 科普基地：</span>
-                    <el-select filterable v-model="place" placeholder="请选择" style="margin-right: 10px;">
+                    <el-select filterable v-model="place" placeholder="请选择科普基地" style="margin-right: 10px;">
                         <el-option v-for="(item,index) in placeList" :key="index" :label="item.name"
                                    :value="item.id"></el-option>
                     </el-select>
@@ -83,6 +91,7 @@
 
                 show: Math.round(Math.random()),
                 title: '',
+                info:'',
                 power: 0,
                 status: this.$constData.statusList[3].value,
                 userId: 401770184378345,
@@ -155,6 +164,13 @@
                     })
                     return
                 }
+                if (this.info == '') {
+                    this.$message({
+                        message: '请填写简介',
+                        type: 'warning'
+                    })
+                    return
+                }
                 if (this.imgSrc == '') {
                     this.$message({
                         message: '请上传封面图',
@@ -201,6 +217,7 @@
                     place:this.place,
                     address:this.address,
                     time:newTime,
+                    info:this.info,
                 }
                 let cnt = {
                     module: this.$constData.module,

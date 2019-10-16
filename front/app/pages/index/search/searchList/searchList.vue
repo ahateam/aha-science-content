@@ -1,7 +1,7 @@
 <template>
-	<view>
+	<view style="background-color: #f8f8f8;min-height: 100vh;">
 		<!-- 导航栏 -->
-		<navBar>
+		<navBar bgColor="#FB7299" fontColor="#FFFFFF">
 			<view class="search" @click="navBack">
 				<!-- #ifdef APP-PLUS -->
 				<image src="/static/zy-search/voice.png" mode="aspectFit" class="voice-icon"></image>
@@ -10,9 +10,21 @@
 				<image src="/static/zy-search/search.png" mode="aspectFit" class="search-icon"></image>
 			</view>
 		</navBar>
-		
+
+		<scroll-view scroll-x class="userList">
+			<view v-if="userList.length == 0" class="noUser">
+				好像没有找到相关用户哦
+			</view>
+			<view class="item-user" v-for="(item,index) in userList" :key="index">
+				<image :src="item.head" mode="aspectFill"></image>
+				<view class="userName">
+					{{item.name}}
+				</view>
+			</view>
+		</scroll-view>
+
 		<!-- 搜索内容列表 -->
-		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
+		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
 				<view v-if="item.show == constData.contentShow[0].key">
 					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></trans-video>
@@ -30,7 +42,7 @@
 				<only-text :title="item.title" :upName="item.user.name" time="1小时前"></only-text>
 			</view>
 		</view>
-		
+
 		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>
@@ -54,22 +66,111 @@
 		},
 		data() {
 			return {
-				searchText: '',
+				page: 1,
+				count: 10,
+				offset: 0,
+				pageOver: false,
+
+				constData: this.$constData,
 				contents: [],
+
+				searchText: '',
+				userList: [],
 				pageStatus: 'loading'
 			};
 		},
 		onLoad(res) {
 			this.searchText = res.value
 			let cnt = {
-				
+				moduleId: this.$constData.module, // Long 模块编号
+				search: this.searchText, // String 关键字
+				count: this.count, // int 
+				offset: this.offset, // int 
 			}
+			this.searchContentAndUser(cnt)
 		},
-		methods:{
-			navBack(){
-				uni.navigateBack({
-					 "animationType": "none",
+		methods: {
+			//查询
+			searchContentAndUser(cnt) {
+				this.pageStatus = 'loading'
+				this.$api.searchContentAndUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let searchs = this.$util.tryParseJson(res.data.c)
+						console.log(searchs)
+						this.userList = searchs.userSearch
+						
+						this.setContentList(searchs.contentSearch)
+					} else {
+						console.log('error')
+					}
 				})
+			},
+
+			//内容列表更改
+			setContentList(list) {
+				for (let i = 0; i < list.length; i++) {
+					let show = this.$util.tryParseJson(list[i].data).show
+					list[i].show = show
+					if (list[i].type == this.$constData.contentType[2].key || list[i].type == this.$constData.contentType[3].key) {
+						let imgList = this.$util.tryParseJson(list[i].data).imgList
+						list[i].imgList = imgList
+					}
+					if (list[i].type == this.$constData.contentType[1].key) {
+						let imgList = [{
+							src: this.$util.tryParseJson(list[i].data).imgSrc
+						}]
+						list[i].imgList = imgList
+						// if(this.versionStatus == this.$constData.showStatus[0].key){
+						// 	list[i].type = 999
+						// }
+					}
+					let time = new Date(list[i].createTime)
+					let y = time.getFullYear()
+					let m = 1 * time.getMonth() + 1
+					let d = time.getDate()
+					list[i].time = `${y}-${m}-${d}`
+				}
+				this.tryDataList(list)
+			},
+
+			//添加内容进数组
+			tryDataList(list) {
+				console.log(list)
+				console.log('--------------')
+				if (list.length < this.count) {
+					this.pageOver = true
+					this.pageStatus = 'nomore'
+				} else {
+					this.pageOver = false
+					this.pageStatus = 'more'
+				}
+				let newList = this.contents.concat(list)
+				this.contents = newList
+				console.log(this.contents)
+			},
+
+			//返回上一页
+			navBack() {
+				uni.navigateBack({
+					"animationType": "none",
+				})
+			},
+			
+			/* 跳转至详情 */
+			navToInfo(info) {
+				if (info.type == this.constData.contentType[2].key || info.type == this.constData.contentType[0].key) {
+					uni.navigateTo({
+						url: `/pages/index/articleView/articleView?id=${info.id}`
+					})
+				} else if (info.type == this.constData.contentType[1].key) {
+					uni.navigateTo({
+						url: `/pages/index/videoView/videoView?id=${info.id}`
+					})
+				} else if (info.type == this.constData.contentType[3].key) {
+					uni.navigateTo({
+						url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
+					})
+				}
 			}
 		}
 	}
@@ -88,6 +189,8 @@
 			padding: 10upx 54upx;
 			font-size: 28upx;
 			border-radius: 50upx;
+			color: #303133;
+			font-weight: normal;
 		}
 
 		.voice-icon {
@@ -109,5 +212,38 @@
 			top: 4upx;
 			z-index: 10;
 		}
+	}
+
+	.userList {
+		white-space: nowrap;
+		background-color: #fff;
+		margin-bottom: $box-margin-top;
+		
+		.item-user{
+			display: inline-block;
+			padding: $box-margin-top $box-margin-left;
+			width: 100upx;
+			text-align: center;
+			font-size: 30upx;
+			color: #303133;
+			image{
+				width: 100upx;
+				height: 100upx;
+				border-radius: 100%;
+				overflow: hidden;
+			}
+		}
+	}
+	
+	.userName{
+		font-size: $list-info;
+		padding-top: 5upx;
+		overflow: hidden;
+		text-overflow:ellipsis;
+	}
+	
+	.noUser{
+		font-size: $list-info;
+		padding: $box-margin-top $box-margin-left;
 	}
 </style>

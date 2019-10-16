@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<navBar>
+		<navBar bgColor="#fb7299" fontColor="#FFFFFF">
 			<view class="search">
 				<!-- #ifdef APP-PLUS -->
 				<image src="/static/zy-search/voice.png" mode="aspectFit" @click="startRecognize()" class="voice-icon"></image>
@@ -10,40 +10,23 @@
 				<image src="/static/zy-search/search.png" mode="aspectFit" @click="searchStart()" class="search-icon"></image>
 			</view>
 		</navBar>
-		<template v-if="isBlock">
-			<view class="s-block" v-if="hList.length > 0">
-				<view class="header">
-					历史记录
-					<image src="/static/zy-search/delete.png" mode="aspectFit" @click="delhistory"></image>
-				</view>
-				<view class="list">
-					<view v-for="(item,index) in hList" :key="index" @click="keywordsClick(item)">{{item}}</view>
-				</view>
+
+		<view class="s-circle" v-if="hList.length > 0">
+			<view class="header">
+				历史记录
+				<image src="/static/zy-search/delete.png" mode="aspectFit" @click="delhistory"></image>
 			</view>
-			<view class="wanted-block" v-if="showWant">
-				<view class="header">猜你想搜的</view>
-				<view class="list">
-					<view v-for="(item,index) in wantList" :key="index" @click="keywordsClick(item)">{{item}}</view>
-				</view>
+			<view class="list">
+				<view v-for="(item,index) in hList" :key="index" @click="keywordsClick(item)">{{item}}</view>
 			</view>
-		</template>
-		<template v-else>
-			<view class="s-circle" v-if="hList.length > 0">
-				<view class="header">
-					历史记录
-					<image src="/static/zy-search/delete.png" mode="aspectFit" @click="delhistory"></image>
-				</view>
-				<view class="list">
-					<view v-for="(item,index) in hList" :key="index" @click="keywordsClick(item)">{{item}}</view>
-				</view>
+		</view>
+		<view class="wanted-circle" v-if="showWant">
+			<view class="header">猜你想搜的</view>
+			<view class="list">
+				<view v-for="(item,index) in wantList" :key="index" @click="keywordsClick(item)">{{item}}</view>
 			</view>
-			<view class="wanted-circle" v-if="showWant">
-				<view class="header">猜你想搜的</view>
-				<view class="list">
-					<view v-for="(item,index) in wantList" :key="index" @click="keywordsClick(item)">{{item}}</view>
-				</view>
-			</view>
-		</template>
+		</view>
+
 	</view>
 </template>
 
@@ -153,6 +136,8 @@
 			padding: 10upx 54upx;
 			font-size: 28upx;
 			border-radius: 50upx;
+			color: #303133;
+			font-weight: normal;
 		}
 
 		.voice-icon {
@@ -175,54 +160,17 @@
 			z-index: 10;
 		}
 	}
-
-	.s-block {
-		margin-top: 30upx;
-
-		.header {
-			font-size: 32upx;
-			padding: 30upx;
-			position: relative;
-
-			image {
-				width: 36upx;
-				height: 36upx;
-				padding: 10upx;
-				position: absolute;
-				right: 40upx;
-				top: 24upx;
-			}
-		}
-
-		.list {
-			display: flex;
-			flex-wrap: wrap;
-
-			view {
-				width: 50%;
-				color: #8A8A8A;
-				font-size: 28upx;
-				box-sizing: border-box;
-				text-align: center;
-				padding: 20upx 0;
-				border-top: 2upx solid #FFF;
-				border-left: 2upx solid #FFF;
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				background-color: #F7F7F7;
-			}
-		}
-	}
-
+	
 	.s-circle {
-		margin-top: 30upx;
-
+		padding-top: 30upx;
+		background-color: $color-main;
+		
 		.header {
 			font-size: 32upx;
 			padding: 30upx;
-			border-bottom: 2upx solid #F9F9F9;
+			border-bottom: 2upx solid $color-main;
 			position: relative;
+			color: #FFFFFF;
 
 			image {
 				width: 36upx;
@@ -243,8 +191,8 @@
 				padding: 8upx 30upx;
 				margin: 20upx 30upx 0 0;
 				font-size: 28upx;
-				color: #8A8A8A;
-				background-color: #F7F7F7;
+				color: #FFFFFF;
+				background-color: $color-button;
 				box-sizing: border-box;
 				text-align: center;
 				border-radius: 20upx;
@@ -252,37 +200,10 @@
 		}
 	}
 
-	.wanted-block {
-		margin-top: 30upx;
-
-		.header {
-			font-size: 32upx;
-			padding: 30upx;
-		}
-
-		.list {
-			display: flex;
-			flex-wrap: wrap;
-
-			view {
-				width: 50%;
-				color: #8A8A8A;
-				font-size: 28upx;
-				box-sizing: border-box;
-				text-align: center;
-				padding: 20upx 0;
-				border-top: 2upx solid #FFF;
-				border-left: 2upx solid #FFF;
-				background-color: #F7F7F7;
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-			}
-		}
-	}
-
 	.wanted-circle {
-		margin-top: 30upx;
+		margin-top: 5upx;
+		// background-color: $color-main;
+		// color: #FFFFFF;
 
 		.header {
 			font-size: 32upx;
@@ -298,8 +219,8 @@
 				padding: 8upx 30upx;
 				margin: 20upx 30upx 0 0;
 				font-size: 28upx;
-				color: #8A8A8A;
-				background-color: #F7F7F7;
+				// color: #FFFFFF;
+				background-color: $uni-bg-color-grey;
 				box-sizing: border-box;
 				text-align: center;
 				border-radius: 20upx;

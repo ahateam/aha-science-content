@@ -1,11 +1,24 @@
 <template>
 	<view class="body">
+		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF" >推荐</navBar>
 		<!-- 顶部选项卡 -->
 		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
 			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
 			 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
 		</scroll-view>
 		<view style="padding-top: 90upx;"></view>
+		
+		<scroll-view scroll-x class="userList" v-if="tabCurrentIndex == 0">
+			<view v-if="userList.length == 0" class="noUser">
+				还没有关注其他用户哦
+			</view>
+			<view class="item-user" v-for="(item,index) in userList" :key="index">
+				<image :src="item.head" mode="aspectFill"></image>
+				<view class="userName">
+					{{item.name}}
+				</view>
+			</view>
+		</scroll-view>
 
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
@@ -35,7 +48,7 @@
 	import rightVideo from '@/components/video/rightVideo.vue'
 	import threeImg from '@/components/article/threeImg.vue'
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
-	import uniSwiperDot from "@/components/uni-swiper-dot/uni-swiper-dot.vue"
+	import navBar from '@/components/zhouWei-navBar/index.vue'
 
 	let windowWidth = 0
 
@@ -46,7 +59,7 @@
 			rightVideo,
 			threeImg,
 			uniLoadMore,
-			uniSwiperDot
+			navBar
 		},
 		data() {
 			return {
@@ -54,10 +67,10 @@
 				constData: this.$constData, //全局变量引入，防止头条html中报错
 
 				tagsList: [{
-						name: '全部'
+						name: '关注列表'
 					},
 					{
-						name: '推荐'
+						name: '推荐专题'
 					}
 				], //标签列表
 				tabCurrentIndex: 0, //当前选项卡索引
@@ -81,6 +94,8 @@
 				page: 1,
 
 				pageStatus: 'loading', //加载状态 more（loading前）、loading（loading中）、noMore（没有更多了）
+				
+				userList:[],
 			}
 		},
 		onLoad() {
@@ -361,41 +376,45 @@
 	/* 顶部tabbar */
 	.nav-bar {
 		position: fixed;
-		top: 0;
 		z-index: 10;
 		height: 90upx;
 		white-space: nowrap;
 		box-shadow: 0 2upx 8upx rgba(0, 0, 0, .06);
 		background-color: #fff;
-
+	
 		.nav-item {
 			display: inline-block;
-			width: 150upx;
+			padding: 0 $box-margin-left;
 			height: 90upx;
 			text-align: center;
 			line-height: 90upx;
 			font-size: 30upx;
 			color: #303133;
 			position: relative;
-
+			transition:.2s;
+	
 			&:after {
 				content: '';
 				width: 0;
 				height: 0;
-				border-bottom: 4upx solid #007aff;
+				border-bottom: 4upx solid #fb7299;
 				position: absolute;
 				left: 50%;
 				bottom: 0;
 				transform: translateX(-50%);
-				transition: .3s;
+				transition: .2s;
 			}
 		}
-
+	
 		.current {
-			color: #007aff;
-
+			color: #fb7299;
+			font-weight: bold;
+			font-size: $list-title-m;
+			transform: translateY(5upx);
+	
 			&:after {
 				width: 50%;
+				transform:translateX(-50%) translateY(-7upx);
 			}
 		}
 	}
@@ -405,5 +424,38 @@
 		height: 200rpx;
 		background: #fff;
 		margin-top: 10rpx;
+	}
+	
+	.userList {
+		white-space: nowrap;
+		background-color: #fff;
+		margin-bottom: $box-margin-top;
+		
+		.item-user{
+			display: inline-block;
+			padding: $box-margin-top $box-margin-left;
+			width: 100upx;
+			text-align: center;
+			font-size: 30upx;
+			color: #303133;
+			image{
+				width: 100upx;
+				height: 100upx;
+				border-radius: 100%;
+				overflow: hidden;
+			}
+		}
+	}
+	
+	.userName{
+		font-size: $list-info;
+		padding-top: 5upx;
+		overflow: hidden;
+		text-overflow:ellipsis;
+	}
+	
+	.noUser{
+		font-size: $list-info;
+		padding: $box-margin-top $box-margin-left;
 	}
 </style>

@@ -81,14 +81,24 @@ $box-margin-left:30upx;//盒子左边距
 
 $box-margin-s:16upx;//小边距
 
+
+$list-title:32upx;//标题文字小
+$list-title-m:38upx;//标题文字中
 $list-title-l:45upx;//标题字体-大
 
-$list-title:32upx;//标题文字大小
-$list-title-color:#303133;//标题字体颜色
-$list-title-line:46upx;//标题行高
+$list-title-line:46upx;//标题行高-小
 $list-title-line-half:23upx;//行高一半
+
+$list-title-color:#303133;//标题字体颜色
 
 $list-info:26upx;//次要信息字体大小
 $list-info-line:40upx;//次要信息行高
 $list-info-line-half:20upx;//次要行高一半
 $list-info-color:#aaa;//次要信息字体颜色
+
+$color-main:#fb7299;//主要背景色
+$color-befor:#ffb359;//次要颜色
+$color-after:#11bbff;//三级颜色
+
+$color-button:#fc9ab6;//按钮颜色
+
