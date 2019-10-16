@@ -1,7 +1,7 @@
 <template>
 	<view class="body">
 		<!-- 自定义导航栏 -->
-		<nav-bar>
+		<nav-bar bgColor="#fb7299" fontColor="#FFFFFF">
 			<view slot="left" class="search_box" @click="searchBtn">
 				<text class="iconfont kk-sousuo"></text>
 				<text class="prompt">搜索(用户、资讯)</text>
@@ -90,41 +90,17 @@
 				current: 0,
 				mode: 'nav',
 				dotsStyles: {
-					backgroundColor: 'rgba(171,220,255,0.5)',
+					backgroundColor: 'rgba(251,114,153,0.3)',
 				},
 				/* 轮播图end */
 
-				tagsList: [{
-						name: '全部'
-					},
-					{
-						name: '推荐'
-					}
-				], //标签列表
+				tagsList: [], //标签列表
 				tabCurrentIndex: 0, //当前选项卡索引
 				scrollLeft: 0, //顶部选项卡左滑距离,
 
 				userId: '',
 
-				contents: [{
-						title: '知乎最精辟的50条段子，已笑喷！',
-						imgList: [{
-							src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-						}, ],
-						type: 5,
-						show: 0,
-						time: '2019-10-15'
-					},
-					{
-						title: '2019遵义科技展！',
-						imgList: [{
-							src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131870991&di=301a093c74713a49ef7a2d5f74fc74ae&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170923%2F8eaf9c4654874b2dbc2154780b97c9df.jpeg'
-						}, ],
-						type: 8,
-						show: 1,
-						time: '2019-10-15'
-					}
-				], //显示列表
+				contents: [], //显示列表
 				tagName: '', //当前选中标签名字
 
 				//上拉加载 ---分页
@@ -263,7 +239,7 @@
 						for (let i = 0; i < list.length; i++) {
 							let show = this.$util.tryParseJson(list[i].data).show
 							list[i].show = show
-							if (list[i].type == this.$constData.contentType[2].key||list[i].type == this.$constData.contentType[3].key) {
+							if (list[i].type == this.$constData.contentType[2].key || list[i].type == this.$constData.contentType[3].key) {
 								let imgList = this.$util.tryParseJson(list[i].data).imgList
 								list[i].imgList = imgList
 							}
@@ -350,6 +326,19 @@
 					return
 				}
 
+				if (this.tagName == '活动') {
+					let cnt = {
+						module: this.constData.module, // String 所属模块
+						status: this.constData.contentStatus[4].key, // Byte <选填> 状态
+						type: this.constData.contentType[3].key, // Byte <选填> 类型
+						count: this.count, // Integer
+						offset: this.offset, // Integer
+					}
+					this.contents = []
+					this.getContentsByTag(cnt)
+					return
+				}
+
 				let cnt = {
 					module: this.constData.module, // String 所属模块
 					status: this.constData.contentStatus[4].key, // Byte <选填> 状态
@@ -396,11 +385,15 @@
 			}
 			if (this.tagName != '' && this.tagName != '全部') {
 				cnt.tags = `{"homeCotent":"${this.tagName}"}`
+			} else if (this.tagName != '活动') {
+				cnt.type = this.constData.contentType[3].key
 			}
 			this.getContentsByTag(cnt)
 		},
 		//上滑加载更多
 		onReachBottom() {
+			
+			
 			this.page += 1
 			this.tagsList[this.tabCurrentIndex].page = this.page
 			let cnt = {
@@ -413,6 +406,8 @@
 			}
 			if (this.tagName != '' && this.tagName != '全部') {
 				cnt.tags = `{"homeCotent":"${this.tagName}"}`
+			} else if (this.tagName != '活动') {
+				cnt.type = this.constData.contentType[3].key
 			}
 			this.getContentsByTag(cnt)
 		},
@@ -469,25 +464,30 @@
 			font-size: 30upx;
 			color: #303133;
 			position: relative;
+			transition:.2s;
 
 			&:after {
 				content: '';
 				width: 0;
 				height: 0;
-				border-bottom: 4upx solid #007aff;
+				border-bottom: 4upx solid #fb7299;
 				position: absolute;
 				left: 50%;
 				bottom: 0;
 				transform: translateX(-50%);
-				transition: .3s;
+				transition: .2s;
 			}
 		}
 
 		.current {
-			color: #007aff;
+			color: #fb7299;
+			font-weight: bold;
+			font-size: $list-title-m;
+			transform: translateY(5upx);
 
 			&:after {
 				width: 50%;
+				transform:translateX(-50%) translateY(-7upx);
 			}
 		}
 	}

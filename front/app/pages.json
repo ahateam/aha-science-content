@@ -12,7 +12,8 @@
 		{
 			"path": "pages/follow/follow",
 			"style": {
-				"navigationBarTitleText": "关注"
+				"navigationBarTitleText": "关注",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -24,7 +25,8 @@
 		{
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "我的"
+				"navigationBarTitleText": "我的",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -82,11 +84,18 @@
 				"navigationBarTitleText": "活动",
 				"navigationStyle": "custom"
 			}
-        }
+        },
+		{
+		    "path" : "pages/index/activity/signUp",
+		    "style" : {
+				"navigationBarTitleText": "活动报名",
+				"navigationStyle": "custom"
+			}
+		}
     ],
 	"tabBar": {
 		"color": "#C0C4CC",
-		"selectedColor": "#fa436a",
+		"selectedColor": "#fb7299",
 		"borderStyle": "white",
 		"backgroundColor": "#ffffff",
 		"list": [{

@@ -10,6 +10,13 @@
 		<view class="placeInfo">
 			{{placeInfo}}
 		</view>
+		
+		<view class="autoTitle">
+			活动介绍：
+			<view class="autoInfo" style="text-indent: 2em;">
+				{{activityInfo}}
+			</view>
+		</view>
 
 		<view class="autoTitle">
 			活动地点：
@@ -26,7 +33,7 @@
 		</view>
 
 		<view class="fixBox">
-			<button class="signUpBtn" type="primary">报名</button>
+			<button class="signUpBtn" type="primary" @click="signUp">报名</button>
 		</view>
 	</view>
 </template>
@@ -45,12 +52,14 @@
 			return {
 				contentId: '', //活动id
 				placeId: '', //基地id
-
-				imgSrc: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1048618502,452709363&fm=26&gp=0.jpg',
-				placeTitle: '遵义科技基地',
-				placeInfo: '《遵义科技》主办单位遵义市科学技术局 遵义市生产力促进中心。本刊坚持为社会主义服务的方向，坚持以马克思列宁主义、毛泽东思想和邓小平理论为指导，贯彻“百花齐放、百家争鸣”和“古为今用、洋为中用”的方针，坚持实事求是、理论与实际相结合的严谨学风，传播先进的科学文化知识，弘扬民族优秀科学文化，促进国际科学文化交流，探索防灾科技教育、教学及管理诸方面的规律，活跃教学与科研的学术风气，为教学与科研服务。',
-				address: '遵义市新蒲新区湿地公园科技路',
-				time: '2019年10月15日',
+				
+				imgSrc: '',//基地图片
+				placeTitle: '',//基地标题
+				placeInfo: '',//基地简介
+				
+				activityInfo:'',//活动简介
+				address: '',//活动地址
+				time: '',//活动时间
 
 				isRotate: 'false'
 			}
@@ -70,22 +79,41 @@
 		},
 		methods: {
 			//获取基地详情
-			getTourBase(cnt){
-				this.$api.getTourBase(cnt,(res)=>{
-					if(res.data.rc == this.$util.RC.SUCCESS){
+			getTourBase(cnt) {
+				this.$api.getTourBase(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
 						console.log('基地详情------------------------↓')
-						console.log(this.$util.tryParseJson(res.data.c))
-					}else{
+						let info = this.$util.tryParseJson(res.data.c)
+						console.log(info)
+						let data = this.$util.tryParseJson(info.data)
+						this.placeInfo = data.info
+						this.placeTitle = info.name
+						this.imgSrc = data.img
+					} else {
 						console.log('error')
 					}
 				})
 			},
-			
+
+			datetime_to_unix(datetime) { //能转换的格式'yyyy-mm-dd hh:mm:ss'
+				let tmp_datetime = datetime.replace(/:/g, '-')
+				tmp_datetime = tmp_datetime.replace(/ /g, '-')
+				let arr = tmp_datetime.split("-")
+				let now = new Date(Date.UTC(arr[0], arr[1] - 1, arr[2], arr[3] - 8, arr[4], arr[5]))
+				return parseInt(now.getTime() / 1000)
+			},
+
 			//获取活动详情
 			getContent(cnt) {
 				this.$api.getContentById(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						console.log(this.$util.tryParseJson(res.data.c))
+						let info = this.$util.tryParseJson(res.data.c)
+						console.log(info)
+						let data = this.$util.tryParseJson(info.data)
+						this.address = data.address
+						this.time = data.time
+						this.activityInfo = data.info
+						this.activityTitle = info.title
 					} else {
 						console.log('Error')
 					}
@@ -94,15 +122,15 @@
 
 			//跳转报名
 			signUp() {
-
+				uni.navigateTo({
+					url:`/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
+				})
 			},
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	@import url("../../../components/watch-login/css/icon.css");
-	@import url("../../../commen/main.css");
 
 	.imgBox {
 		position: relative;

@@ -10,7 +10,7 @@
 				<wInput v-model="phoneData" type="text" maxlength="11" placeholder="用户名/电话"></wInput>
 				<wInput v-model="passData" type="password" maxlength="11" placeholder="密码"></wInput>
 			</view>
-			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin"></wButton>
+			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin" style="margin-top: 96upx;"></wButton>
 
 			<!-- 其他登录 -->
 			<view class="other_login cuIcon" style="margin-top: 206upx;">
@@ -66,7 +66,6 @@
 			}
 		},
 		methods: {
-			
 			//登录按钮触发
 			startLogin() {
 				if (this.isRotate) {
@@ -75,6 +74,13 @@
 				if (this.phoneData.length != 11) {
 					uni.showToast({
 						title: '请输入正确的账号',
+						icon: 'none'
+					})
+					return
+				}
+				if(this.passData ==''){
+					uni.showToast({
+						title: '请输入密码',
 						icon: 'none'
 					})
 					return
@@ -96,6 +102,7 @@
 						uni.setStorageSync('userHead',userInfo.head)
 						uni.setStorageSync('userId',userInfo.id)
 						uni.setStorageSync('userName',userInfo.name)
+						uni.setStorageSync('phone',userInfo.phone)
 						uni.switchTab({
 							url:'/pages/user/user'
 						})

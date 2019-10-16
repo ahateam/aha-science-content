@@ -135,4 +135,11 @@ api.createEnroll = function(cnt, callback) {
 api.getAdverts = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/getAdverts', cnt, callback)
 }
+
+/* 搜索 */
+//搜索用户和内容 
+api.searchContentAndUser = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/searchContentAndUser', cnt, callback)
+}
+
 export default api
