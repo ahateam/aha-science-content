@@ -26,16 +26,6 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="付费">
-						<el-select v-model="power" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in powerList" :key="item.value" :label="item.name" :value="item.value">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
 					<el-form-item label="显示">
 						<el-select v-model="show" placeholder="请选择" style="margin-right: 10px;">
 							<el-option v-for="item in showList" :key="item.value" :label="item.name" :value="item.value">
@@ -46,9 +36,9 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="类型">
-						<el-select v-model="contentType" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in typeList" :key="item.value" :label="item.name" :value="item.value">
+					<el-form-item label="标签分组:">
+						<el-select v-model="tagGroup" placeholder="请选择" style="margin-right: 10px;" @change="changeTagGroup">
+							<el-option v-for="item in tagGroupList" :key="item.groupName" :label="item.groupName" :value="item.groupName">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -56,7 +46,7 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="首页标签">
+					<el-form-item label="选择标签">
 						<el-select v-model="homeTagName" placeholder="请选择" style="margin-right: 10px;">
 							<el-option v-for="item in homeTag" :key="item.name" :label="item.title" :value="item.name">
 							</el-option>
@@ -67,29 +57,16 @@
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="专栏">
-						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" @change="getChannelContentTag">
+						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" >
 							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id" >
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
-					<el-form-item label="所属课程">
-						<el-select v-model="channelTagName" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in channelContentTag" :key="item.id" :label="item.title" :value="item.name">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
-				<el-tag>{{tempChannelTagName}}</el-tag>
-			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
-			<el-button type="primary" @click="subBtn" style="margin: 0 auto;display: block;padding: 15px 50px">提交修改
+			<el-button type="primary" @click="editorBtn" style="margin: 0 auto;display: block;padding: 15px 50px">提交修改
 			</el-button>
 		</el-row>
 
@@ -102,11 +79,10 @@
 		name: "addContent",
 		data() {
 			return {
+				tagGroupList:'',
+				tagGroup:'',
 				id:'',
-				channelTagName:'',
-				tempChannelTagName:'',
 				homeTagName:'',
-				channelContentTag:'',
 				channelTag:'',
 				homeTag:'',
 				editor: {},
@@ -122,13 +98,9 @@
 				}],
 				show: 0,
 				title: '',
-				power: '',
 				status: '',
-				contentType: '',
 				userId: 401770184378345,
-				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
-				powerList: this.$constData.powerList,
 				showList: this.$constData.showList,
 			}
 		},
@@ -151,11 +123,8 @@
 			},
 			editorBtn() {
 				let that = this
-				let text = this.editor.txt.html()
+				//let text = this.editor.txt.html()
 				let cid = `{"homeCotent":["${this.homeTagName}"]}`
-				if(this.upChannelId != '' && this.channelTagName != ''){
-					cid = `{"t${this.upChannelId}":["${this.channelTagName}"],"homeCotent":["${this.homeTagName}"]}`
-				}
 				let cnt = {
 					id: this.id,
 					module: this.$constData.module,
@@ -199,39 +168,36 @@
 					}
 				})
 			},
-			getHomeTag() {
+			getTagGroup() {
 				let cnt = {
-					moduleId: this.$constData.module,
-					status: 1,
-					group: '首页', 
-					count: 20,
-					offset: 0,
-				};
+						moduleId: this.$constData.module,
+						count: 200,
+						offset: 0,
+					};
+				this.$api.getContentTagGroup(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tagGroupList = this.$util.tryParseJson(res.data.c)
+						console.log(this.tagGroupList)
+					}
+				})
+			},
+			changeTagGroup(){
+				let cnt = {
+						moduleId: this.$constData.module,
+						group: this.tagGroup, 
+						status: 1,
+						count: 200, 
+						offset: 0,  
+					};
 				this.$api.getContentTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.homeTag = this.$util.tryParseJson(res.data.c)
 					}
 				})
-			},
-			//查询课程
-			getChannelContentTag() {
-				this.channelTagName=''
-				let cnt = {
-					moduleId: this.$constData.module,
-					channelId: this.upChannelId, 
-					status: 4,
-					count: 20,
-					offset: 0,
-				};
-				this.$api.getChannelContentTag(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.channelContentTag = this.$util.tryParseJson(res.data.c)
-					}
-				})
-			},
+			}
 		},
 		mounted() {
-			this.getHomeTag()
+			this.getTagGroup()
 			this.getChannels()
 			// this.editor = new wangEditor('#editor')
 			// this.editor.create()
@@ -242,10 +208,6 @@
 			this.power = info.power
 			this.show = JSON.parse(info.data).show
 			this.contentType = info.type
-			this.homeTagName = info.tags.homeCotent
-			this.upChannelId = info.upChannelId
-			this.tempChannelTagName = info.tags
-			this.getChannelContentTag()
 		}
 	}
 </script>

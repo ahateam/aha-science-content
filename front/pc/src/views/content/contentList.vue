@@ -205,7 +205,7 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
-				this.searchData.type = ''
+				this.searchData.type = 5
 				this.searchData.status = ''
 				this.searchData.power = ''
 				this.searchData.tags = ''
@@ -225,6 +225,7 @@
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,
+				type:5,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

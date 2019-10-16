@@ -123,10 +123,10 @@
 			getContentTag() {
 				let cnt = {
 					moduleId: this.$constData.module,
-					group: 'vip', // String <选填> 分组
-					status: 1, // Byte <选填> 状态
-					count: 20, // Integer 
-					offset: 0, // Integer 
+					group: '专题', 
+					status: 1, 
+					count: 20, 
+					offset: 0, 
 				};
 				this.$api.getContentTag(cnt, (res) => {
 					this.vipTagList = this.$util.tryParseJson(res.data.c)

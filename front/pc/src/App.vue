@@ -4,6 +4,8 @@
   </div>
 </template>
 
+
+
 <style lang="scss">
   html{
     padding: 0 0;

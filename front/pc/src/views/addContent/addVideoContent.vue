@@ -45,16 +45,6 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="是否付费">
-						<el-select v-model="power" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in powerList" :key="item.value" :label="item.name" :value="item.value">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
 					<el-form-item label="初始状态">
 						<el-select v-model="status" placeholder="请选择" style="margin-right: 10px;">
 							<el-option v-for="item in statusList" :key="item.value" :label="item.name" :value="item.value">
@@ -65,7 +55,17 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="首页标签">
+					<el-form-item label="标签分组:">
+						<el-select v-model="tagGroup" placeholder="请选择" style="margin-right: 10px;" @change="changeTagGroup">
+							<el-option v-for="item in tagGroupList" :key="item.groupName" :label="item.groupName" :value="item.groupName">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="选择标签">
 						<el-select v-model="homeTagName" placeholder="请选择" style="margin-right: 10px;">
 							<el-option v-for="item in homeTag" :key="item.name" :label="item.title" :value="item.name">
 							</el-option>
@@ -75,19 +75,9 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="选择专栏">
-						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" @change="getChannelContentTag">
+					<el-form-item label="选择专题">
+						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;">
 							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
-					<el-form-item label="所属课程">
-						<el-select v-model="channelTagName" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in channelContentTag" :key="item.id" :label="item.title" :value="item.name">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -110,8 +100,8 @@
 		name: "addVideoContent",
 		data() {
 			return {
-				channelTagName: '',
-				channelContentTag: '',
+				tagGroup:'',
+				tagGroupList:'',
 				homeTagName: '',
 				homeTag: '',
 				channelList: [{
@@ -119,10 +109,8 @@
 					id: 0,
 				}],
 				status: '',
-				powerList: this.$constData.powerList,
 				statusList: this.$constData.statusList,
 				conType: '',
-				power: '',
 				text: '',
 				title: '',
 				userId: 400795534052038,
@@ -161,9 +149,6 @@
 					imgSrc: this.imgSrc
 				}
 				let cid = `{"homeCotent":["${this.homeTagName}"]}`
-				if (this.upChannelId != '' && this.channelTagName != '') {
-					cid = `{"t${this.upChannelId}":["${this.channelTagName}"],"homeCotent":["${this.homeTagName}"]}`
-				}
 				let cnt = {
 					module: this.$constData.module,
 					type: 3,
@@ -207,38 +192,36 @@
 					}
 				})
 			},
-			getHomeTag() {
+			getTagGroup() {
 				let cnt = {
-					moduleId: this.$constData.module,
-					status: 1,
-					group: '首页',
-					count: 20,
-					offset: 0,
-				};
+						moduleId: this.$constData.module,
+						count: 200,
+						offset: 0,
+					};
+				this.$api.getContentTagGroup(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tagGroupList = this.$util.tryParseJson(res.data.c)
+						console.log(this.tagGroupList)
+					}
+				})
+			},
+			changeTagGroup(){
+				let cnt = {
+						moduleId: this.$constData.module,
+						group: this.tagGroup, 
+						status: 1,
+						count: 200, 
+						offset: 0,  
+					};
 				this.$api.getContentTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.homeTag = this.$util.tryParseJson(res.data.c)
 					}
 				})
-			},
-			getChannelContentTag() {
-				this.channelTagName = ''
-				let cnt = {
-					moduleId: this.$constData.module,
-					channelId: this.upChannelId,
-					status: 4,
-					count: 20,
-					offset: 0,
-				};
-				this.$api.getChannelContentTag(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.channelContentTag = this.$util.tryParseJson(res.data.c)
-					}
-				})
-			},
+			}
 		},
 		mounted() {
-			this.getHomeTag()
+			this.getTagGroup()
 			this.getChannels()
 			let info = this.$route.params.info
 			if (info != undefined) {

@@ -39,7 +39,7 @@
 
 <script>
 	export default {
-		name: "contentList",
+		name: "insiderList",
 		data() {
 			return {
 				tableData: [],
@@ -136,7 +136,7 @@
 		mounted() {
 			let cnt = {
 				moduleId: this.$constData.module,
-				authority:1,
+				authority:2,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

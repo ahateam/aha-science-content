@@ -1,47 +1,41 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			信息信息表付个
+			视频管理
 		</el-row>
 		<el-row class="content-box">
 			<el-row>
 				<el-col :span="8">
 					<el-form label-width="80px">
-						<el-form-item label="任务类型">
-							<el-select v-model="searchData.status" placeholder="请选择">
-								<el-option v-for="(item,index) in TaskType" :key="index" :label="item.name" :value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
-				</el-col>
-				<el-col :span="8">
-					<el-form label-width="80px">
-						<el-form-item label="模板类型">
-							<el-select v-model="searchData.type" placeholder="请选择">
-								<el-option v-for="(item,index) in templateType" :key="index" :label="item.name" :value="item.value"></el-option>
+						<el-form-item label="选择类型:">
+							<el-select v-model="searchData.type" placeholder="请选择类型">
+								<el-option v-for="(item,index) in typeList" :key="index" :label="item.name" :value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>
 				</el-col>
 			</el-row>
 			<el-row>
-				<el-button type="primary" @click="searchBtn">查询</el-button>
-				<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
-				<el-button type="primary" style="float: right;margin-right: 50px" @click="addTemplate">添加模板</el-button>
+				<el-col >
+					<el-button type="primary" @click="searchBtn">查询</el-button>
+					<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
+					<el-button type="primary" @click="createContent" style="float: right;">发布视频</el-button>
+				</el-col>
 			</el-row>
+
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column prop="name" label="名称" width="400">
+				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="status" label="状态" :formatter="statusFliter">
+				<el-table-column prop="type" label="类型" :formatter="typeFliter">
 				</el-table-column>
-				<el-table-column prop="taskType" label="任务类型" :formatter="taskFliter">
+				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
-				<el-table-column prop="tempType" label="模板类型" :formatter="templateTypeFliter">
-				</el-table-column>
-				<el-table-column label="操作" width="100">
+				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button>
+						<el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
 					</template>
 				</el-table-column>
@@ -59,7 +53,7 @@
 
 <script>
 	export default {
-		name: "contentList",
+		name: "videoContentList",
 		data() {
 			return {
 				tableData: [],
@@ -72,12 +66,10 @@
 					power: '',
 					tags: '',
 				},
+
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
 				powerList: this.$constData.powerList,
-				generalStatus: this.$constData.generalStatus,
-				TaskType: this.$constData.TaskType,
-				templateType: this.$constData.templateType,
 			}
 		},
 		methods: {
@@ -98,10 +90,10 @@
 				return dataTime
 			},
 			statusFliter(row, col, val) {
-				let generalStatus = this.generalStatus
-				for (let i = 0; i < generalStatus.length; i++) {
-					if (generalStatus[i].value == val) {
-						return generalStatus[i].name
+				let statusList = this.statusList
+				for (let i = 0; i < statusList.length; i++) {
+					if (statusList[i].value == val) {
+						return statusList[i].name
 					}
 				}
 			},
@@ -113,25 +105,9 @@
 					}
 				}
 			},
-			taskFliter(row, col, val) {
-				let TaskType = this.TaskType
-				for (let i = 0; i < TaskType.length; i++) {
-					if (TaskType[i].value == val) {
-						return TaskType[i].name
-					}
-				}
-			},
-			templateTypeFliter(row, col, val) {
-				let templateType = this.templateType
-				for (let i = 0; i < templateType.length; i++) {
-					if (templateType[i].value == val) {
-						return templateType[i].name
-					}
-				}
-			},
 			/*获取内容列表*/
 			getContents(cnt) {
-				this.$api.getTemplates(cnt, (res) => {
+				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {
@@ -160,14 +136,24 @@
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
-					type: this.searchData.status,
-					tempType: this.searchData.type,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
+				if (this.searchData.type) {
+					cnt.type = this.searchData.type
+				}
+				if (this.searchData.status) {
+					cnt.status = this.searchData.status
+				}
+				if (this.searchData.power) {
+					cnt.power = this.searchData.power
+				}
+				if (this.searchData.tags) {
+					cnt.tags = this.searchData.tags
+				}
 				this.getContents(cnt)
 			},
-			/* 删除模板*/
+			/* 删除内容*/
 			delBtn(info) {
 				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
 					confirmButtonText: '确定',
@@ -177,7 +163,7 @@
 					let cnt = {
 						id: info.id,
 					}
-					this.$api.delemplates(cnt, (res) => {
+					this.$api.delContentById(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
 							this.$message({
 								type: 'success',
@@ -197,15 +183,21 @@
 					});
 				});
 			},
-			//添加模板
-			addTemplate() {
-				this.$router.push('/addTemplate')
-			},
 			//查看 详情
 			infoBtn(info) {
 				this.$router.push({
-					path: '/svipInfoList',
-					name: 'svipInfoList',
+					path: '/contentInfo',
+					name: 'contentInfo',
+					params: {
+						info: info
+					}
+				})
+			},
+			//编辑修改
+			updateBtn(info) {
+				this.$router.push({
+					path: '/editContent',
+					name: 'editContent',
 					params: {
 						info: info
 					}
@@ -213,7 +205,7 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
-				this.searchData.type = ''
+				this.searchData.type = 3
 				this.searchData.status = ''
 				this.searchData.power = ''
 				this.searchData.tags = ''
@@ -225,12 +217,16 @@
 				}
 				this.getContents(cnt)
 			},
+			createContent(){
+				this.$router.push('/addVideoContent')
+			}
 		},
 		mounted() {
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,
 				count: this.count,
+				type:3,
 				offset: (this.page - 1) * this.count
 			}
 			this.getContents(cnt)

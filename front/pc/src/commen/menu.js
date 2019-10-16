@@ -14,7 +14,7 @@ const  menu=[
                 title:'视频管理',
             },
             {
-                path:'/channelList',
+                path:'/svipList',
                 title:'专题管理',
             },
             {
@@ -76,9 +76,6 @@ const  menu=[
 			},{
 			    path:'/userList',
 			    title:'用户管理'
-			},{
-			    path:'/userInfo',
-			    title:'用户详情'
 			},
 		]
     },
@@ -107,8 +104,14 @@ const  menu=[
 	},
 ]
 
+const adminMenu=[
+	{
+		
+	}
+]
 
 
 export default {
-    menu
+    menu,
+	adminMenu
 }

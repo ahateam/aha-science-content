@@ -1,28 +1,23 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			用户管理
+			评论管理
 		</el-row>
 		<el-row class="content-box">
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column label="头像">
-					<template scope="scope">
-						<img :src="scope.row.head" width="40" height="40" class="head_pic" />
-					</template>
+				<el-table-column prop="user.name" label="用户名" width="200">
 				</el-table-column>
-				<el-table-column prop="name" label="用户名" width="200">
+				<el-table-column prop="text" label="评论">
 				</el-table-column>
-				<el-table-column prop="phone" label="手机号">
+				<el-table-column prop="appraiseCount" label="点赞数">
 				</el-table-column>
-				<el-table-column prop="createTime" label="注册日期" :formatter="timeFliter">
+				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">封禁</el-button>
-						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status != 0">解封</el-button>
-						<el-button @click="infoBtn(scope.row)" type="text" size="small">详情</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -58,9 +53,10 @@
 			},
 			/*获取评论列表*/
 			getContents(cnt) {
-				this.$api.getUsers(cnt, (res) => {
+				this.$api.getReplyList(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
+						console.log(this.tableData)
 					} else {
 						this.tableData = []
 					}
@@ -82,51 +78,42 @@
 				}
 				this.getContents(cnt)
 			},
+			/* 删除内容*/
 			delBtn(info) {
-				let msg =''
-				if(info.state == 0){
-					msg = '封禁'
-				}else{
-					msg = '解封'
-				}
-				this.$confirm('此操作将'+msg+'用户的评论功能, 是否继续?', '提示', {
+				this.$confirm('此操作将永久删除, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
-						moduleId: this.$constData.module,
-						id:info.id,
-						bool:true
-					};
-					if(info.state == 1){
-						cnt.bool = false
+						ownerId: info.ownerId,
+						sequenceId:info.sequenceId,
 					}
-					this.$api.closeUser(cnt, (res) => {
+					this.$api.delReply(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
 							this.$message({
 								type: 'success',
-								message: '操作成功!'
+								message: '删除成功!'
 							});
 						} else {
 							this.$message({
 								type: 'error',
-								message: '操作失败!'
+								message: '删除失败!'
 							});
 						}
 					})
 				}).catch(() => {
 					this.$message({
 						type: 'info',
-						message: '已取消'
+						message: '已取消删除'
 					});
 				});
 			},
 			//查看 详情
 			infoBtn(info) {
 				this.$router.push({
-					path: '/userInfo',
-					name: 'userInfo',
+					path: '/contentInfo',
+					name: 'contentInfo',
 					params: {
 						info: info
 					}
@@ -134,12 +121,14 @@
 			},
 		},
 		mounted() {
+			 let info = this.$route.params.info
 			let cnt = {
-				moduleId: this.$constData.module,
-				authority:1,
+				ownerId:info.id,
+				orderDesc:true,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}
+			console.log(cnt)
 			this.getContents(cnt)
 		}
 	}
