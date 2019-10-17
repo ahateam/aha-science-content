@@ -207,7 +207,7 @@
 					type: 3,
 					status: this.status,
 					power: 0,
-					upUserId: 401770184378345,
+					upUserId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 					upChannelId: this.upChannelId,
 					tags: JSON.parse(cid),
 					title: this.title,

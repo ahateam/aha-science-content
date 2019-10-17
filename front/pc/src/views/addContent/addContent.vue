@@ -104,7 +104,7 @@
 				show: 0,
 				title: '',
 				status: '',
-				userId: 401770184378345,
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
 				showList: this.$constData.showList,
 			}
@@ -190,6 +190,7 @@
 				this.$api.getContentTagGroup(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tagGroupList = this.$util.tryParseJson(res.data.c)
+						console.log(this.tagGroupList)
 					}
 				})
 			},
@@ -226,6 +227,7 @@
 					}).then(res => {
 						//取出存好的url
 						let address = res.res.requestUrls[0]
+						console.log(address)
 						let _index = address.indexOf('?')
 						if (_index == -1) {
 							_this.imgSrc = address
