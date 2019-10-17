@@ -161,4 +161,11 @@ api.getFavoriteUser = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpUserService/getFavoriteUser', cnt, callback)
 }
 
+
+/*回复*/
+	
+api.getReplyList = function(cnt, callback) {
+	util.call(baseUrl + '/reply/getReplyList', cnt, callback)
+}
+
 export default api
