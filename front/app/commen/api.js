@@ -16,9 +16,9 @@ api.getContentTag = function(cnt, callback) {
 
 //根据标签获取 内容列表
 api.getContents = function(cnt, callback) {
-	util.call(baseUrl + '/content/getContents', cnt, callback)
+	util.call(baseUrl + '/ZskpOtherContent/getContents', cnt, callback)
 }
-	
+
 //根据id获取内容
 api.getContentById = function(cnt, callback) {
 	util.call(baseUrl + '/content/getConntent', cnt, callback)
@@ -68,7 +68,7 @@ api.login = function(cnt, callback) {
 
 //根据id获取用户
 api.getUserById = function(cnt, callback) {
-	util.call(baseUrl + '/weixin/getUserById', cnt, callback)
+	util.call(baseUrl + '/ZskpUserService/getUser', cnt, callback)
 }
 
 //修改用户信息 
@@ -142,6 +142,10 @@ api.createEnroll = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/createEnroll', cnt, callback)
 }
 
+// 查询报名 
+api.getEnrolls = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getEnrolls', cnt, callback)
+}
 
 /* 广告 */
 //查询广告 
@@ -156,11 +160,20 @@ api.searchContentAndUser = function(cnt, callback) {
 }
 
 /* 关注 */
+//关注 
+api.createUserFavorite = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/createUserFavorite', cnt, callback)
+}
+
 //查询用户关注用户列表 
 api.getFavoriteUser = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpUserService/getFavoriteUser', cnt, callback)
 }
 
+// 查询是否关注 
+api.getBoolFavoriteUser = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/getBoolFavoriteUser', cnt, callback)
+}
 
 /*回复*/
 	

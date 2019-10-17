@@ -6,10 +6,11 @@
 				<view class="introduce-section">
 					<text class="title">{{detailData.title}}</text>
 					<view class="introduce">
-
 						<text>{{upInfo.name}}</text>
 						<!-- <text>105阅读</text> -->
 						<text>{{detailData.time}}</text>
+						<button type="primary" @click="createUserFavorite" class="followBtn" v-if="followStatus == false">关注</button>
+						<button type="primary" class="followBtn" v-else-if="followStatus == true">已关注</button>
 					</view>
 					<view class="articleInfo">
 						<view v-for="(item,index) in flow" :key="index">
@@ -130,6 +131,8 @@
 				commentContent: '', //评论内容
 				/* 评论end */
 
+				followStatus: false,
+
 			}
 		},
 		onLoad(res) {
@@ -141,15 +144,57 @@
 			} else {
 				this.contentId = res.id
 			}
+			
 			this.getContentById()
 			this.getAppraiseCount()
 		},
 		methods: {
+			//查询是否关注
+			getBoolFavoriteUser() {
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					userId: uni.getStorageSync('userId'), // Long 用户id
+					concernId: this.upInfo.id, // Long 被关注用户id,true没有关注
+					count: 10, // int 
+					offset: 0, // int 
+				}
+				this.$api.getBoolFavoriteUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.followStatus = this.$util.tryParseJson(res.data.c)
+					}else{
+						console.log('失败')
+					}
+				})
+			},
+
+			//创建关注
+			createUserFavorite() {
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					concernId: this.upInfo.id, // Long 被关注用户id
+					userId: uni.getStorageSync('userId'), // Long 用户id
+				}
+				this.$api.createUserFavorite(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title: '关注成功'
+						})
+						this.followStatus = true
+					} else {
+						uni.showToast({
+							title: res.data.rm,
+							icon: 'none'
+						})
+						this.followStatus = true
+					}
+				})
+			},
+
 			//更新赞数
-			upZan(index){
+			upZan(index) {
 				this.comment[index].appraiseCount += 1
 			},
-			
+
 			/* 评论 */
 			createComment() {
 				let userId = uni.getStorageSync('userId')
@@ -288,10 +333,10 @@
 				}
 				this.$api.createUpvote(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						if(this.$util.tryParseJson(res.data.c).value == 10){
+						if (this.$util.tryParseJson(res.data.c).value == 10) {
 							uni.showToast({
-								title:'您已经点过赞啦',
-								icon:'none'
+								title: '您已经点过赞啦',
+								icon: 'none'
 							})
 							return
 						}
@@ -473,12 +518,18 @@
 			/* 获取id对应用户 */
 			getUserById(id) {
 				let cnt = {
-					userId: id, //long 用户编号
+					moduleId: this.$constData.module,
+					id: id, //long 用户编号
 				}
 				this.$api.getUserById(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						console.log(this.$util.tryParseJson(res.data.c))
 						this.upInfo = this.$util.tryParseJson(res.data.c)
+						console.log('--------------------')
+						console.log(this.upInfo)
+						this.getBoolFavoriteUser()
+					} else {
+						console.log('error')
 					}
 				}))
 			},
@@ -562,6 +613,7 @@
 		}
 
 		.introduce {
+			position: relative;
 			display: flex;
 			font-size: 26upx;
 			color: #909399;
@@ -727,6 +779,18 @@
 		.stopBtn {
 			width: 50vw;
 			margin: 0 auto;
+		}
+	}
+
+	.followBtn {
+		position: absolute;
+		top: -10upx;
+		right: 0;
+		font-size: $list-info;
+		background-color: $color-main;
+
+		&:after {
+			border: none;
 		}
 	}
 </style>

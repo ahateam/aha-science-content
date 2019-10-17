@@ -170,7 +170,7 @@
 					})
 				} else if (info.type == this.constData.contentType[3].key) {
 					uni.navigateTo({
-						url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
+						url: `/pages/index/activity/activity?contentId=${info.id}`
 					})
 				}
 			}

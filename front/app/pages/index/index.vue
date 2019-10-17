@@ -114,7 +114,7 @@
 
 			let cnt = {
 				moduleId: this.constData.module, // String 隶属
-				status: this.constData.tagStatus[1].key, // Byte 标签状态
+				// status: this.constData.tagStatus[1].key, // Byte 标签状态
 				group: this.constData.tagGroupType[0].val, // String 标签
 				count: 500, // Integer 
 				offset: 0, // Integer 
@@ -212,10 +212,10 @@
 						this.tagsList = tagsList
 						let cnt1 = {
 							module: this.constData.module, // String 所属模块
-							status: parseInt(this.constData.contentStatus[4].key),
+							// status: parseInt(this.constData.contentStatus[4].key),
 							count: this.count,
 							offset: this.offset,
-							power: this.$constData.contentPaid[0].key
+							// power: this.$constData.contentPaid[0].key
 						}
 						this.getContentsByTag(cnt1)
 					} else {
@@ -327,7 +327,7 @@
 				if (this.tagName == '活动') {
 					let cnt = {
 						module: this.constData.module, // String 所属模块
-						status: this.constData.contentStatus[4].key, // Byte <选填> 状态
+						// status: this.constData.contentStatus[4].key, // Byte <选填> 状态
 						type: this.constData.contentType[3].key, // Byte <选填> 类型
 						count: this.count, // Integer
 						offset: this.offset, // Integer
@@ -339,8 +339,8 @@
 
 				let cnt = {
 					module: this.constData.module, // String 所属模块
-					status: this.constData.contentStatus[4].key, // Byte <选填> 状态
-					power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
+					// status: this.constData.contentStatus[4].key, // Byte <选填> 状态
+					// power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
 					// type: type, // Byte <选填> 类型
 					tags: `{"homeCotent":"${this.tagName}"}`, // String <选填> 标签
 					count: this.count, // Integer
@@ -362,7 +362,7 @@
 					})
 				} else if (info.type == this.constData.contentType[3].key) {
 					uni.navigateTo({
-						url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
+						url: `/pages/index/activity/activity?contentId=${info.id}`
 					})
 				}
 			}
@@ -375,8 +375,8 @@
 			this.tagsList[this.tabCurrentIndex].pageOver = false
 			let cnt = {
 				module: this.constData.module, // String 所属模块
-				status: this.constData.contentStatus[4].key, // Byte <选填> 状态
-				power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
+				// status: this.constData.contentStatus[4].key, // Byte <选填> 状态
+				// power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
 				// type: type, // Byte <选填> 类型
 				count: this.count, // Integer
 				offset: this.offset, // Integer
@@ -396,7 +396,7 @@
 			this.tagsList[this.tabCurrentIndex].page = this.page
 			let cnt = {
 				module: this.constData.module, // String 所属模块
-				status: this.constData.contentStatus[4].key, // Byte <选填> 状态
+				// status: this.constData.contentStatus[4].key, // Byte <选填> 状态
 				power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
 				// type: type, // Byte <选填> 类型
 				count: this.count, // Integer
@@ -404,7 +404,7 @@
 			}
 			if (this.tagName != '' && this.tagName != '全部') {
 				cnt.tags = `{"homeCotent":"${this.tagName}"}`
-			} else if (this.tagName != '活动') {
+			} else if (this.tagName == '活动') {
 				cnt.type = this.constData.contentType[3].key
 			}
 			this.getContentsByTag(cnt)

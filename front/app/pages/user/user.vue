@@ -32,6 +32,14 @@
 
 			<view class="iconfont kk-jiantou nextIcon"></view>
 		</view>
+		
+		<view class="bottomBox" v-if="loginStatus">
+			<navigator class="autoBoxHeight" url="/pages/user/shopping/shopping">
+				<text class="iconfont kk-money iconColor" ></text>
+				<text class="bottomTitle">报名中心</text>
+				<!-- <text class="iconfont kk-jiantou rightIcon"></text> -->
+			</navigator>
+		</view>
 	</view>
 </template>
 
@@ -93,6 +101,11 @@
 </script>
 
 <style lang="scss" scoped>
+	.iconColor{
+		color: $color-main;
+		font-size: 40upx;
+	}
+	
 	.userBox {
 		position: relative;
 		background-color: $color-main;
@@ -172,5 +185,25 @@
 	.setBtn {
 		font-size: 40upx;
 		margin-right: $box-margin-left;
+	}
+	
+	.bottomBox {
+		padding: $box-margin-top $box-margin-left;
+		background-color: #fff;
+		line-height: 60upx;
+		font-size: 40upx;
+	}
+	
+	.rightIcon {
+		float: right;
+		font-size: $list-title;
+	}
+	
+	.autoBoxHeight {
+		height: 60upx;
+	}
+	
+	.bottomTitle{
+		margin-left: 5upx;
 	}
 </style>

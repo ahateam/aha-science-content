@@ -2,19 +2,19 @@
 	<view>
 		<view v-if='replyList.length >0'>
 			<view class="list">
-				<view class="item">
+				<view class="item" v-for="(item,index) in replyList" :key="index" @click="navToInfo(item.content)">
 					<view class="content">
-						asdhasadasd对号函数第八号按时大会上八点哈搜不到had阿达萨达所大所阿萨德啊实打实达到阿斯达萨达啊飒飒大嫂
+						{{item.text}}
 					</view>
 					<view class="time-box">
-						2019-05-5
+						{{timeFilter(item.createTime)}}
 					</view>
 				</view>
 			</view>
 		</view>
 		<view v-else>
 			<view class="msg-box">
-					暂无任何回复消息...
+				暂无任何回复消息...
 			</view>
 		</view>
 	</view>
@@ -26,16 +26,49 @@
 			return {
 				page: 1,
 				count: 10,
-				replyList: [{val:'223123123123123',time:'18663355'}],
+				replyList: [],
 			};
 		},
 		methods: {
+			timeFilter(timer){
+				let time = new Date(timer)
+				let y = time.getFullYear()
+				let m = 1 * time.getMonth() + 1
+				let d = time.getDate()
+				return `${y}-${m}-${d}`
+			},
+			
 			getReplyList(cnt) {
 				this.$api.getReplyList(cnt, (res) => {
-					console.log(JSON.parse(res.data.c))
-					
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let list = this.$util.tryParseJson(res.data.c)
+						console.log(list)
+						for (let i = 0; i.length < list.length; i++) {
+							
+						}
+						this.replyList = list
+					} else {
+						console.log('error')
+					}
 				})
 
+			},
+			
+			/* 跳转至详情 */
+			navToInfo(info) {
+				if (info.type == this.$constData.contentType[2].key || info.type == this.$constData.contentType[0].key) {
+					uni.navigateTo({
+						url: `/pages/index/articleView/articleView?id=${info.id}`
+					})
+				} else if (info.type == this.$constData.contentType[1].key) {
+					uni.navigateTo({
+						url: `/pages/index/videoView/videoView?id=${info.id}`
+					})
+				} else if (info.type == this.$constData.contentType[3].key) {
+					uni.navigateTo({
+						url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
+					})
+				}
 			}
 		},
 		onShow() {
@@ -53,7 +86,7 @@
 </script>
 
 <style scoped lang="scss">
-	.msg-box{
+	.msg-box {
 		margin-top: 20rpx;
 		width: 80%;
 		height: 80rpx;
@@ -62,30 +95,34 @@
 		text-align: center;
 		color: #666;
 	}
-	.list{
+
+	.list {
 		padding: 20rpx;
 	}
-	.item{
+
+	.item {
 		margin-top: 10rpx;
 		padding: 20rpx 20rpx 20rpx 20rpx;
 	}
-	.content{
-		
+
+	.content {
+
 		font-size: 32rpx;
 		color: #303133;
 		line-height: 46rpx;
-		overflow:hidden;
-		text-overflow:ellipsis;
-		display:-webkit-box;
-		-webkit-box-orient:vertical;
-		-webkit-line-clamp:2;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
 	}
-	.time-box{
-			width: 100%;
+
+	.time-box {
+		width: 100%;
 		margin-top: 20rpx;
 		font-size: 26rpx;
 		color: #aaa;
 		text-align: right;
-	
+
 	}
 </style>

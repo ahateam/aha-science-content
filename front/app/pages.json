@@ -106,6 +106,10 @@
 				"navigationStyle": "custom"
 			}
         }
+        ,{
+            "path" : "pages/user/shopping/shopping",
+            "style" : {}
+        }
     ],
 	"tabBar": {
 		"color": "#C0C4CC",

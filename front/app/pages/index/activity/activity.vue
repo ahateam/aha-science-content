@@ -66,16 +66,10 @@
 		},
 		onLoad(res) {
 			this.contentId = res.contentId
-			this.placeId = res.placeId
 			let cnt = {
 				id: this.contentId, // String 内容编号
 			}
 			this.getContent(cnt)
-			let cnt1 = {
-				moduleId: this.$constData.module, // Long 模块编号
-				id: this.placeId, // Long id
-			}
-			this.getTourBase(cnt1)
 		},
 		methods: {
 			//获取基地详情
@@ -114,6 +108,14 @@
 						this.time = data.time
 						this.activityInfo = data.info
 						this.activityTitle = info.title
+						
+						this.placeId = data.place
+						
+						let cnt1 = {
+							moduleId: this.$constData.module, // Long 模块编号
+							id: this.placeId, // Long id
+						}
+						this.getTourBase(cnt1)
 					} else {
 						console.log('Error')
 					}
