@@ -71,10 +71,17 @@ api.getReplyList = function (cnt, callback) {
 api.delReply = function (cnt, callback) {
     util.call(baseUrl + '/reply/delReply', cnt, callback)
 }
-//添加模板
-api.addTemplate = function (cnt, callback) {
-    util.call(baseUrl + '/task/createTemplates', cnt, callback)
+
+//查询申请
+api.getApplyAuthoritys = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/getApplyAuthoritys', cnt, callback)
 }
+//审核申请
+api.examineApplyAuthority = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/examineApplyAuthority', cnt, callback)
+}
+
+
 //获取内容标签
 api.getContentTag = function (cnt, callback) {
     util.call(baseUrl + '/contentTag/getContentTag', cnt, callback)
@@ -86,6 +93,11 @@ api.createContentTag = function (cnt, callback) {
 //修改内容标签
 api.editteContentTag = function (cnt, callback) {
     util.call(baseUrl + '/contentTag/editteContentTag', cnt, callback)
+}
+
+//创建用户
+api.register = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/register', cnt, callback)
 }
 //获取用户
 api.getUsers = function (cnt, callback) {
@@ -103,10 +115,31 @@ api.updateUserInfo = function (cnt, callback) {
 api.login = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/login', cnt, callback)
 }
-//修改课程
-api.updateChannelContentTag = function (cnt, callback) {
-    util.call(baseUrl + '/channelTag/updateChannelContentTag', cnt, callback)
+//创建广告
+api.createAdvert = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/createAdvert', cnt, callback)
 }
+//删除广告
+api.delAdvert = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/delAdvert', cnt, callback)
+}
+//修改广告
+api.updateAdvert = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/updateAdvert', cnt, callback)
+}
+//查询广告
+api.getAdverts = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/getAdverts', cnt, callback)
+}
+//查询用户兴趣标签
+api.getInterestTags = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/getInterestTags', cnt, callback)
+}
+//查询报名
+api.getEnrolls = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/getEnrolls', cnt, callback)
+}
+
 //修改专栏
 api.editChannel = function (cnt, callback) {
     util.call(baseUrl + '/channel/editChannel', cnt, callback)

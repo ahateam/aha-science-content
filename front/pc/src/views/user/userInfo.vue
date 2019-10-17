@@ -79,7 +79,6 @@
 					id:this.id,
 					authority:this.auth,
 				}
-				console.log(cnt)
 				this.$api.updateUserInfo(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.$message({

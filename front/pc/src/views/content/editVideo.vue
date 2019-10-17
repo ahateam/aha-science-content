@@ -226,7 +226,6 @@
             // 标签
             handleClose(tag) {
                 this.tagList.splice(this.tagList.indexOf(tag), 1);
-                console.log(this.tagList)
             },
 
             showInput() {
@@ -244,7 +243,6 @@
                 }
                 this.inputVisible = false;
                 this.inputValue = '';
-                console.log(this.tagList)
             }
 
             //end

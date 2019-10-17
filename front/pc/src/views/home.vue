@@ -56,6 +56,7 @@
 				isRouterActive: true,
 				menuList: [],
 				mainBoxStyle:{
+					
 					background:'#f0f2f5',
 					height:parseInt(document.body.clientHeight-150)+'px',
 					
@@ -76,11 +77,8 @@
 				this.$store.state.navDefaultActive = key + '-' + key1
 				this.$router.push(item1.path)
 			},
-
-
-
 			outLogin() {
-
+				localStorage.clear()
 				this.$router.push('/login')
 			}
 		},
@@ -90,7 +88,14 @@
 				text: '拼命加载中...',
 				spinner: 'el-icon-loading'
 			})
-			this.menuList = menu.menu
+			let loginUser = JSON.parse(localStorage.getItem('loginUser'))
+			if(loginUser.authority == 3){
+				this.menuList = menu.menu
+			}else if(loginUser.authority == 2){
+				this.menuList = menu.insiderMenu
+			}else if(loginUser.authority == 1){
+				this.menuList = menu.userMenu
+			}
 			this.$router.push('/contentList')
 			this.showActive = true
 			this.$store.state.navDefaultActive = '0-0'

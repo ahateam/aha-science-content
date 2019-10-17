@@ -20,7 +20,7 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 视频地址：</span>
-				<el-input placeholder="请输入网络视频地址" v-model="src" style="display: inline-block;width: 400px">
+				<input @change="getMechData1($event)" type="file" class="upload" v-if="src == ''" />
 				</el-input>
 			</el-col>
 		</el-row>
@@ -28,7 +28,7 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 封面地址：</span>
-				<el-input placeholder="请输入封面图片地址" v-model="imgSrc" style="display: inline-block;width: 400px">
+				<input @change="getMechData2($event)" type="file" class="upload" v-if="imgSrc == ''" />
 				</el-input>
 			</el-col>
 		</el-row>
@@ -96,6 +96,9 @@
 </template>
 
 <script>
+	import ossAuth from '@/commen/oss/ossAuth.js'
+	
+	let client = ossAuth.client
 	export default {
 		name: "addVideoContent",
 		data() {
@@ -140,6 +143,56 @@
 			}
 		},
 		methods: {
+			getMechData1() {
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg,1)
+			},
+			getMechData2() {
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg,2)
+			},
+			doUpload(file,val) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file,val)
+			},
+			multipartUpload(upName, upFile,val) {
+				//Vue中封装的分片上传方法（详见官方文档）
+				let _this = this
+				try {
+					let result = client.multipartUpload(upName, upFile, {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						let _index = address.indexOf('?')
+						if (_index == -1) {
+							_this.imgSrc = address
+						} else {
+							_this.imgSrc = address.substring(0, _index)
+						}
+						if(val == 1){
+							this.src = _this.imgSrc 
+						}else if(val ==2){
+							this.imgSrc = _this.imgSrc
+						}
+					}).catch(err => {
+						console.log(err)
+					})
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			},
+			//--------
 			addContent() {
 				let that = this
 				let dataUrl = {
@@ -153,7 +206,7 @@
 					module: this.$constData.module,
 					type: 3,
 					status: this.status,
-					power: this.power,
+					power: 0,
 					upUserId: 401770184378345,
 					upChannelId: this.upChannelId,
 					tags: JSON.parse(cid),
@@ -201,7 +254,6 @@
 				this.$api.getContentTagGroup(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tagGroupList = this.$util.tryParseJson(res.data.c)
-						console.log(this.tagGroupList)
 					}
 				})
 			},

@@ -110,7 +110,6 @@
                 this.size = file.size
                 let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' + encodeURIComponent(file.name)
 
-                console.log(tmpName)
 
                 this.multipartUpload(tmpName, file)
             },
@@ -127,7 +126,6 @@
                     }).then(res => {
                         //取出存好的url
                         let address = res.res.requestUrls[0]
-                        console.log(address)
                         let _index = address.indexOf('?')
                         console.log(_index)
                         if (_index == -1) {
@@ -135,7 +133,6 @@
                         } else {
                             _this.imgSrc = address.substring(0, _index)
                         }
-
                     }).catch(err => {
                         console.log(err)
                     })

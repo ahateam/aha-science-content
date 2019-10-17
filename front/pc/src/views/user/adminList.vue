@@ -4,6 +4,7 @@
 			用户管理
 		</el-row>
 		<el-row class="content-box">
+			<el-button @click="adduser">创建普通管理员</el-button>
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
@@ -132,6 +133,12 @@
 					}
 				})
 			},
+			adduser(){
+				this.$router.push({
+					path: '/addUser',
+					name: 'addUser',
+				})
+			}
 		},
 		mounted() {
 			let cnt = {

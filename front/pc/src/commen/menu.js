@@ -104,14 +104,58 @@ const  menu=[
 	},
 ]
 
-const adminMenu=[
+const insiderMenu=[
 	{
-		
+	
+	    title:'内容管理',
+	    icon:'course_shouye',
+	    child:[
+	        {
+	            path:'/ContentList',
+	            title:'图文管理',
+	        },
+	        {
+	            path:'/videoContentList',
+	            title:'视频管理',
+	        },
+	        {
+	            path:'/replyList',
+	            title:'评论管理'
+	        }
+	    ]
+	},
+	{
+	    title:'活动管理',
+	    icon:'course_shouye',
+	    child:[
+	        {
+	            path:'/activityList',
+	            title:'活动管理'
+	        },
+	        {
+	            path:'/addActivity',
+	            title:'发布活动'
+	        }
+	    ]
+	}
+]
+
+const userMenu=[
+	{
+	    title:'内容管理',
+	    icon:'course_shouye',
+	    child:[
+	        {
+	            path:'/replyList',
+	            title:'评论管理'
+	        }
+	    ]
 	}
 ]
 
 
 export default {
     menu,
-	adminMenu
+	insiderMenu,
+	userMenu,
 }

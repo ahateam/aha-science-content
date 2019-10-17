@@ -12,6 +12,18 @@
 				</el-col>
 			</el-col>
 		</el-row>
+		<el-row class="row-box1">
+			<el-col :span="24" style="margin-bottom: 10px">
+				<el-col :span="4">
+					<div class="title-box">简介:</div>
+				</el-col>
+				<el-col :span="14">
+					<div class="text-box">
+						<el-input v-model="text" placeholder="简单介绍"></el-input>
+					</div>
+				</el-col>
+			</el-col>
+		</el-row>
 		<el-row>
 			<el-col :span="4">
 				<div class="title-box">状态:</div>
@@ -24,6 +36,15 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
+			</el-col>
+		</el-row>
+		<el-row>
+			<el-col :span="4">
+				<div class="title-box">专题图片:</div>
+			</el-col>
+			<el-col :span="18">
+				<img width="500" :src="imgSrc" v-if="imgSrc">
+				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
 			</el-col>
 		</el-row>
 		<el-row>
@@ -55,10 +76,15 @@
 </template>
 
 <script>
+		import ossAuth from '@/commen/oss/ossAuth.js'
+		let client = ossAuth.client
 	export default {
 		name: "addSvip",
+		
 		data() {
 			return {
+				imgList: [],
+				address: '',
 				vipTagList: '',
 				title: '',
 				imgSrc: '',
@@ -71,11 +97,53 @@
 			}
 		},
 		methods: {
+			getMechData1() {
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg)
+			},
+			doUpload(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file)
+			},
+			multipartUpload(upName, upFile) {
+				//Vue中封装的分片上传方法（详见官方文档）
+				let _this = this
+				try {
+					let result = client.multipartUpload(upName, upFile, {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						let _index = address.indexOf('?')
+						if (_index == -1) {
+							_this.imgSrc = address
+						} else {
+							_this.imgSrc = address.substring(0, _index)
+						}
+					}).catch(err => {
+						console.log(err)
+					})
+			
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			},
+			///-----------
 			createChannel() {
 				let that = this
 				let data = {
-					text: this.text,
-					src: this.imgSrc
+					info: this.text,
+					img: this.imgSrc
 				}
 				let vipTag = {
 					channel: this.tagList
@@ -85,6 +153,7 @@
 					title: this.title,
 					status: this.status,
 					tags: JSON.stringify(vipTag),
+					data:JSON.stringify(data),
 				}
 				this.$api.createChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {

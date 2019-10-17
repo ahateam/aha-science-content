@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<el-row class="row-box1">
+			<img :src="imgSrc" width="80"  class="head_pic" />
 			<el-col :span="24" style="margin-bottom: 10px">
 				<el-col :span="4">
 					<div class="title-box">标题:</div>
@@ -8,6 +9,18 @@
 				<el-col :span="14">
 					<div class="text-box">
 						<el-input v-model="title" placeholder="标题"></el-input>
+					</div>
+				</el-col>
+			</el-col>
+		</el-row>
+		<el-row class="row-box1">
+			<el-col :span="24" style="margin-bottom: 10px">
+				<el-col :span="4">
+					<div class="title-box">简介:</div>
+				</el-col>
+				<el-col :span="14">
+					<div class="text-box">
+						<el-input v-model="info" placeholder="简介"></el-input>
 					</div>
 				</el-col>
 			</el-col>
@@ -54,6 +67,7 @@
 		name: "addSvip",
 		data() {
 			return {
+				info:'',
 				nowVipTagList: '',
 				vipTagList: '',
 				title: '',
@@ -71,7 +85,7 @@
 			createChannel() {
 				let that = this
 				let data = {
-					text: this.text,
+					info: this.text,
 					src: this.imgSrc
 				}
 				let vipTag = {
@@ -138,6 +152,8 @@
 			this.title = info.title
 			this.nowVipTagList = JSON.parse(info.tags).channel
 			this.id = info.id
+			this.info = JSON.parse(info.data).info
+			this.imgSrc = JSON.parse(info.data).img
 		}
 	}
 </script>
