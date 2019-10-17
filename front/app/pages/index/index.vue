@@ -73,7 +73,6 @@
 		},
 		data() {
 			return {
-
 				constData: this.$constData, //全局变量引入，防止头条html中报错
 
 				/* 广告轮播图 */
@@ -228,12 +227,12 @@
 			/*根据标签获取内容列表*/
 			getContentsByTag(cnt) {
 				let index = this.tabCurrentIndex
+				let list = []
 				if (this.tagsList[index].pageOver === true) {
 					return
 				}
 				this.pageStatus = 'loading'
 				this.$api.getContents(cnt, (res) => {
-					let list = []
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						list = this.$util.tryParseJson(res.data.c)
 						for (let i = 0; i < list.length; i++) {
@@ -322,7 +321,6 @@
 				if (undefined != this.tagsList[_index].child) {
 					this.pageStatus = this.tagsList[_index].pageStatus
 					this.contents = this.tagsList[_index].child
-					console.log(this.contents)
 					return
 				}
 
@@ -383,17 +381,17 @@
 				count: this.count, // Integer
 				offset: this.offset, // Integer
 			}
+			
 			if (this.tagName != '' && this.tagName != '全部') {
 				cnt.tags = `{"homeCotent":"${this.tagName}"}`
-			} else if (this.tagName != '活动') {
+			} else if (this.tagName == '活动') {
 				cnt.type = this.constData.contentType[3].key
 			}
+			this.contents = []
 			this.getContentsByTag(cnt)
 		},
 		//上滑加载更多
 		onReachBottom() {
-			
-			
 			this.page += 1
 			this.tagsList[this.tabCurrentIndex].page = this.page
 			let cnt = {

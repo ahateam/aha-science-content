@@ -1,26 +1,26 @@
 <template>
 	<view class="body">
-		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF" >推荐</navBar>
+		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF">推荐</navBar>
 		<!-- 顶部选项卡 -->
 		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
 			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
 			 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
 		</scroll-view>
 		<view style="padding-top: 90upx;"></view>
-		
+
 		<scroll-view scroll-x class="userList" v-if="tabCurrentIndex == 0">
 			<view v-if="userList.length == 0" class="noUser">
 				还没有关注其他用户哦
 			</view>
 			<view class="item-user" v-for="(item,index) in userList" :key="index">
-				<image :src="item.head" mode="aspectFill"></image>
+				<image :src="item.user.head" mode="aspectFill"></image>
 				<view class="userName">
-					{{item.name}}
+					{{item.user.name}}
 				</view>
 			</view>
 		</scroll-view>
 
-		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
+		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1" style="background-color: #FFFFFF;">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
 				<view v-if="item.show == constData.contentShow[0].key">
 					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></trans-video>
@@ -38,6 +38,11 @@
 				<only-text :title="item.title" :upName="item.user.name" time="1小时前"></only-text>
 			</view>
 		</view>
+
+		<view v-for="(item,index) in channelList" :key="index" :hidden="tabCurrentIndex == 0">
+			<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
+		</view>
+
 		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>
@@ -47,6 +52,8 @@
 	import onlyText from '@/components/article/onlyText.vue'
 	import rightVideo from '@/components/video/rightVideo.vue'
 	import threeImg from '@/components/article/threeImg.vue'
+	import channel from '@/components/channel/channel.vue'
+
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
 	import navBar from '@/components/zhouWei-navBar/index.vue'
 
@@ -59,7 +66,8 @@
 			rightVideo,
 			threeImg,
 			uniLoadMore,
-			navBar
+			navBar,
+			channel
 		},
 		data() {
 			return {
@@ -67,10 +75,14 @@
 				constData: this.$constData, //全局变量引入，防止头条html中报错
 
 				tagsList: [{
-						name: '关注列表'
+						name: '关注列表',
+						pageOver: false,
+						pageStatus: 'loading'
 					},
 					{
-						name: '推荐专题'
+						name: '推荐专题',
+						pageOver: false,
+						pageStatus: 'loading'
 					}
 				], //标签列表
 				tabCurrentIndex: 0, //当前选项卡索引
@@ -86,7 +98,8 @@
 					type: 5,
 					show: 1
 				}], //显示列表
-				tagName: '', //当前选中标签名字
+				channelList: [],
+
 
 				//上拉加载 ---分页
 				offset: 0,
@@ -94,115 +107,83 @@
 				page: 1,
 
 				pageStatus: 'loading', //加载状态 more（loading前）、loading（loading中）、noMore（没有更多了）
-				
-				userList:[],
+
+				userList: [],
 			}
 		},
 		onLoad() {
+			windowWidth = uni.getSystemInfoSync().windowWidth
 
-			// let cnt = {
-			// 	moduleId: this.constData.module, // String 隶属
-			// 	status: this.constData.tagStatus[1].key, // Byte 标签状态
-			// 	group: this.constData.tagGroupType[0].val, // String 标签
-			// 	count: 500, // Integer 
-			// 	offset: 0, // Integer 
-			// }
-			// this.getTagsList(cnt)
-
-			windowWidth = uni.getSystemInfoSync().windowWidth;
-			if (!uni.getStorageSync('userId')) {
-				uni.setStorageSync('userId', '1234567890')
+			let cnt = {
+				moduleId: this.$constData.module, // String 模块编号
+				userId: uni.getStorageSync('userId'), // Long 用户id
+				count: this.count, // int 
+				offset: this.offset, // int 
 			}
-
-			this.userId = uni.getStorageSync('userId')
+			this.getAUserFavorite(cnt)
+			this.getFavoriteUser(cnt)
 		},
 		methods: {
-			
-			// 轮播图改变触发
-			change(e) {
-				this.current = e.detail.current;
-			},
-
-			//获得元素的size
-			getElSize(id) {
-				return new Promise((res, rej) => {
-					let el = uni.createSelectorQuery().select('#' + id);
-					el.fields({
-						size: true,
-						scrollOffset: true,
-						rect: true
-					}, (data) => {
-						res(data);
-					}).exec();
-				});
-			},
-
-			//按钮点击跳转
-			trigger(e) {
-				if (this.userId == '' || this.userId == '1234567890') {
-					uni.switchTab({
-						url: '/pages/user/user'
-					})
-					uni.showToast({
-						title: '请登录',
-						icon: 'none',
-						duration: 1000
-					})
-					return
-				}
-				console.log(e)
-				if (e.item.url == '/pages/index/addContent/addContent?type=1') {
-					uni.navigateTo({
-						url: '/pages/index/addArticle/addArticle'
-					})
-				} else if (e.item.url == '/pages/index/addContent/addContent?type=0') {
-					uni.navigateTo({
-						url: '/pages/index/addVideo/addVideo'
-					})
-				}
-			},
-
-			/* 获取标签列表*/
-			getTagsList(cnt) {
-				this.$api.getContentTag(cnt, (res) => {
+			//获取专题
+			getChannels(cnt) {
+				let index = this.tabCurrentIndex
+				this.$api.getChannel(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let tagsList = this.$util.tryParseJson(res.data.c)
-						for (let i = 0; i < tagsList.length; i++) {
-							tagsList[i].pageOver = false
-							tagsList[i].page = 1
+						let list = this.$util.tryParseJson(res.data.c)
+						for (let i = 0; i < list.length; i++) {
+							let data = this.$util.tryParseJson(list[i].data)
+							list[i].info = data.info
+							list[i].img = data.img
 						}
-						this.tagsList = tagsList
-						console.log('标签列表:')
-						console.log(this.tagsList)
-						let cnt1 = {
-							module: this.constData.module, // String 所属模块
-							status: parseInt(this.constData.contentStatus[4].key),
-							count: this.count,
-							offset: this.offset,
-							power: this.$constData.contentPaid[0].key
+						console.log(list)
+
+						if (list.length < this.count) { //判断长度是否为等于设定this.count，是则可能还有剩余数据，否则无
+							this.tagsList[index].pageOver = true //结束拉取
+							this.tagsList[index].pageStatus = 'nomore'
+						} else {
+							this.tagsList[index].pageOver = false
+							this.tagsList[index].pageStatus = 'more'
 						}
-						this.getContentsByTag(cnt1)
+
+						this.pageStatus = this.tagsList[index].pageStatus //改变'uni-load-more'组件的状态
+
+						let arr = this.channelList.concat(list)
+						this.tagsList[index].child = arr
+						this.channelList = arr
+
 					} else {
-						this.tagsList = []
+						console.log('error')
 					}
 				})
 			},
 
-			/*根据标签获取内容列表*/
-			getContentsByTag(cnt) {
+			//获取关注的用户列表
+			getFavoriteUser(cnt) {
+				this.$api.getFavoriteUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.userList = this.$util.tryParseJson(res.data.c)
+						console.log(this.userList)
+					} else {
+						this.userList = []
+					}
+				})
+			},
+
+			//获取关注内容列表
+			getAUserFavorite(cnt) {
 				let index = this.tabCurrentIndex
 				if (this.tagsList[index].pageOver === true) {
 					return
 				}
 				this.pageStatus = 'loading'
-				this.$api.getContents(cnt, (res) => {
-					let list = []
+
+				this.$api.getAUserFavorite(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						list = this.$util.tryParseJson(res.data.c)
+						let list = this.$util.tryParseJson(res.data.c)
 						for (let i = 0; i < list.length; i++) {
 							let show = this.$util.tryParseJson(list[i].data).show
 							list[i].show = show
-							if (list[i].type == this.$constData.contentType[2].key) {
+							if (list[i].type == this.$constData.contentType[2].key || list[i].type == this.$constData.contentType[3].key) {
 								let imgList = this.$util.tryParseJson(list[i].data).imgList
 								list[i].imgList = imgList
 							}
@@ -215,18 +196,16 @@
 								// 	list[i].type = 999
 								// }
 							}
+							let time = new Date(list[i].createTime)
+							let y = time.getFullYear()
+							let m = 1 * time.getMonth() + 1
+							let d = time.getDate()
+							list[i].time = `${y}-${m}-${d}`
 						}
 						this.tryDataList(list)
 						uni.stopPullDownRefresh()
 					} else {
-						this.tagsList[index].pageOver = true //结束拉取
-						this.tagsList[index].pageStatus = 'nomore'
-						this.pageStatus = this.tagsList[index].pageStatus
-						let obj = this.$util.tryParseJson(JSON.stringify(this.tagsList[index]))
-						obj.child = []
-						this.$nextTick(function() {
-							this.tagsList.splice(index, 1, obj)
-						})
+						console.log('error')
 					}
 				})
 			},
@@ -254,10 +233,11 @@
 				})
 			},
 
+
+
 			/* 触发改变选中标签*/
 			async changeTag(_index) {
 				this.tabCurrentIndex = _index
-				this.tagName = this.tagsList[_index].name
 				this.page = this.tagsList[_index].page
 
 				let width = 0;
@@ -276,25 +256,30 @@
 				} else {
 					this.scrollLeft = 0;
 				}
+				//滑动end
 
+				//如加载过则读取当前数组
 				if (undefined != this.tagsList[_index].child) {
 					this.pageStatus = this.tagsList[_index].pageStatus
 					this.contents = this.tagsList[_index].child
 					console.log(this.contents)
 					return
 				}
+				//读取end
 
-				let cnt = {
-					module: this.constData.module, // String 所属模块
-					status: this.constData.contentStatus[4].key, // Byte <选填> 状态
-					power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
-					// type: type, // Byte <选填> 类型
-					tags: `{"homeCotent":"${this.tagName}"}`, // String <选填> 标签
-					count: this.count, // Integer
-					offset: this.offset, // Integer
+				//点击推荐专题
+				if (_index == 1) {
+					let cnt = {
+						module: this.$constData.module, // Long 模块编号
+						// status: this.$constData.tagStatus[1].key, // Byte <选填> 状态
+						// tags: tags, // String <选填> 标签（json）
+						count: this.count, // int 
+						offset: this.offset, // int 
+					}
+					this.getChannels(cnt)
+					return
 				}
-				this.contents = []
-				this.getContentsByTag(cnt)
+				//推荐专题end
 			},
 
 			/* 跳转至详情 */
@@ -324,7 +309,21 @@
 						})
 					}
 				}
-			}
+			},
+
+			//获得元素的size
+			getElSize(id) {
+				return new Promise((res, rej) => {
+					let el = uni.createSelectorQuery().select('#' + id);
+					el.fields({
+						size: true,
+						scrollOffset: true,
+						rect: true
+					}, (data) => {
+						res(data);
+					}).exec();
+				});
+			},
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
@@ -333,34 +332,33 @@
 			this.contents = []
 			this.tagsList[this.tabCurrentIndex].pageOver = false
 			let cnt = {
-				module: this.constData.module, // String 所属模块
-				status: this.constData.contentStatus[4].key, // Byte <选填> 状态
-				power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
-				// type: type, // Byte <选填> 类型
-				count: this.count, // Integer
-				offset: this.offset, // Integer
+				moduleId: this.$constData.module, // String 模块编号
+				count: this.count, // int 
+				offset: this.offset, // int 
 			}
-			if (this.tagName != '' && this.tagName != '全部') {
-				cnt.tags = `{"homeCotent":"${this.tagName}"}`
+			if (this.tabCurrentIndex == 0) {
+				cnt.userId = uni.getStorageSync('userId') // Long 用户id
+				this.getAUserFavorite(cnt)
+				this.getFavoriteUser(cnt)
+			} else if (this.tabCurrentIndex == 1) {
+				this.getChannels(cnt)
 			}
-			this.getContentsByTag(cnt)
 		},
 		//上滑加载更多
 		onReachBottom() {
 			this.page += 1
 			this.tagsList[this.tabCurrentIndex].page = this.page
 			let cnt = {
-				module: this.constData.module, // String 所属模块
-				status: this.constData.contentStatus[4].key, // Byte <选填> 状态
-				power: this.constData.contentPaid[0].key, // Byte <选填> 是否付费
-				// type: type, // Byte <选填> 类型
+				moduleId: this.$constData.module, // String 模块编号
 				count: this.count, // Integer
 				offset: (this.page - 1) * this.count, // Integer
 			}
-			if (this.tagName != '' && this.tagName != '全部') {
-				cnt.tags = `{"homeCotent":"${this.tagName}"}`
+			if (this.tabCurrentIndex == 0) {
+				cnt.userId = uni.getStorageSync('userId') // Long 用户id
+				this.getAUserFavorite(cnt)
+			} else if (this.tabCurrentIndex == 1) {
+				this.getChannels(cnt)
 			}
-			this.getContentsByTag(cnt)
 		},
 
 	}
@@ -381,7 +379,7 @@
 		white-space: nowrap;
 		box-shadow: 0 2upx 8upx rgba(0, 0, 0, .06);
 		background-color: #fff;
-	
+
 		.nav-item {
 			display: inline-block;
 			padding: 0 $box-margin-left;
@@ -391,8 +389,8 @@
 			font-size: 30upx;
 			color: #303133;
 			position: relative;
-			transition:.2s;
-	
+			transition: .2s;
+
 			&:after {
 				content: '';
 				width: 0;
@@ -405,16 +403,16 @@
 				transition: .2s;
 			}
 		}
-	
+
 		.current {
 			color: #fb7299;
 			font-weight: bold;
 			font-size: $list-title-m;
 			transform: translateY(5upx);
-	
+
 			&:after {
 				width: 50%;
-				transform:translateX(-50%) translateY(-7upx);
+				transform: translateX(-50%) translateY(-7upx);
 			}
 		}
 	}
@@ -425,20 +423,21 @@
 		background: #fff;
 		margin-top: 10rpx;
 	}
-	
+
 	.userList {
 		white-space: nowrap;
 		background-color: #fff;
 		margin-bottom: $box-margin-top;
-		
-		.item-user{
+
+		.item-user {
 			display: inline-block;
 			padding: $box-margin-top $box-margin-left;
 			width: 100upx;
 			text-align: center;
 			font-size: 30upx;
 			color: #303133;
-			image{
+
+			image {
 				width: 100upx;
 				height: 100upx;
 				border-radius: 100%;
@@ -446,15 +445,15 @@
 			}
 		}
 	}
-	
-	.userName{
+
+	.userName {
 		font-size: $list-info;
 		padding-top: 5upx;
 		overflow: hidden;
-		text-overflow:ellipsis;
+		text-overflow: ellipsis;
 	}
-	
-	.noUser{
+
+	.noUser {
 		font-size: $list-info;
 		padding: $box-margin-top $box-margin-left;
 	}

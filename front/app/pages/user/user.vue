@@ -1,29 +1,45 @@
 <template>
 	<view class="body">
-		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF"></navBar>
-		<!-- 用户信息 -->
-		<view class="userBox" v-if="loginStatus == false">
+		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF">
+			<view slot="right" class="iconfont kk-chilun setBtn"></view>
+		</navBar>
+
+		<!-- 登录注册 -->
+		<view class="userBox" style="text-align: center;" v-if="loginStatus == false">
 			<button class="leftButton" type="primary" @click="register">注册</button>
 			<button class="rightButton" type="primary" @click="loginBtn">登录</button>
 		</view>
-		<view class="userBox" v-if="loginStatus == true">
+
+		<!-- 用户信息 -->
+		<view class="userBox" v-if="loginStatus == true" @click="navToUser">
 			<view class="userHead">
-				<image  :src="userHead" mode="aspectFill"></image>
+				<image :src="userHead" mode="aspectFill"></image>
 			</view>
 			<view class="userInfo">
 				<view class="userName">
 					{{userName}}
 				</view>
+
+				<view class="contentInfo">
+					<text class="tagName">正式会员</text>
+				</view>
+
+				<view class="contentInfo" style="color: #fdc7d6;">
+					<text>发布内容:{{addContent}}</text>
+					<text style="margin-left: 20upx;">我的提问:{{addQuest}}</text>
+				</view>
 			</view>
+
+			<view class="iconfont kk-jiantou nextIcon"></view>
 		</view>
 	</view>
 </template>
 
 <script>
 	import navBar from '@/components/zhouWei-navBar/index.vue'
-	
+
 	export default {
-		components:{
+		components: {
 			navBar,
 		},
 		data() {
@@ -35,10 +51,13 @@
 				loginStatus: false,
 
 				providerList: [],
+
+				addContent: 0,
+				addQuest: 0,
 			};
 		},
 		onLoad() {
-			
+
 		},
 		onShow() {
 			let userId = uni.getStorageSync('userId')
@@ -49,12 +68,19 @@
 				this.loginStatus = true
 			} else {
 				console.log('未登录')
+				this.loginStatus = false
 			}
 		},
-		methods:{
-			register(){
+		methods: {
+			navToUser(){
 				uni.navigateTo({
-					url:'/pages/user/userLogin/register'
+					url:'/pages/user/userData/userData'
+				})
+			},
+			
+			register() {
+				uni.navigateTo({
+					url: '/pages/user/userLogin/register'
 				})
 			},
 			loginBtn() {
@@ -63,56 +89,88 @@
 				})
 			},
 		}
-	};
+	}
 </script>
 
 <style lang="scss" scoped>
-	.userBox{
+	.userBox {
+		position: relative;
 		background-color: $color-main;
 		width: 100vw;
-		padding: $box-margin-top 0 40upx;
-		text-align: center;
-		
-		button{
+		padding: $box-margin-top 0 35upx;
+
+		button {
 			display: inline-flex;
 			margin: 0 $box-margin-left;
 			padding: 0 60upx;
 			font-size: $list-title;
-			&:after{
+
+			&:after {
 				border: none;
 			}
 		}
-		
-		.leftButton{
+
+		.leftButton {
 			background-color: $color-button;
 		}
-		
-		.rightButton{
-			background-color: #FFFFFF;
+
+		.rightButton {
+			background-color: $color-button-back;
 			color: $color-main;
 		}
 	}
-	
-	.userHead{
-		display: inline-flex;
-		margin-left: $box-margin-left;
-		border: 2px solid #FFFFFF;
+
+	.userHead {
+		display: inline-block;
+		margin-left: 50upx;
+		border: 2px solid $color-button-back;
 		width: 120upx;
 		height: 120upx;
 		border-radius: 100%;
 		overflow: hidden;
-		image{
+
+		image {
 			width: 100%;
 			height: 100%;
 		}
 	}
-	
-	.userInfo{
-		display: inline-flex;
+
+	.userInfo {
+		display: inline-block;
 		margin-left: $box-margin-left;
+		vertical-align: top;
 	}
-	
-	.userName{
-		color: #FFFFFF;
+
+	.userName {
+		display: block;
+		color: $color-button-back;
+		font-size: $list-title;
+		// padding: 10upx 0;
+	}
+
+	.tagName {
+		border: 1px solid $color-button-back;
+		border-radius: 10upx;
+		padding: 0 0.7em;
+	}
+
+	.contentInfo {
+		color: $color-button-back;
+		font-size: $list-info-s;
+		margin-top: 10upx;
+	}
+
+	.nextIcon {
+		position: absolute;
+		right: $box-margin-left;
+		font-size: 40upx;
+		top: 50%;
+		margin-top: -0.7em;
+		color: $color-button-back;
+	}
+
+	.setBtn {
+		font-size: 40upx;
+		margin-right: $box-margin-left;
 	}
 </style>

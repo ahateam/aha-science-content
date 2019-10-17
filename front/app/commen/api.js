@@ -24,6 +24,11 @@ api.getContentById = function(cnt, callback) {
 	util.call(baseUrl + '/content/getConntent', cnt, callback)
 }
 
+//查询用户关注 
+api.getAUserFavorite = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/getAUserFavorite', cnt, callback)
+}
+
 /********************* 专栏接口 ******************************/ 
 //获取专栏列表 
 api.getChannel = function(cnt, callback) {
@@ -65,6 +70,12 @@ api.login = function(cnt, callback) {
 api.getUserById = function(cnt, callback) {
 	util.call(baseUrl + '/weixin/getUserById', cnt, callback)
 }
+
+//修改用户信息 
+api.updateUserInfo = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/updateUserInfo', cnt, callback)
+}
+
 
 //微信获取用户openid
 api.getAccessToken = function(cnt, callback) {
@@ -130,6 +141,8 @@ api.getTourBases = function(cnt, callback) {
 api.createEnroll = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/createEnroll', cnt, callback)
 }
+
+
 /* 广告 */
 //查询广告 
 api.getAdverts = function(cnt, callback) {
@@ -140,6 +153,12 @@ api.getAdverts = function(cnt, callback) {
 //搜索用户和内容 
 api.searchContentAndUser = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/searchContentAndUser', cnt, callback)
+}
+
+/* 关注 */
+//查询用户关注用户列表 
+api.getFavoriteUser = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/getFavoriteUser', cnt, callback)
 }
 
 export default api
