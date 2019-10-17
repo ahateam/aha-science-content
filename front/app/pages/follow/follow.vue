@@ -39,8 +39,10 @@
 			</view>
 		</view>
 
-		<view v-for="(item,index) in channelList" :key="index" :hidden="tabCurrentIndex == 0">
-			<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
+		<view :hidden="tabCurrentIndex == 0">
+			<view v-for="(item,index) in channelList" :key="index" @click="navChannle(item)">
+				<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
+			</view>
 		</view>
 
 		<uni-load-more :status="pageStatus"></uni-load-more>
@@ -90,14 +92,7 @@
 
 				userId: '',
 
-				contents: [{
-					title: '知乎最精辟的50条段子，已笑喷！',
-					imgList: [{
-						src: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg'
-					}],
-					type: 5,
-					show: 1
-				}], //显示列表
+				contents: [], //显示列表
 				channelList: [],
 
 
@@ -153,6 +148,7 @@
 
 					} else {
 						console.log('error')
+						uni.stopPullDownRefresh()
 					}
 				})
 			},
@@ -281,6 +277,13 @@
 				}
 				//推荐专题end
 			},
+			
+			//跳转至专题详情
+			navChannle(item){
+				uni.navigateTo({
+					url:`/pages/follow/channel/channel?id=${item.id}&title=${item.title}`
+				})
+			},
 
 			/* 跳转至详情 */
 			navToInfo(info) {
@@ -329,18 +332,20 @@
 		onPullDownRefresh() {
 			this.page = 1
 			this.tagsList[this.tabCurrentIndex].page = 1
-			this.contents = []
 			this.tagsList[this.tabCurrentIndex].pageOver = false
 			let cnt = {
-				moduleId: this.$constData.module, // String 模块编号
 				count: this.count, // int 
 				offset: this.offset, // int 
 			}
 			if (this.tabCurrentIndex == 0) {
+				this.contents = []
 				cnt.userId = uni.getStorageSync('userId') // Long 用户id
+				cnt.moduleId = this.$constData.module // String 模块编号
 				this.getAUserFavorite(cnt)
 				this.getFavoriteUser(cnt)
 			} else if (this.tabCurrentIndex == 1) {
+				this.channelList = []
+				cnt.module = this.$constData.module
 				this.getChannels(cnt)
 			}
 		},
@@ -349,14 +354,15 @@
 			this.page += 1
 			this.tagsList[this.tabCurrentIndex].page = this.page
 			let cnt = {
-				moduleId: this.$constData.module, // String 模块编号
 				count: this.count, // Integer
 				offset: (this.page - 1) * this.count, // Integer
 			}
 			if (this.tabCurrentIndex == 0) {
+				cnt.moduleId = this.$constData.module // String 模块编号
 				cnt.userId = uni.getStorageSync('userId') // Long 用户id
 				this.getAUserFavorite(cnt)
 			} else if (this.tabCurrentIndex == 1) {
+				cnt.module = this.$constData.module
 				this.getChannels(cnt)
 			}
 		},

@@ -100,6 +100,12 @@
 				"navigationStyle": "custom"
 			}
         }
+        ,{
+            "path" : "pages/follow/channel/channel",
+            "style" : {
+				"navigationStyle": "custom"
+			}
+        }
     ],
 	"tabBar": {
 		"color": "#C0C4CC",
