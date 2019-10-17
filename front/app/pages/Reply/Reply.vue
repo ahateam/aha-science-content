@@ -4,10 +4,10 @@
 			<view class="list">
 				<view class="item">
 					<view class="content">
-						asdhasadasd对号函数第八号
+						asdhasadasd对号函数第八号按时大会上八点哈搜不到had阿达萨达所大所阿萨德啊实打实达到阿斯达萨达啊飒飒大嫂
 					</view>
-					<view class="tiem">
-						
+					<view class="time-box">
+						2019-05-5
 					</view>
 				</view>
 			</view>
@@ -41,7 +41,7 @@
 		onShow() {
 			let cnt = {
 				upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
-				status: 1, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
+				status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
 				orderDesc: true, // Boolean 是否降序（较新的排前面）
 				count: this.count, // Integer 
 				offset: (this.page - 1) * this.count, // Integer 
@@ -66,13 +66,26 @@
 		padding: 20rpx;
 	}
 	.item{
-		padding: 20rpx;
-		
+		margin-top: 10rpx;
+		padding: 20rpx 20rpx 20rpx 20rpx;
 	}
 	.content{
-		padding:15rpx;
-	}
-	.time{
 		
+		font-size: 32rpx;
+		color: #303133;
+		line-height: 46rpx;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		display:-webkit-box;
+		-webkit-box-orient:vertical;
+		-webkit-line-clamp:2;
+	}
+	.time-box{
+			width: 100%;
+		margin-top: 20rpx;
+		font-size: 26rpx;
+		color: #aaa;
+		text-align: right;
+	
 	}
 </style>
