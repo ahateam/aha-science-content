@@ -78,7 +78,7 @@
 					})
 					return
 				}
-				if(this.passData ==''){
+				if (this.passData == '') {
 					uni.showToast({
 						title: '请输入密码',
 						icon: 'none'
@@ -93,27 +93,32 @@
 				}
 				this.login(cnt)
 			},
-			
+
 			//账号密码登录
-			login(cnt){
-				this.$api.login(cnt,(res)=>{
-					if(res.data.rc == this.$util.RC.SUCCESS){
+			login(cnt) {
+				this.$api.login(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let userInfo = this.$util.tryParseJson(res.data.c)
-						uni.setStorageSync('userHead',userInfo.head)
-						uni.setStorageSync('userId',userInfo.id)
-						uni.setStorageSync('userName',userInfo.name)
-						uni.setStorageSync('phone',userInfo.phone)
+						uni.setStorageSync('userHead', userInfo.head)
+						uni.setStorageSync('userId', userInfo.id)
+						uni.setStorageSync('userName', userInfo.name)
+						uni.setStorageSync('phone', userInfo.phone)
+						if (userInfo.company) {
+							uni.setStorageSync('company', userInfo.company)
+						}else{
+							uni.setStorageSync('company', '你还没有提交单位哦')
+						}
 						uni.switchTab({
-							url:'/pages/user/user'
+							url: '/pages/user/user'
 						})
 						uni.showToast({
-							title:'已登录'
+							title: '已登录'
 						})
-					}else{
+					} else {
 						uni.showToast({
-							title:'账号或密码错误！',
-							icon:'none',
-							position:'bottom'
+							title: '账号或密码错误！',
+							icon: 'none',
+							position: 'bottom'
 						})
 						this.isRotate = false
 					}

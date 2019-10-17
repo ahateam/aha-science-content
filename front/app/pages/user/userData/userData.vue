@@ -2,43 +2,59 @@
 	<view class="body">
 		<navBar bgColor="#FB7299" fontColor="#FFF">账号资料</navBar>
 		<view class="topBox">
-			<view class="autoBox" @click="change(0)">
+			<view class="autoBox" @click="change('head')">
 				<view class="leftBox" style="line-height: 100upx;">
 					头像
 				</view>
 				<view class="userHead">
 					<image :src="head" mode="aspectFill"></image>
-					<text class="iconfont kk-jiantou leftMargin"></text>
+					<text class="iconfont kk-xiayibu leftMargin"></text>
 				</view>
 			</view>
 
-			<view class="autoBox">
+			<view class="autoBox" @click="openBox('name')">
 				<view class="leftBox">
 					昵称
 				</view>
 				<view class="rightBox">
-					<text class="infoBox">{{userName}}</text>
-					<text class="iconfont kk-jiantou leftMargin"></text>
+					<view v-if="userNameBox == false">
+						<text class="infoBox">{{userName}}</text>
+						<text class="iconfont kk-xiayibu leftMargin"></text>
+					</view>
+
+					<view v-if="userNameBox == true" class="leftBox">
+						<input type="text" v-model="newName" focus class="changeName" />
+						<text class="textBtn" @click="change('name')">保存</text>
+					</view>
 				</view>
 			</view>
 
-			<view class="autoBox">
+			<view class="autoBox" @click="openBox('company')">
 				<view class="leftBox">
 					单位/学校
 				</view>
 				<view class="rightBox">
-					<text class="infoBox">{{userUnit}}</text>
-					<text class="iconfont kk-jiantou leftMargin"></text>
+					<view v-if="companyBox == false">
+						<text class="infoBox">{{userUnit}}</text>
+						<text class="iconfont kk-xiayibu leftMargin"></text>
+					</view>
+
+					<view v-if="companyBox == true" class="leftBox">
+						<input type="text" v-model="company" focus class="changeName" />
+						<text class="textBtn" @click="change('company')">保存</text>
+					</view>
 				</view>
+
+
 			</view>
 
-			<view class="autoBox">
+			<view class="autoBox" @click="changeLevel">
 				<view class="leftBox">
 					权限
 				</view>
 				<view class="rightBox">
 					<text class="infoBox">正式会员</text>
-					<text class="iconfont kk-jiantou leftMargin"></text>
+					<text class="iconfont kk-xiayibu leftMargin"></text>
 				</view>
 			</view>
 		</view>
@@ -61,16 +77,41 @@
 		data() {
 			return {
 				head: uni.getStorageSync('userHead'),
-				userName: uni.getStorageSync('userName'),
-				userUnit: '遵义小红椒',
+				imgSrc: '',
 
-			};
+				userName: uni.getStorageSync('userName'),
+				newName: '',
+
+				userUnit: uni.getStorageSync('company'),
+				company: '',
+
+				companyBox: false,
+
+				userNameBox: false,
+			}
 		},
 		methods: {
+			changeLevel(){
+				uni.showToast({
+					title:'功能开发中~',
+					icon:'none'
+				})
+			},
+			
+			//打开修改盒子
+			openBox(e) {
+				if (e == 'name') {
+					this.userNameBox = true
+				} else if (e == 'company') {
+					this.companyBox = true
+				}
+			},
+
+			//修改功能
 			change(e) {
 				let cnt = {
 					moduleId: this.$constData.module, // String 模块编号
-					id: uni.getStorageInfoSync('userId'), // Long 用户id
+					id: uni.getStorageSync('userId'), // Long 用户id
 					// name: name, // String <选填> 昵称
 					// head: head, // String <选填> 头像
 					// company: company, // String <选填> 单位
@@ -78,9 +119,40 @@
 					// status: status, // Byte <选填> 状态
 					// ext: ext, // String <选填> 扩展
 				}
-				if (e == 0) {
+				if (e == 'head') {
 					this.upImg(cnt)
+				} else if (e == 'name') {
+					cnt.name = this.newName
+					this.changeName(cnt)
+				} else if (e == 'company') {
+					cnt.company = this.company
+					this.changeCompany(cnt)
 				}
+			},
+
+			changeCompany(cnt) {
+				this.$api.updateUserInfo(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.userUnit = this.company
+						this.companyBox = false
+						uni.showToast({
+							title:'修改成功！'
+						})
+					}
+				})
+			},
+
+			changeName(cnt) {
+				this.$api.updateUserInfo(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.userName = this.newName
+						uni.setStorageSync('userName', this.newName)
+						this.userNameBox = false
+						uni.showToast({
+							title: '修改成功！'
+						})
+					}
+				})
 			},
 
 			//更改用户头像
@@ -88,48 +160,47 @@
 				let tiemr = new Date()
 				let address = tiemr.getFullYear() + "" + (tiemr.getMonth() + 1) + "" + tiemr.getDate()
 				address = 'zskp/userHead/' + address + '/'
-				if (type == "image")
-					uni.chooseImage({
-						count: 1, //默认9
-						sizeType: ['compressed'],
-						sourceType: ['album'],
-						success: res => {
-							uni.showLoading({
-								mask: true,
-							})
-							var imageSrc = res.tempFilePaths[0]
-							let str = res.tempFilePaths[0].substr(res.tempFilePaths[0].lastIndexOf('.'))
-							let nameStr = address + tiemr.getTime() + str
-							uni.uploadFile({
-								url: 'https://weapp-xhj.oss-cn-hangzhou.aliyuncs.com',
-								filePath: imageSrc,
-								fileType: 'image',
-								name: 'file',
-								formData: {
-									name: nameStr,
-									'key': nameStr,
-									'policy': 'eyJleHBpcmF0aW9uIjoiMjAyMi0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
-									'OSSAccessKeyId': 'LTAIJ9mYIjuW54Cj',
-									'success_action_status': '200',
-									//让服务端返回200,不然，默认会返回204
-									'signature': 'kgQ5n4s0oKpFHp35EI12CuTFvVM=',
-								},
-								success: (res) => {
-									uni.showToast({
-										title: '上传成功',
-										icon: 'success',
-										duration: 1000
-									})
-									this.imgSrc = 'https://weapp-xhj.oss-cn-hangzhou.aliyuncs.com/' + nameStr
-									this.changeHead(cnt)
-								},
-								complete: () => {
-									uni.hideLoading()
-									this.hideInputPopup()
-								}
-							});
-						}
-					});
+				uni.showLoading({
+					title: '上传头像中~'
+				})
+				uni.chooseImage({
+					count: 1, //默认9
+					sizeType: ['compressed'],
+					sourceType: ['album'],
+					success: res => {
+						uni.showLoading({
+							mask: true,
+						})
+						var imageSrc = res.tempFilePaths[0]
+						let str = res.tempFilePaths[0].substr(res.tempFilePaths[0].lastIndexOf('.'))
+						let nameStr = address + tiemr.getTime() + str
+						uni.uploadFile({
+							url: 'https://weapp-xhj.oss-cn-hangzhou.aliyuncs.com',
+							filePath: imageSrc,
+							fileType: 'image',
+							name: 'file',
+							formData: {
+								name: nameStr,
+								'key': nameStr,
+								'policy': 'eyJleHBpcmF0aW9uIjoiMjAyMi0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
+								'OSSAccessKeyId': 'LTAIJ9mYIjuW54Cj',
+								'success_action_status': '200',
+								//让服务端返回200,不然，默认会返回204
+								'signature': 'kgQ5n4s0oKpFHp35EI12CuTFvVM=',
+							},
+							success: (res) => {
+								this.imgSrc = 'https://weapp-xhj.oss-cn-hangzhou.aliyuncs.com/' + nameStr
+								this.changeHead(cnt)
+							},
+							fail: () => {
+								uni.hideLoading()
+							}
+						});
+					},
+					fail: () => {
+						uni.hideLoading()
+					}
+				});
 
 			},
 
@@ -137,6 +208,7 @@
 				cnt.head = this.imgSrc
 				this.$api.updateUserInfo(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.hideLoading()
 						this.head = this.imgSrc
 						uni.setStorageSync('userHead', this.imgSrc)
 						uni.showToast({
@@ -237,5 +309,19 @@
 		&:after {
 			border: none;
 		}
+	}
+
+	.textBtn {
+		color: $color-main;
+		font-size: $list-title;
+		margin-left: 10upx;
+		vertical-align: middle;
+	}
+
+	.changeName {
+		display: inline-block;
+		border-bottom: 2px solid $color-main;
+		width: 20vw;
+		vertical-align: middle;
 	}
 </style>
