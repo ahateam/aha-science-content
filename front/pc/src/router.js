@@ -22,15 +22,23 @@ const addSvip = () => import('./views/svip/addSvip')
 //活动
 const activityList = () => import('./views/activity/activityList')
 const addActivity = () => import('./views/activity/addActivity')
+//广告
+const advertList = () => import('./views/advert/advertList')
+const addAdvert = () => import('./views/advert/addAdvert')
 //用户
 const userList = () => import('./views/user/userList')
 const userInfo = () => import('./views/user/userInfo')
 const adminList = () => import('./views/user/adminList')
 const insiderList = () => import('./views/user/insiderList')
+const addUser = () => import('./views/user/addUser')
 //标签
 const homeTag = () => import('./views/tag/homeTag')
 const tagGroup = () => import('./views/tag/tagGroup')
-
+//申请
+const insiderExamineList = () => import('./views/examine/insiderExamineList')
+//数据
+const interestTagList = () => import('./views/dataInfo/interestTagList')
+const enrollList = () => import('./views/dataInfo/enrollList')
 Vue.use(Router)
 
 export default new Router({
@@ -142,6 +150,21 @@ export default new Router({
 					path: '/adminList',
 					name: 'adminList',
 					component: adminList
+				},{
+					path: '/addUser',
+					name: 'addUser',
+					component: addUser
+				},
+				//广告
+				{
+					path: '/advertList',
+					name: 'advertList',
+					component: advertList
+				},
+				{
+					path: '/addAdvert',
+					name: 'addAdvert',
+					component: addAdvert
 				},
 				//标签
 				{
@@ -153,6 +176,20 @@ export default new Router({
 					path: '/tagGroup',
 					name: 'tagGroup',
 					component: tagGroup
+				},
+				{
+					path: '/insiderExamineList',
+					name: 'insiderExamineList',
+					component: insiderExamineList
+				},
+				{
+					path: '/enrollList',
+					name: 'enrollList',
+					component: enrollList
+				},{
+					path: '/interestTagList',
+					name: 'interestTagList',
+					component: interestTagList
 				}
 			]
 		},

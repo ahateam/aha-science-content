@@ -1,23 +1,26 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			评论管理
+			广告管理
 		</el-row>
 		<el-row class="content-box">
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column prop="user.name" label="用户名" width="200">
+				<el-table-column label="展示图">
+					<template scope="scope">
+						<img :src="scope.row.imgSrc" width="40" height="40" class="head_pic" />
+					</template>
 				</el-table-column>
-				<el-table-column prop="text" label="评论">
+				<el-table-column prop="linkSrc" label="链接" width="200">
 				</el-table-column>
-				<el-table-column prop="appraiseCount" label="点赞数">
+				<el-table-column prop="remark" label="备注">
 				</el-table-column>
-				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
+				<el-table-column prop="createTime" label="创建日期" :formatter="timeFliter">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -34,7 +37,7 @@
 
 <script>
 	export default {
-		name: "contentList",
+		name: "advertList",
 		data() {
 			return {
 				tableData: [],
@@ -53,7 +56,7 @@
 			},
 			/*获取评论列表*/
 			getContents(cnt) {
-				this.$api.getReplyList(cnt, (res) => {
+				this.$api.getAdverts(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {
@@ -77,42 +80,43 @@
 				}
 				this.getContents(cnt)
 			},
-			/* 删除内容*/
 			delBtn(info) {
-				this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+				let msg =''
+				
+				this.$confirm('此操作将永久删除此数据, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
-						ownerId: info.ownerId,
-						sequenceId:info.sequenceId,
-					}
-					this.$api.delReply(cnt, (res) => {
+						moduleId: this.$constData.module,
+						id:info.id,
+					};
+					this.$api.delAdvert(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
 							this.$message({
 								type: 'success',
-								message: '删除成功!'
+								message: '操作成功!'
 							});
 						} else {
 							this.$message({
 								type: 'error',
-								message: '删除失败!'
+								message: '操作失败!'
 							});
 						}
 					})
 				}).catch(() => {
 					this.$message({
 						type: 'info',
-						message: '已取消删除'
+						message: '已取消'
 					});
 				});
 			},
 			//查看 详情
 			infoBtn(info) {
 				this.$router.push({
-					path: '/contentInfo',
-					name: 'contentInfo',
+					path: '/userInfo',
+					name: 'userInfo',
 					params: {
 						info: info
 					}
@@ -120,14 +124,12 @@
 			},
 		},
 		mounted() {
-			 let info = this.$route.params.info
 			let cnt = {
-				ownerId:info.id,
-				orderDesc:true,
+				moduleId: this.$constData.module,
+				authority:3,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}
-			console.log(cnt)
 			this.getContents(cnt)
 		}
 	}

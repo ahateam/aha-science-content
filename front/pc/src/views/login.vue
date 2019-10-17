@@ -63,6 +63,7 @@
 					}
 					this.$api.login(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
+							localStorage.setItem("loginUser",res.data.c)
 							this.$router.push('/content')
 						} else {
 							this.$message.error('登录信息不正确')
