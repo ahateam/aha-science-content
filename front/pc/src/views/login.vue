@@ -4,7 +4,7 @@
 
 			<div class="title-container">
 				<h3 class="title">
-					小程序管理系统登录
+					掌上科普管理系统登录
 				</h3>
 			</div>
 
@@ -12,7 +12,7 @@
 				<span class="svg-container">
 					<i class="iconfont course_user"></i>
 				</span>
-				<el-input v-model="username" placeholder="请输入账号" type="text" />
+				<el-input v-model="username" placeholder="请输入账号/手机号" type="text" />
 			</el-form-item>
 			<el-form-item prop="password">
 				<span class="svg-container">
@@ -27,7 +27,6 @@
 				登录
 			</el-button>
 		</el-form>
-
 	</div>
 </template>
 

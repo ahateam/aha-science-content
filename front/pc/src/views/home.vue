@@ -24,7 +24,7 @@
 			</el-aside>
 			<el-container>
 				<el-header class="header-box">
-					<div class="system-box">后台管理系统</div>
+					<div class="system-box">掌上科普后台管理系统</div>
 
 					<div class="system-mech">
 						<div style="float: right">

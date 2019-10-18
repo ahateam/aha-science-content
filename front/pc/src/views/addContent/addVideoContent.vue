@@ -116,7 +116,7 @@
 				conType: '',
 				text: '',
 				title: '',
-				userId: 400795534052038,
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				//展示样式
 				showList: [{
 						name: '竖屏',
@@ -145,18 +145,25 @@
 		methods: {
 			getMechData1() {
 				this.mechGrantImg = event.target.files[0]
-				this.doUpload(this.mechGrantImg,1)
+				this.doUpload(this.mechGrantImg)
 			},
 			getMechData2() {
 				this.mechGrantImg = event.target.files[0]
-				this.doUpload(this.mechGrantImg,2)
+				this.doUpload2(this.mechGrantImg)
 			},
-			doUpload(file,val) {
+			doUpload(file) {
 				let date = new Date()
 				this.size = file.size
-				let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 					encodeURIComponent(file.name)
-				this.multipartUpload(tmpName, file,val)
+				this.multipartUpload(tmpName, file,0)
+			},
+			doUpload2(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/img/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file,1)
 			},
 			multipartUpload(upName, upFile,val) {
 				//Vue中封装的分片上传方法（详见官方文档）
@@ -171,15 +178,16 @@
 						//取出存好的url
 						let address = res.res.requestUrls[0]
 						let _index = address.indexOf('?')
+						let src = ''
 						if (_index == -1) {
-							_this.imgSrc = address
+							src = address
 						} else {
-							_this.imgSrc = address.substring(0, _index)
+							src = address.substring(0, _index)
 						}
-						if(val == 1){
-							this.src = _this.imgSrc 
-						}else if(val ==2){
-							this.imgSrc = _this.imgSrc
+						if(val == 0){
+						this.src = src 
+						}else if(val ==1){
+							this.imgSrc = src 
 						}
 					}).catch(err => {
 						console.log(err)

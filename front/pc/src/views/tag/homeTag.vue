@@ -201,7 +201,7 @@
 						});
 					}
 				})
-				this.$router.push('/homeTag')
+				this.$router.push('/contentList')
 			},
 			//获取默认列表
 			getContentsBtn() {

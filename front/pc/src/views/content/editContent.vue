@@ -24,7 +24,7 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8">
+			<!-- <el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="显示">
 						<el-select v-model="show" placeholder="请选择" style="margin-right: 10px;">
@@ -33,7 +33,7 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
-			</el-col>
+			</el-col> -->
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="标签分组:">

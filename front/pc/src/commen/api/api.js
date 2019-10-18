@@ -11,7 +11,7 @@ console.log('开始调用ctrl');
 /** 内容相关*/
 //获取内容列表
 api.getContents = function (cnt, callback) {
-    util.call(baseUrl + '/content/getContents', cnt, callback)
+    util.call(baseUrl + '/ZskpOtherContent/getContents', cnt, callback)
 }
 //修改内容
 api.editContent = function (cnt, callback) {
@@ -65,7 +65,7 @@ api.getTags = function (cnt, callback) {
 
 //获取评论
 api.getReplyList = function (cnt, callback) {
-    util.call(baseUrl + '/reply/getReplyList', cnt, callback)
+    util.call(baseUrl + '/ZskpOtherContent/getReplyList', cnt, callback)
 }
 //删除评论
 api.delReply = function (cnt, callback) {
@@ -150,7 +150,13 @@ api.editChannel = function (cnt, callback) {
 api.getTourBases = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/getTourBases', cnt, callback)
 }
-
-
+//创建景点
+api.createTourBase = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/createTourBase', cnt, callback)
+}
+//删除景点
+api.delupdateTourBase = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/delupdateTourBase', cnt, callback)
+}
 export default api
 

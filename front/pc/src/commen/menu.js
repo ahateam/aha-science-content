@@ -34,6 +34,10 @@ const  menu=[
             {
                 path:'/addActivity',
                 title:'发布活动'
+            },
+            {
+                path:'/tourBaseList',
+                title:'基地管理'
             }
         ]
     },

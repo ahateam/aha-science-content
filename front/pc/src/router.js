@@ -22,6 +22,9 @@ const addSvip = () => import('./views/svip/addSvip')
 //活动
 const activityList = () => import('./views/activity/activityList')
 const addActivity = () => import('./views/activity/addActivity')
+const addTourBase = () => import('./views/activity/addTourBase')
+const tourBaseList = () => import('./views/activity/tourBaseList')
+
 //广告
 const advertList = () => import('./views/advert/advertList')
 const addAdvert = () => import('./views/advert/addAdvert')
@@ -118,6 +121,14 @@ export default new Router({
 					path: '/addActivity',
 					name: 'addActivity',
 					component: addActivity
+				}, {
+					path: '/addTourBase',
+					name: 'addTourBase',
+					component: addTourBase
+				}, {
+					path: '/tourBaseList',
+					name: 'tourBaseList',
+					component: tourBaseList
 				},
 				//评论
 				{

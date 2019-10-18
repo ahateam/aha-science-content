@@ -57,6 +57,14 @@
                     </el-select>
             </el-col>
         </el-row>
+		
+		<el-row style="padding: 20px">
+		    <el-col :span="2" style="min-height: 20px"></el-col>
+		    <el-col :span="20">
+		        <span class="title-box"> 直播链接：</span>
+		        <el-input placeholder="请输入直播链接" v-model="zhibo" style="display: inline-block;width: 400px"></el-input>
+		    </el-col>
+		</el-row>
 
         <el-row style="margin-top: 20px;padding-bottom: 10px">
             <el-col :span="4" style="min-height: 20px"></el-col>
@@ -76,6 +84,7 @@
         name: "addContent",
         data() {
             return {
+				zhibo:'',
                 homeTagName: '',
                 homeTag: '',
                 imgSrc: '',
@@ -94,7 +103,7 @@
                 info:'',
                 power: 0,
                 status: this.$constData.statusList[3].value,
-                userId: 401770184378345,
+                userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 
                 contentType: this.$constData.typeList[3].value,
             }
@@ -215,6 +224,7 @@
                     address:this.address,
                     time:newTime,
                     info:this.info,
+					live:this.zhibo,
                 }
                 let cnt = {
                     module: this.$constData.module,
@@ -241,21 +251,6 @@
                     }
                 }))
             },
-            getHomeTag() {
-                let cnt = {
-                    moduleId: this.$constData.module,
-                    status: 1,
-                    group: '首页',
-                    count: 20,
-                    offset: 0,
-                };
-                this.$api.getContentTag(cnt, (res) => {
-                    if (res.data.rc == this.$util.RC.SUCCESS) {
-                        this.homeTag = this.$util.tryParseJson(res.data.c)
-                    }
-                })
-            },
-
             getPlace() {
                 let cnt = {
                     moduleId: this.$constData.module, // Long 模块编号
@@ -265,7 +260,6 @@
                 this.$api.getTourBases(cnt, (res) => {
                     if (res.data.rc == this.$util.RC.SUCCESS) {
                         this.placeList = this.$util.tryParseJson(res.data.c)
-                        console.log(this.placeList)
                     } else {
                         this.addressList = []
                     }
@@ -273,7 +267,6 @@
             },
         },
         mounted() {
-            this.getHomeTag()
             this.getPlace()
         }
     }
