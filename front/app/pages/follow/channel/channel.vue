@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<navBar type="transparentFixed" fontColor="#FFF">{{title}}</navBar>
+		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="title"></navBar>
 		<view class="topBox">
 			<image :src="channelInfo.data.img" mode="aspectFill"></image>
 			<view class="block"></view>

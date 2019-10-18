@@ -3,86 +3,13 @@ const constData = {}
 /** 首页常量*/
 constData.module = 1180
 
-/* 支付平台常量 */
-constData.payInfoList = [{
+constData.userStatus = [{
 		key: 0,
-		id: 'wxpay',
-		name: '微信支付',
-		value: 0
+		val: '正常'
 	},
 	{
 		key: 1,
-		id: 'toutiao',
-		name: '头条支付',
-		value: 1
-	},
-	{
-		key: 2,
-		id: 'qq',
-		name: 'qq支付',
-		value: 2
-	},
-	{
-		key: 3,
-		id: 'sinaweibo',
-		name: '新浪微博支付',
-		value: 3
-	},
-	{
-		key: 4,
-		id: 'xiaomi',
-		name: '小米支付',
-		value: 4
-	},
-	{
-		key: 5,
-		id: 'alipay',
-		name: '支付宝支付',
-		value: 5
-	},
-	{
-		key: 6,
-		id: 'baidu',
-		name: '百度支付',
-		value: 6
-	}
-]
-
-/* 登录平台常量 */
-constData.providerList = [{
-		key: 0,
-		id: 'weixin',
-		name: '微信登录'
-	},
-	{
-		key: 1,
-		id: 'toutiao',
-		name: '头条登录'
-	},
-	{
-		key: 2,
-		id: 'qq',
-		name: 'qq登录'
-	},
-	{
-		key: 3,
-		id: 'sinaweibo',
-		name: '新浪微博登录'
-	},
-	{
-		key: 4,
-		id: 'xiaomi',
-		name: '小米登录'
-	},
-	{
-		key: 5,
-		id: 'alipay',
-		name: '支付宝登录'
-	},
-	{
-		key: 6,
-		id: 'baidu',
-		name: '百度登录'
+		val: '被禁言'
 	}
 ]
 
@@ -116,24 +43,24 @@ constData.tagStatus = [{
 		val: '启用'
 	}],
 
-/* 标签分组 */
-constData.tagGroupType = [{
-		key: '0',
-		val: '首页'
-	},
-	{
-		key: '1',
-		val: 'VIP'
-	},
-	{
-		key: '2',
-		val: '任务墙'
-	},
-	{
-		key: '3',
-		val: '模板'
-	}
-]
+	/* 标签分组 */
+	constData.tagGroupType = [{
+			key: '0',
+			val: '首页'
+		},
+		{
+			key: '1',
+			val: 'VIP'
+		},
+		{
+			key: '2',
+			val: '任务墙'
+		},
+		{
+			key: '3',
+			val: '模板'
+		}
+	]
 
 /* 首页文章展示样式 */
 constData.contentShow = [{
@@ -157,7 +84,7 @@ constData.contentType = [{
 }, {
 	key: '5',
 	val: '图文'
-},{
+}, {
 	key: '8',
 	val: '科普活动'
 }]

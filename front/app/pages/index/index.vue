@@ -16,10 +16,10 @@
 		<view style="padding-top: 90upx;"></view>
 
 		<!-- 广告轮播图 -->
-		<uni-swiper-dot :info="info" :current="current" field="title" :mode="mode" :dotsStyles="dotsStyles" v-if="info.length > 1">
+		<uni-swiper-dot :info="info" :current="current" field="remark" :mode="mode" :dotsStyles="dotsStyles" v-if="info.length > 1">
 			<swiper class="swiper-box" @change="change" autoplay>
-				<swiper-item v-for="(item ,index) in info" :key="index">
-					<image style="width: 100%;height: 100%;" :src="item.content" mode="aspectFill"></image>
+				<swiper-item v-for="(item ,index) in info" :key="index" @click="navInfo(item.linkSrc)">
+					<image style="width: 100%;height: 100%;" :src="item.imgSrc" mode="aspectFill"></image>
 				</swiper-item>
 			</swiper>
 		</uni-swiper-dot>
@@ -76,16 +76,7 @@
 				constData: this.$constData, //全局变量引入，防止头条html中报错
 
 				/* 广告轮播图 */
-				info: [{
-					content: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg',
-					title: '标题1'
-				}, {
-					content: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg',
-					title: '标题2'
-				}, {
-					content: 'http://5b0988e595225.cdn.sohucs.com/images/20171114/3b18817e72a54a6aabfa78528640dc30.jpeg',
-					title: '标题3'
-				}],
+				info: [],
 				current: 0,
 				mode: 'nav',
 				dotsStyles: {
@@ -136,12 +127,31 @@
 			this.userId = uni.getStorageSync('userId')
 		},
 		methods: {
+			navInfo(url) {
+				if (url) {
+					let key = url.indexOf('http://')
+					let key1 = url.indexOf('https://')
+					if (key != -1 || key1 != -1) {
+						plus.runtime.openURL(url)
+					} else {
+						uni.showToast({
+							title: '广告链接错误',
+							icon: 'none'
+						})
+					}
+				} else {
+					uni.showToast({
+						title: '没有广告链接',
+						icon: 'none'
+					})
+				}
+			},
 
 			//查询广告
 			getAdverts(cnt) {
 				this.$api.getAdverts(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						console.log(this.$util.tryParseJson(res.data.c))
+						this.info = this.$util.tryParseJson(res.data.c)
 					} else {
 						console.log('Error')
 					}
@@ -381,11 +391,10 @@
 				count: this.count, // Integer
 				offset: this.offset, // Integer
 			}
-			
-			if (this.tagName != '' && this.tagName != '全部') {
-				cnt.tags = `{"homeCotent":"${this.tagName}"}`
-			} else if (this.tagName == '活动') {
+			if (this.tagName == '活动') {
 				cnt.type = this.constData.contentType[3].key
+			} else if (this.tagName != '' && this.tagName != '全部') {
+				cnt.tags = `{"homeCotent":"${this.tagName}"}`
 			}
 			this.contents = []
 			this.getContentsByTag(cnt)
@@ -462,7 +471,7 @@
 			font-size: 30upx;
 			color: #303133;
 			position: relative;
-			transition:.2s;
+			transition: .2s;
 
 			&:after {
 				content: '';
@@ -485,7 +494,7 @@
 
 			&:after {
 				width: 50%;
-				transform:translateX(-50%) translateY(-7upx);
+				transform: translateX(-50%) translateY(-7upx);
 			}
 		}
 	}

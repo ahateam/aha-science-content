@@ -55,6 +55,13 @@
       "unicode_decimal": 59002
     },
     {
+      "icon_id": "4138030",
+      "name": "直播 播放 摄像机 天线 线性",
+      "font_class": "zhibobofangshexiangjitianxianxianxing",
+      "unicode": "e8c9",
+      "unicode_decimal": 59593
+    },
+    {
       "icon_id": "5162650",
       "name": "上 传",
       "font_class": "shangchuan",

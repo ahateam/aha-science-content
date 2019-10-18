@@ -9,11 +9,11 @@
 				还没有人评论哦,快来抢个首发吧~
 			</view>
 			<view v-for="(item, index) in comment" :key="index" class="eva-item">
-				<image :src="item.userHead" mode="aspectFill"></image>
+				<image :src="item.user.head" mode="aspectFill"></image>
 				<view class="eva-right">
 					<text>{{item.user.name}}</text>
 					<text>{{item.time}}</text>
-					<view class="zan-box" @click="upvote(item.sequenceId,index)" v-if="item.jsAdd == false">
+					<view class="zan-box" @click="upvote(item.sequenceId,index,item)" v-if="item.jsAdd == false">
 						<text>{{item.appraiseCount}}</text><!-- 点赞数 -->
 						<text class="yticon iconfont kk-shoucang1"></text>
 					</view>
@@ -29,7 +29,15 @@
 		props: ['comment'],
 		data() {
 			return {
-				upvote(id,index) {
+				upvote(id,index,item) {
+					if(item.upZan){
+						uni.showToast({
+							title:'你已经点过赞啦',
+							icon:'none'
+						})
+						return
+					}
+					
 					let cnt = {
 						ownerId: id, // Long 内容编号
 						userId: uni.getStorageSync('userId'), // Long 用户编号
@@ -39,7 +47,7 @@
 						if(res.data.rc == this.$util.RC.SUCCESS){
 							if(this.$util.tryParseJson(res.data.c).value == 10){
 								uni.showToast({
-									title:'请勿重复点赞',
+									title:'你已经点过赞啦',
 									icon:'none'
 								})
 								return

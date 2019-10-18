@@ -118,7 +118,7 @@ api.getAppraiseCount = function(cnt, callback) {
 
 //获取评论列表 
 api.getCommentByContentId = function(cnt, callback) {
-	util.call(baseUrl + '/reply/getReplyList', cnt, callback)
+	util.call(baseUrl + '/ZskpOtherContent/getReplyList', cnt, callback)
 }
 
 //评论 

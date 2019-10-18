@@ -2,50 +2,55 @@
 	<view class="body">
 		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF">推荐</navBar>
 		<!-- 顶部选项卡 -->
-		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
-			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
-			 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
-		</scroll-view>
-		<view style="padding-top: 90upx;"></view>
+		<view v-if="pageLoading">
+			<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
+				<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
+				 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
+			</scroll-view>
+			<view style="padding-top: 90upx;"></view>
 
-		<scroll-view scroll-x class="userList" v-if="tabCurrentIndex == 0">
-			<view v-if="userList.length == 0" class="noUser">
-				还没有关注其他用户哦
-			</view>
-			<view class="item-user" v-for="(item,index) in userList" :key="index">
-				<image :src="item.user.head" mode="aspectFill"></image>
-				<view class="userName">
-					{{item.user.name}}
+			<scroll-view scroll-x class="userList" v-if="tabCurrentIndex == 0">
+				<view v-if="userList.length == 0" class="noUser">
+					还没有关注其他用户哦
+				</view>
+				<view class="item-user" v-for="(item,index) in userList" :key="index">
+					<image :src="item.user.head" mode="aspectFill"></image>
+					<view class="userName">
+						{{item.user.name}}
+					</view>
+				</view>
+			</scroll-view>
+
+			<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1" style="background-color: #FFFFFF;">
+				<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
+					<view v-if="item.show == constData.contentShow[0].key">
+						<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
+					</view>
+
+					<view v-else-if="item.show == constData.contentShow[1].key">
+						<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
+					</view>
+
+					<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
+						<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+					</view>
+				</view>
+				<view v-else-if="item.type == constData.contentType[0].key">
+					<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
 				</view>
 			</view>
-		</scroll-view>
 
-		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1" style="background-color: #FFFFFF;">
-			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
-				<view v-if="item.show == constData.contentShow[0].key">
-					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
-				</view>
-
-				<view v-else-if="item.show == constData.contentShow[1].key">
-					<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
-				</view>
-
-				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+			<view :hidden="tabCurrentIndex == 0">
+				<view v-for="(item,index) in channelList" :key="index" @click="navChannle(item)">
+					<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
 				</view>
 			</view>
-			<view v-else-if="item.type == constData.contentType[0].key">
-				<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
-			</view>
+
+			<uni-load-more :status="pageStatus"></uni-load-more>
 		</view>
-
-		<view :hidden="tabCurrentIndex == 0">
-			<view v-for="(item,index) in channelList" :key="index" @click="navChannle(item)">
-				<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
-			</view>
+		<view v-if="pageLoading == false" class="noLoading">
+			没有获取到数据哦
 		</view>
-
-		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>
 
@@ -102,8 +107,11 @@
 				page: 1,
 
 				pageStatus: 'loading', //加载状态 more（loading前）、loading（loading中）、noMore（没有更多了）
+				pageOver: false,
 
 				userList: [],
+
+				pageLoading: false,
 			}
 		},
 		onLoad() {
@@ -124,6 +132,7 @@
 				let index = this.tabCurrentIndex
 				this.$api.getChannel(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.stopPullDownRefresh()
 						let list = this.$util.tryParseJson(res.data.c)
 						for (let i = 0; i < list.length; i++) {
 							let data = this.$util.tryParseJson(list[i].data)
@@ -140,6 +149,7 @@
 							this.tagsList[index].pageStatus = 'more'
 						}
 
+						this.pageOver = this.tagsList[index].pageOver
 						this.pageStatus = this.tagsList[index].pageStatus //改变'uni-load-more'组件的状态
 
 						let arr = this.channelList.concat(list)
@@ -172,9 +182,9 @@
 					return
 				}
 				this.pageStatus = 'loading'
-
 				this.$api.getAUserFavorite(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.pageLoading = true
 						let list = this.$util.tryParseJson(res.data.c)
 						for (let i = 0; i < list.length; i++) {
 							let show = this.$util.tryParseJson(list[i].data).show
@@ -234,6 +244,7 @@
 			/* 触发改变选中标签*/
 			async changeTag(_index) {
 				this.tabCurrentIndex = _index
+				this.pageOver = this.tagsList[_index].pageOver
 				this.page = this.tagsList[_index].page
 
 				let width = 0;
@@ -277,11 +288,11 @@
 				}
 				//推荐专题end
 			},
-			
+
 			//跳转至专题详情
-			navChannle(item){
+			navChannle(item) {
 				uni.navigateTo({
-					url:`/pages/follow/channel/channel?id=${item.id}&title=${item.title}`
+					url: `/pages/follow/channel/channel?id=${item.id}&title=${item.title}`
 				})
 			},
 
@@ -351,6 +362,9 @@
 		},
 		//上滑加载更多
 		onReachBottom() {
+			if (this.pageOver == true) {
+				return
+			}
 			this.page += 1
 			this.tagsList[this.tabCurrentIndex].page = this.page
 			let cnt = {
@@ -462,5 +476,10 @@
 	.noUser {
 		font-size: $list-info;
 		padding: $box-margin-top $box-margin-left;
+	}
+
+	.noLoading {
+		padding: $box-margin-top $box-margin-left;
+		font-size: $list-title;
 	}
 </style>

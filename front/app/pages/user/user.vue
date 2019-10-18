@@ -34,7 +34,7 @@
 		</view>
 		
 		<view class="bottomBox" v-if="loginStatus">
-			<navigator class="autoBoxHeight" url="/pages/user/shopping/shopping">
+			<navigator class="autoBox" url="/pages/user/shopping/shopping">
 				<text class="iconfont kk-money iconColor" ></text>
 				<text class="bottomTitle">报名中心</text>
 				<!-- <text class="iconfont kk-jiantou rightIcon"></text> -->
@@ -104,6 +104,7 @@
 	.iconColor{
 		color: $color-main;
 		font-size: 40upx;
+		vertical-align: middle;
 	}
 	
 	.userBox {
@@ -188,8 +189,7 @@
 	}
 	
 	.bottomBox {
-		padding: $box-margin-top $box-margin-left;
-		background-color: #fff;
+		padding: $box-margin-top 0;
 		line-height: 60upx;
 		font-size: 40upx;
 	}
@@ -199,11 +199,15 @@
 		font-size: $list-title;
 	}
 	
-	.autoBoxHeight {
-		height: 60upx;
+	.autoBox {
+		padding: 10upx;
+		background-color: rgba($color: $uni-text-color-grey, $alpha: 0.1);
 	}
 	
 	.bottomTitle{
-		margin-left: 5upx;
+		margin-left: 15upx;
+		font-size: $list-title;
+		color: $uni-text-color-placeholder;
+		vertical-align: middle;
 	}
 </style>

@@ -1,7 +1,10 @@
 <template>
 	<view class="content">
-
-		<scroll-view class="scroll" scroll-y>
+		<view v-if="pageStatus == false">
+			<uniLoadMore status="loading"></uniLoadMore>
+		</view>
+		
+		<scroll-view class="scroll" scroll-y v-if="pageStatus">
 			<view class="scroll-content">
 				<view class="introduce-section">
 					<text class="title">{{detailData.title}}</text>
@@ -28,7 +31,7 @@
 						<view class="action-item">
 							<button type="primary" @click="upvote(contentId)">
 								<i class="yticon iconfont kk-dianzan"></i>
-								<text>{{contentUpvote}}赞</text>
+								<text >{{contentUpvote}}赞</text>
 							</button>
 						</view>
 						<view class="action-item">
@@ -72,7 +75,7 @@
 		<canvas class="hiddenBox canvasBox" canvas-id="firstCanvas"></canvas>
 		<canvas class="hiddenBox upHeadBox" canvas-id="upHeadCanvas"></canvas>
 
-		<view class="bottom">
+		<view class="bottom" v-if="pageStatus">
 			<view class="input-box">
 				<text class="yticon icon-huifu"></text>
 				<input class="input" type="text" placeholder="点评一下把.." v-model="commentContent" placeholder-style="color:#adb1b9;" />
@@ -85,6 +88,7 @@
 <script>
 	import tkiQrcode from '@/components/tki-qrcode/tki-qrcode.vue'
 	import comment from '@/components/comment/comment.vue'
+	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
 
 	let context = uni.createCanvasContext('firstCanvas')
 	let upHead = uni.createCanvasContext('upHeadCanvas')
@@ -92,7 +96,8 @@
 	export default {
 		components: {
 			tkiQrcode,
-			comment
+			comment,
+			uniLoadMore
 		},
 		data() {
 			return {
@@ -122,6 +127,7 @@
 
 				/* 点赞 */
 				commentId: 0, //点赞对象id
+				upvoteStatus:false,//文章点赞状态
 				/* 点赞end */
 
 				/* 评论 */
@@ -132,7 +138,8 @@
 				/* 评论end */
 
 				followStatus: false,
-
+				
+				pageStatus:false,
 			}
 		},
 		onLoad(res) {
@@ -144,7 +151,7 @@
 			} else {
 				this.contentId = res.id
 			}
-			
+
 			this.getContentById()
 			this.getAppraiseCount()
 		},
@@ -161,7 +168,7 @@
 				this.$api.getBoolFavoriteUser(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.followStatus = this.$util.tryParseJson(res.data.c)
-					}else{
+					} else {
 						console.log('失败')
 					}
 				})
@@ -169,10 +176,19 @@
 
 			//创建关注
 			createUserFavorite() {
+				let userId = uni.getStorageSync('userId')
+				if (userId == '' || userId == '1234567890') {
+					uni.showToast({
+						title: '登录后可关注',
+						icon: 'none'
+					})
+					return
+				}
+
 				let cnt = {
 					moduleId: this.$constData.module, // String 模块编号
 					concernId: this.upInfo.id, // Long 被关注用户id
-					userId: uni.getStorageSync('userId'), // Long 用户id
+					userId: userId, // Long 用户id
 				}
 				this.$api.createUserFavorite(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -185,7 +201,7 @@
 							title: res.data.rm,
 							icon: 'none'
 						})
-						this.followStatus = true
+						this.followStatus = false
 					}
 				})
 			},
@@ -193,11 +209,13 @@
 			//更新赞数
 			upZan(index) {
 				this.comment[index].appraiseCount += 1
+				this.comment[index].upZan = true
 			},
 
 			/* 评论 */
 			createComment() {
 				let userId = uni.getStorageSync('userId')
+				let status = uni.getStorageSync('status')
 				if (userId == '' || userId == '1234567890') {
 					uni.showToast({
 						title: '登录后可评论',
@@ -205,6 +223,15 @@
 					})
 					return
 				}
+				
+				if(status == this.$constData.userStatus[1].key){
+					uni.showToast({
+						title:'已被管理员禁言',
+						icon:'none'
+					})
+					return
+				}
+				
 				let cnt = {
 					// module: this.$constData.module, // String 隶属
 					ownerId: this.contentId, // Long 内容编号
@@ -274,11 +301,6 @@
 							let m = 1 + time.getMonth()
 							let d = time.getDate()
 							comment[i].time = `${y}-${m}-${d}`
-							if (comment[i].user != undefined) {
-								comment[i].userHead = this.$util.tryParseJson(comment[i].user.ext).userHead
-							} else {
-								comment[i].userHead = ''
-							}
 						}
 						this.comment = comment
 					} else {
@@ -313,6 +335,14 @@
 
 			//点赞
 			upvote(conid, index) {
+				if(this.upvoteStatus == true){
+					uni.showToast({
+						title:'你已经赞过他啦',
+						icon:'none'
+					})
+					return
+				}
+				this.upvoteStatus = true
 				this.commentId = conid
 				this.createUpvote(index)
 			},
@@ -389,7 +419,7 @@
 
 			//生成up圆形头像
 			getUpHead() {
-				let img = this.$util.tryParseJson(this.upInfo.ext).userHead
+				let img = this.upInfo.head
 				console.log(img)
 				console.log('头像地址')
 				let imgSrc = ''
@@ -501,6 +531,8 @@
 				this.$api.getContentById(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let detailData = this.$util.tryParseJson(res.data.c)
+						console.log('----------------')
+						console.log(detailData)
 						let a = new Date(detailData.createTime)
 						let y = a.getFullYear()
 						let m = 1 + a.getMonth()
@@ -509,6 +541,7 @@
 						detailData.time = time
 						this.detailData = detailData
 						this.flow = this.$util.tryParseJson(detailData.data).editor
+						this.pageStatus = true
 						this.getUserById(detailData.upUserId)
 						this.getCommentByContentId()
 					}
@@ -607,7 +640,8 @@
 		line-height: 1.5;
 
 		.title {
-			font-size: 36upx;
+			font-weight: bold;
+			font-size: $list-title-l;
 			color: #303133;
 			margin-bottom: 16upx;
 		}

@@ -72,6 +72,10 @@
 			}
 		},
 		onShow() {
+			if(uni.getStorageSync('userId') == ''||uni.getStorageSync('userId') == '1234567890'){
+				return
+			}
+			
 			let cnt = {
 				upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
 				status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过

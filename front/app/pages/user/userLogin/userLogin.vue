@@ -103,6 +103,7 @@
 						uni.setStorageSync('userId', userInfo.id)
 						uni.setStorageSync('userName', userInfo.name)
 						uni.setStorageSync('phone', userInfo.phone)
+						uni.setStorageSync('status', userInfo.status)
 						if (userInfo.company) {
 							uni.setStorageSync('company', userInfo.company)
 						}else{
