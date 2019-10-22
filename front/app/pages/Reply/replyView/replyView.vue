@@ -5,24 +5,16 @@
 			<text>网友评论</text>
 		</view>
 		<view class="evalution">
-			<view class="noEva" v-if="comment.length == 0">
-				还没有人评论哦,快来抢个首发吧~
-			</view>
 			<view v-for="(item, index) in comment" :key="index" class="eva-item" @click="repaly(item.sequenceId,index,item)">
 				<image :src="item.user.head" mode="aspectFill"></image>
 				<view class="eva-right">
 					<text>{{item.user.name}}</text>
 					<text>{{item.time}}</text>
-					<view class="zan-box"  @click="upvote(item.sequenceId,index,item)" @click.stop v-if="item.jsAdd == false">
-						<text>{{item.appraiseCount}}</text><!-- 点赞数 -->
+					<view class="zan-box" @click="upvote(item.sequenceId,index,item)" @click.stop v-if="item.jsAdd == false">
+						<text>{{item.appraiseCount}}</text> <!-- 点赞数 -->
 						<text class="yticon iconfont kk-shoucang1"></text>
 					</view>
 					<text class="content">{{item.text}}</text>
-					<view class="replayBox" v-if="item.comment.list.length > 0" @click.stop @click="navToreplay(item.sequenceId)">
-						<view class="replayList" v-for="(list,index) in item.comment.list" :key="index" >
-							<text class="replayUser">{{list.upUserName}}</text>：<text class="replayText">{{list.text}}</text>
-						</view>
-					</view>
 				</view>
 			</view>
 		</view>
@@ -31,78 +23,64 @@
 
 <script>
 	export default {
-		props: ['comment'],
 		data() {
 			return {
+				comment: [],
+
 			}
 		},
 		methods: {
-			//跳转至二级评论
-			navToreplay(id){
-				uni.navigateTo({
-					url:`/pages/Reply/replyView/replyView?id=${id}`
-				})
-			},
-			
+
 			//回复
-			repaly(id,index,item){
-				let userId = uni.getStorageSync('userId')
-				if(userId == ''||userId == '1234567890'){
-					uni.showToast({
-						title:'请登录',
-						icon:'none'
-					})
-					return
-				}
+			repaly(id, index, item) {
 				
-				this.$emit('repaly',id,index,item.user.name)
 			},
-			
-			upvote(id,index,item) {
+
+			upvote(id, index, item) {
 				let userId = uni.getStorageSync('userId')
-				if(userId == ''||userId == '1234567890'){
+				if (userId == '' || userId == '1234567890') {
 					uni.showToast({
-						title:'请登录',
-						icon:'none'
+						title: '请登录',
+						icon: 'none'
 					})
 					return
 				}
-				
-				if(item.upZan){
+
+				if (item.upZan) {
 					uni.showToast({
-						title:'你已经点过赞啦',
-						icon:'none'
+						title: '你已经点过赞啦',
+						icon: 'none'
 					})
 					return
 				}
-				
+
 				let cnt = {
 					ownerId: id, // Long 内容编号
 					userId: uni.getStorageSync('userId'), // Long 用户编号
 					value: this.$constData.appraise[0].key, // Byte 状态
 				}
-				this.$api.createUpvote(cnt,(res)=>{
-					if(res.data.rc == this.$util.RC.SUCCESS){
-						if(this.$util.tryParseJson(res.data.c).value == 10){
+				this.$api.createUpvote(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						if (this.$util.tryParseJson(res.data.c).value == 10) {
 							uni.showToast({
-								title:'你已经点过赞啦',
-								icon:'none'
+								title: '你已经点过赞啦',
+								icon: 'none'
 							})
 							return
 						}
 						uni.showToast({
-							title:'点赞成功'
+							title: '点赞成功'
 						})
-						this.$emit('upZan',index)
-					}else{
+						this.$emit('upZan', index)
+					} else {
 						uni.showToast({
-							title:res.data.c,
-							icon:'none'
+							title: res.data.c,
+							icon: 'none'
 						})
 					}
 				})
 			},
-			
+
 		}
 	}
 </script>
@@ -191,24 +169,5 @@
 			color: #333;
 			padding-top: 20upx;
 		}
-	}
-	
-	.replayBox{
-		border-radius: 10upx;
-		background-color: $uni-bg-color-grey;
-		padding: 10upx;
-	}
-	
-	.replayList{
-		padding: 10upx 0;
-		font-size: $list-info;
-	}
-	
-	.replayUser{
-		color: #11BBFF;
-	}
-	
-	.replayText{
-		
 	}
 </style>

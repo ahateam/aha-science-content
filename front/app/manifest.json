@@ -19,7 +19,9 @@
         "modules" : {
             "OAuth" : {},
             "Speech" : {},
-            "VideoPlayer" : {}
+            "VideoPlayer" : {},
+            "Maps" : {},
+            "LivePusher" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -58,13 +60,19 @@
                 "oauth" : {},
                 "speech" : {
                     "ifly" : {}
+                },
+                "maps" : {
+                    "baidu" : {
+                        "appkey_ios" : "SOOpwhK5pwWkiC6X0TWgQY5RHGdlQGgt",
+                        "appkey_android" : "SOOpwhK5pwWkiC6X0TWgQY5RHGdlQGgt"
+                    }
                 }
             },
             "splashscreen" : {
                 "android" : {
-                    "hdpi" : "C:/Users/Admin/Desktop/timg.png",
-                    "xhdpi" : "C:/Users/Admin/Desktop/timg.png",
-                    "xxhdpi" : "C:/Users/Admin/Desktop/timg.png"
+                    "hdpi" : "C:/Users/Admin/Desktop/bilibili启动图.png",
+                    "xhdpi" : "C:/Users/Admin/Desktop/bilibili启动图.png",
+                    "xxhdpi" : "C:/Users/Admin/Desktop/bilibili启动图.png"
                 }
             },
             "icons" : {

@@ -3,7 +3,7 @@
 		<view v-if="pageStatus == false">
 			<uniLoadMore status="loading"></uniLoadMore>
 		</view>
-		
+
 		<scroll-view class="scroll" scroll-y v-if="pageStatus">
 			<view class="scroll-content">
 				<view class="introduce-section">
@@ -12,8 +12,8 @@
 						<text>{{upInfo.name}}</text>
 						<!-- <text>105阅读</text> -->
 						<text>{{detailData.time}}</text>
-						<button type="primary" @click="createUserFavorite" class="followBtn" v-if="followStatus == false">关注</button>
-						<button type="primary" class="followBtn" v-else-if="followStatus == true">已关注</button>
+						<button @click="createUserFavorite" class="followBtn" v-if="followStatus == false">关注</button>
+						<button @click="delUserFavorite" class="followBtn" v-else-if="followStatus == true">已关注</button>
 					</view>
 					<view class="articleInfo">
 						<view v-for="(item,index) in flow" :key="index">
@@ -31,7 +31,7 @@
 						<view class="action-item">
 							<button type="primary" @click="upvote(contentId)">
 								<i class="yticon iconfont kk-dianzan"></i>
-								<text >{{contentUpvote}}赞</text>
+								<text>{{contentUpvote}}赞</text>
 							</button>
 						</view>
 						<view class="action-item">
@@ -52,7 +52,7 @@
 				</view>
 
 				<!-- 评论区 -->
-				<comment :comment="comment" @upZan="upZan"></comment>
+				<comment :comment="comment" @upZan="upZan" @repaly="openReplay"></comment>
 				<!-- 评论end -->
 
 			</view>
@@ -76,11 +76,16 @@
 		<canvas class="hiddenBox upHeadBox" canvas-id="upHeadCanvas"></canvas>
 
 		<view class="bottom" v-if="pageStatus">
-			<view class="input-box">
+			<view class="input-box" v-if="!replayBox">
 				<text class="yticon icon-huifu"></text>
 				<input class="input" type="text" placeholder="点评一下把.." v-model="commentContent" placeholder-style="color:#adb1b9;" />
 			</view>
-			<text class="confirm-btn" @click="createComment">提交</text>
+			<text class="confirm-btn" @click="createComment" v-if="!replayBox">提交</text>
+			<view class="input-box" v-if="replayBox">
+				<text class="yticon icon-huifu"></text>
+				<input focus class="input" type="text" :placeholder="'@'+repalyName+'：'" v-model="commentContent" placeholder-style="color:#adb1b9;" />
+			</view>
+			<text class="confirm-btn" @click="replayAfter" v-if="replayBox">提交</text>
 		</view>
 	</view>
 </template>
@@ -127,7 +132,7 @@
 
 				/* 点赞 */
 				commentId: 0, //点赞对象id
-				upvoteStatus:false,//文章点赞状态
+				upvoteStatus: false, //文章点赞状态
 				/* 点赞end */
 
 				/* 评论 */
@@ -135,11 +140,19 @@
 				totalCount: 0, //文章评论数
 				contentUpvote: 0, //文章点赞数
 				commentContent: '', //评论内容
+
+				//二級回復
+				repalyId: '', //评论id
+				replayBox: false, //二级回复盒子开关
+				repalyIndex: '', //回复列表下标
+				repalyName: '', //回复的人的name
 				/* 评论end */
 
 				followStatus: false,
-				
-				pageStatus:false,
+
+				pageStatus: false,
+
+				followId: ''
 			}
 		},
 		onLoad(res) {
@@ -156,20 +169,85 @@
 			this.getAppraiseCount()
 		},
 		methods: {
+			openReplay(id, index, name) {
+				console.log('id:' + id + 'index:' + index + 'name:' + name)
+				this.repalyId = id
+				this.repalyIndex = index
+				this.repalyName = name
+				this.replayBox = true
+			},
+
+			replayAfter() {
+				let cnt = {
+					replyId: this.repalyId, // Long 回复评论id
+					upUserId: uni.getStorageSync('userId'), // Long 提交者编号
+					upUserHead: uni.getStorageSync('userHead'), // String 提交者头像
+					upUserName: uni.getStorageSync('userName'), // String 提交者昵称
+					// toUserId: toUserId, // Long 目标用户编号
+					text: this.commentContent, // String 正文
+					// toUserId: toUserId, // Long <选填> 目标用户编号
+					// toUserName: toUserName, // String <选填> 目标用户昵称
+				}
+				this.$api.createComment(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.replayBox = false
+						uni.showToast({
+							title: '回复成功！',
+						})
+						let user = {
+							upUserName: uni.getStorageSync('userName'),
+							text: this.commentContent
+						}
+						this.comment[this.repalyIndex].comment.list.push(user)
+						this.commentContent = ''
+					} else {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					}
+				})
+			},
 			//查询是否关注
-			getBoolFavoriteUser() {
+			getBoolFavoriteUser(userId) {
 				let cnt = {
 					moduleId: this.$constData.module, // String 模块编号
 					userId: uni.getStorageSync('userId'), // Long 用户id
-					concernId: this.upInfo.id, // Long 被关注用户id,true没有关注
+					concernId: userId, // Long 被关注用户id,true没有关注
 					count: 10, // int 
 					offset: 0, // int 
 				}
 				this.$api.getBoolFavoriteUser(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.followStatus = this.$util.tryParseJson(res.data.c)
+						let data = this.$util.tryParseJson(res.data.c)
+						this.followStatus = data.bool
+						if (this.followStatus == true) {
+							this.followId = data.info.id
+						}
 					} else {
 						console.log('失败')
+					}
+				})
+			},
+
+			//取关
+			delUserFavorite() {
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					id: this.followId, // Long id
+				}
+				this.$api.delUserFavorite(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title: '已取消关注',
+							icon: 'none'
+						})
+						this.followStatus = false
+					} else {
+						uni.showToast({
+							title: '服务器错误！',
+							icon: 'none'
+						})
 					}
 				})
 			},
@@ -196,6 +274,7 @@
 							title: '关注成功'
 						})
 						this.followStatus = true
+						this.followId = this.$util.tryParseJson(res.data.c).id
 					} else {
 						uni.showToast({
 							title: res.data.rm,
@@ -223,15 +302,15 @@
 					})
 					return
 				}
-				
-				if(status == this.$constData.userStatus[1].key){
+
+				if (status == this.$constData.userStatus[1].key) {
 					uni.showToast({
-						title:'已被管理员禁言',
-						icon:'none'
+						title: '已被管理员禁言',
+						icon: 'none'
 					})
 					return
 				}
-				
+
 				let cnt = {
 					// module: this.$constData.module, // String 隶属
 					ownerId: this.contentId, // Long 内容编号
@@ -248,8 +327,7 @@
 						uni.showToast({
 							title: '评论成功',
 							duration: 1000
-						});
-						this.hidden = true
+						})
 						let time = new Date()
 						let y = time.getFullYear()
 						let m = 1 + time.getMonth()
@@ -335,10 +413,10 @@
 
 			//点赞
 			upvote(conid, index) {
-				if(this.upvoteStatus == true){
+				if (this.upvoteStatus == true) {
 					uni.showToast({
-						title:'你已经赞过他啦',
-						icon:'none'
+						title: '你已经赞过他啦',
+						icon: 'none'
 					})
 					return
 				}
@@ -543,6 +621,7 @@
 						this.flow = this.$util.tryParseJson(detailData.data).editor
 						this.pageStatus = true
 						this.getUserById(detailData.upUserId)
+						this.getBoolFavoriteUser(detailData.upUserId)
 						this.getCommentByContentId()
 					}
 				}))
@@ -560,7 +639,6 @@
 						this.upInfo = this.$util.tryParseJson(res.data.c)
 						console.log('--------------------')
 						console.log(this.upInfo)
-						this.getBoolFavoriteUser()
 					} else {
 						console.log('error')
 					}
@@ -818,9 +896,13 @@
 
 	.followBtn {
 		position: absolute;
+		right: $box-margin-left;
 		top: -10upx;
-		right: 0;
+		display: inline-block;
+		// width: 3em;
+		text-align: center;
 		font-size: $list-info;
+		color: $color-button-back;
 		background-color: $color-main;
 
 		&:after {

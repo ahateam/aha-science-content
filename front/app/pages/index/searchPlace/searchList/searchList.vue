@@ -11,18 +11,6 @@
 			</view>
 		</navBar>
 
-		<scroll-view scroll-x class="userList">
-			<view v-if="userList.length == 0" class="noUser">
-				好像没有找到相关用户哦
-			</view>
-			<view class="item-user" v-for="(item,index) in userList" :key="index" @click="navToUser(item)">
-				<image :src="item.head" mode="aspectFill"></image>
-				<view class="userName">
-					{{item.name}}
-				</view>
-			</view>
-		</scroll-view>
-
 		<!-- 搜索内容列表 -->
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
@@ -75,7 +63,7 @@
 				contents: [],
 
 				searchText: '',
-				userList: [],
+				
 				pageStatus: 'loading'
 			};
 		},
@@ -219,39 +207,5 @@
 			top: 4upx;
 			z-index: 10;
 		}
-	}
-
-	.userList {
-		white-space: nowrap;
-		background-color: #fff;
-		margin-bottom: $box-margin-top;
-
-		.item-user {
-			display: inline-block;
-			padding: $box-margin-top $box-margin-left;
-			width: 100upx;
-			text-align: center;
-			font-size: 30upx;
-			color: #303133;
-
-			image {
-				width: 100upx;
-				height: 100upx;
-				border-radius: 100%;
-				overflow: hidden;
-			}
-		}
-	}
-
-	.userName {
-		font-size: $list-info;
-		padding-top: 5upx;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.noUser {
-		font-size: $list-info;
-		padding: $box-margin-top $box-margin-left;
 	}
 </style>

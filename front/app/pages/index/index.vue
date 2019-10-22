@@ -2,9 +2,15 @@
 	<view class="body">
 		<!-- 自定义导航栏 -->
 		<nav-bar bgColor="#fb7299" fontColor="#FFFFFF">
-			<view slot="left" class="search_box" @click="searchBtn">
-				<text class="iconfont kk-sousuo"></text>
-				<text class="prompt">搜索(用户、资讯)</text>
+			<view slot="left" class="navBox">
+				<view class="cityBox" @click="changeCity">
+					<text class="iconfont kk-location"></text>
+					<text>{{cityName}}</text>
+				</view>
+				<view class="search_box" @click="searchBtn">
+					<text class="iconfont kk-sousuo"></text>
+					<text class="prompt">{{searchTitle}}</text>
+				</view>
 			</view>
 		</nav-bar>
 
@@ -16,14 +22,13 @@
 		<view style="padding-top: 90upx;"></view>
 
 		<!-- 广告轮播图 -->
-		<uni-swiper-dot :info="info" :current="current" field="remark" :mode="mode" :dotsStyles="dotsStyles" v-if="info.length > 1">
+		<uni-swiper-dot :info="info" :current="current" field="remark" :mode="mode" :dotsStyles="dotsStyles" v-if="info.length > 1&&tagName !='科普基地'">
 			<swiper class="swiper-box" @change="change" autoplay>
 				<swiper-item v-for="(item ,index) in info" :key="index" @click="navInfo(item.linkSrc)">
 					<image style="width: 100%;height: 100%;" :src="item.imgSrc" mode="aspectFill"></image>
 				</swiper-item>
 			</swiper>
 		</uni-swiper-dot>
-
 		<!-- 内容列表 -->
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 
@@ -44,8 +49,11 @@
 			<view v-else-if="item.type == constData.contentType[0].key">
 				<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
 			</view>
-		</view>
 
+			<view v-else-if="item.type == -1">
+					<right-video :title="item.title" :upName="item.address" :imgSrc="item.imgList[0].src" :time="item.margin+'km'" :type="item.type"></right-video>
+			</view>
+		</view>
 		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>
@@ -60,6 +68,7 @@
 	import navBar from '@/components/zhouWei-navBar/index.vue'
 
 	let windowWidth = 0
+
 
 	export default {
 		components: {
@@ -99,10 +108,15 @@
 				page: 1,
 
 				pageStatus: 'loading', //加载状态 more（loading前）、loading（loading中）、noMore（没有更多了）
+
+				location: '', // 纬 经 度
+				cityName: '遵义', //城市名
+				
+				searchTitle:'搜索(用户、资讯)',
 			}
 		},
-		onLoad() {
 
+		onLoad() {
 			let cnt = {
 				moduleId: this.constData.module, // String 隶属
 				// status: this.constData.tagStatus[1].key, // Byte 标签状态
@@ -125,8 +139,39 @@
 			}
 
 			this.userId = uni.getStorageSync('userId')
+
+			this.getLocation()
 		},
 		methods: {
+			changeCity(){
+				console.log('我不想动')
+			},
+			
+			//获取坐标
+			getLocation() {
+				uni.getLocation({
+					type: 'BD09',
+					geocode: true,
+					success: (res) => {
+						console.log(res)
+						this.location = `${res.latitude},${res.longitude}`
+						this.cityName = res.address.city
+					},
+					fail: (err) => {
+						console.log('错误!————:' + err)
+					}
+				})
+			},
+
+			//跳转基地
+			navToPlace(item) {
+				console.log('111')
+				uni.navigateTo({
+					url: `/pages/index/tourBases/tourBases?id=${item.id}`
+				})
+			},
+
+			//跳转广告
 			navInfo(url) {
 				if (url) {
 					let key = url.indexOf('http://')
@@ -160,10 +205,18 @@
 
 			//跳转搜索页
 			searchBtn() {
-				uni.navigateTo({
-					url: '/pages/index/search/search',
-					"animationType": "none",
-				})
+				if(this.tagName == '科普基地'){
+					uni.navigateTo({
+						url: '/pages/index/searchPlace/searchPlace',
+						"animationType": "none",
+					})
+				}else{
+					uni.navigateTo({
+						url: '/pages/index/search/search',
+						"animationType": "none",
+					})
+				}
+				
 			},
 
 			// 轮播图改变触发
@@ -212,6 +265,7 @@
 
 			/* 获取标签列表*/
 			getTagsList(cnt) {
+				let index = this.tabCurrentIndex
 				this.$api.getContentTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let tagsList = this.$util.tryParseJson(res.data.c)
@@ -227,16 +281,66 @@
 							offset: this.offset,
 							// power: this.$constData.contentPaid[0].key
 						}
-						this.getContentsByTag(cnt1)
+						this.getContentsByTag(cnt1, index)
 					} else {
 						this.tagsList = []
 					}
 				})
 			},
 
+			getTourBases(cnt, index) {
+				this.$api.getTourBases(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.stopPullDownRefresh()
+						let list = this.$util.tryParseJson(res.data.c).list
+						for (let i = 0; i < list.length; i++) {
+							list[i].title = list[i].name
+							list[i].type = -1
+							list[i].show = Math.round(Math.random())
+							let time = new Date(list[i].createTime)
+							let y = time.getFullYear()
+							let m = 1 * time.getMonth() + 1
+							let d = time.getDate()
+							list[i].time = `${y}-${m}-${d}`
+
+							let data = this.$util.tryParseJson(list[i].data)
+							list[i].imgList = [{
+								src: data.img[0]
+							}]
+							
+							list[i].margin = this.getMargin(list[i].coordinate)
+						}
+						// console.log(list)
+						this.tryDataList(list, index)
+					} else {
+						console.log('error')
+					}
+				})
+			},
+			
+			getMargin(code){
+				let arr1 = this.location.split(',')
+				let arr2 = code.split(',')
+				
+				let lat1 = arr1[0]
+				let lat2 = arr2[0]
+				
+				let lng1 = arr1[1]
+				let lng2 = arr2[1]
+				
+				let radLat1 = lat1*Math.PI / 180.0;
+				let radLat2 = lat2*Math.PI / 180.0;
+				let a = radLat1 - radLat2;
+				let b = lng1*Math.PI / 180.0 - lng2*Math.PI / 180.0;
+				let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) +
+				Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)));
+				s = s *6378.137 ;// EARTH_RADIUS;
+				s = Math.round(s * 10000) / 10000;
+				return s.toFixed(2)
+			},
+
 			/*根据标签获取内容列表*/
-			getContentsByTag(cnt) {
-				let index = this.tabCurrentIndex
+			getContentsByTag(cnt, index) {
 				let list = []
 				if (this.tagsList[index].pageOver === true) {
 					return
@@ -267,7 +371,7 @@
 							let d = time.getDate()
 							list[i].time = `${y}-${m}-${d}`
 						}
-						this.tryDataList(list)
+						this.tryDataList(list, index)
 						uni.stopPullDownRefresh()
 					} else {
 						this.tagsList[index].pageOver = true //结束拉取
@@ -283,8 +387,7 @@
 			},
 
 			/* 添加新数据进数组并显示 */
-			tryDataList(list) {
-				let index = this.tabCurrentIndex
+			tryDataList(list, index) {
 				if (list.length < this.count) { //判断长度是否为等于设定this.count，是则可能还有剩余数据，否则无
 					this.tagsList[index].pageOver = true //结束拉取
 					this.tagsList[index].pageStatus = 'nomore'
@@ -310,6 +413,12 @@
 				this.tabCurrentIndex = _index
 				this.tagName = this.tagsList[_index].name
 				this.page = this.tagsList[_index].page
+				
+				if(this.tagName == '科普基地'){
+					this.searchTitle = '搜索科普基地'
+				}else{
+					this.searchTitle = '搜索(用户、资讯)'
+				}
 
 				let width = 0;
 				let nowWidth = 0;
@@ -328,12 +437,16 @@
 					this.scrollLeft = 0;
 				}
 
-				if (undefined != this.tagsList[_index].child) {
+				if (this.tagsList[_index].child) {
 					this.pageStatus = this.tagsList[_index].pageStatus
 					this.contents = this.tagsList[_index].child
 					return
 				}
 
+				this.getData(_index)
+			},
+			
+			getData(_index){
 				if (this.tagName == '活动') {
 					let cnt = {
 						module: this.constData.module, // String 所属模块
@@ -343,10 +456,22 @@
 						offset: this.offset, // Integer
 					}
 					this.contents = []
-					this.getContentsByTag(cnt)
+					this.getContentsByTag(cnt, _index)
 					return
 				}
-
+				
+				if (this.tagName == '科普基地') {
+					let cnt = {
+						moduleId: this.constData.module, // String 所属模块
+						userCoordinate: this.location, // String <选填> 用户定位经纬度
+						count: this.count, // Integer
+						offset: this.offset, // Integer
+					}
+					this.contents = []
+					this.getTourBases(cnt, _index)
+					return
+				}
+				
 				let cnt = {
 					module: this.constData.module, // String 所属模块
 					// status: this.constData.contentStatus[4].key, // Byte <选填> 状态
@@ -357,7 +482,7 @@
 					offset: this.offset, // Integer
 				}
 				this.contents = []
-				this.getContentsByTag(cnt)
+				this.getContentsByTag(cnt, _index)
 			},
 
 			/* 跳转至详情 */
@@ -371,14 +496,24 @@
 						url: `/pages/index/videoView/videoView?id=${info.id}`
 					})
 				} else if (info.type == this.constData.contentType[3].key) {
-					uni.navigateTo({
-						url: `/pages/index/activity/activity?contentId=${info.id}`
-					})
+					let data = this.$util.tryParseJson(info.data)
+					if(data.place){
+						uni.navigateTo({
+							url: `/pages/index/activity/activity?contentId=${info.id}`
+						})
+					}else{
+						uni.navigateTo({
+							url: `/pages/index/activity/noAct?contentId=${info.id}`
+						})
+					}
+				} else if(info.type == -1){
+					this.navToPlace(info)
 				}
 			}
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
+			let index = this.tabCurrentIndex
 			this.page = 1
 			this.tagsList[this.tabCurrentIndex].page = 1
 			this.contents = []
@@ -393,16 +528,29 @@
 			}
 			if (this.tagName == '活动') {
 				cnt.type = this.constData.contentType[3].key
+			} else if (this.tagName == '科普基地') {
+				let cnt1 = {
+					moduleId: this.constData.module, // String 所属模块
+					userCoordinate: this.location, // String <选填> 用户定位经纬度
+					count: this.count, // Integer
+					offset: this.offset, // Integer
+				}
+				this.getTourBases(cnt1, index)
+				return
 			} else if (this.tagName != '' && this.tagName != '全部') {
 				cnt.tags = `{"homeCotent":"${this.tagName}"}`
 			}
 			this.contents = []
-			this.getContentsByTag(cnt)
+			this.getContentsByTag(cnt, index)
 		},
 		//上滑加载更多
 		onReachBottom() {
+			let index = this.tabCurrentIndex
+			if (this.tagsList[index].pageOver == true) {
+				return
+			}
 			this.page += 1
-			this.tagsList[this.tabCurrentIndex].page = this.page
+			this.tagsList[index].page = this.page
 			let cnt = {
 				module: this.constData.module, // String 所属模块
 				// status: this.constData.contentStatus[4].key, // Byte <选填> 状态
@@ -411,12 +559,21 @@
 				count: this.count, // Integer
 				offset: (this.page - 1) * this.count, // Integer
 			}
-			if (this.tagName != '' && this.tagName != '全部') {
-				cnt.tags = `{"homeCotent":"${this.tagName}"}`
-			} else if (this.tagName == '活动') {
+			if (this.tagName == '活动') {
 				cnt.type = this.constData.contentType[3].key
+			} else if (this.tagName == '科普基地') {
+				let cnt1 = {
+					moduleId: this.constData.module, // String 所属模块
+					userCoordinate: this.location, // String <选填> 用户定位经纬度
+					count: this.count, // Integer
+					offset: (this.page - 1) * this.count, // Integer
+				}
+				this.getTourBases(cnt1, index)
+				return
+			} else if (this.tagName != '' && this.tagName != '全部') {
+				cnt.tags = `{"homeCotent":"${this.tagName}"}`
 			}
-			this.getContentsByTag(cnt)
+			this.getContentsByTag(cnt, index)
 		},
 
 	}
@@ -425,8 +582,8 @@
 <style lang="scss" scoped>
 	// 头部导航
 	.search_box {
-		margin-left: 64upx;
-		width: 500upx;
+		margin-left: 4em;
+		width: 450upx;
 		height: 64upx;
 		background-color: #f5f5f5;
 		border-radius: 32upx;
@@ -464,8 +621,8 @@
 
 		.nav-item {
 			display: inline-block;
-			width: 150upx;
 			height: 90upx;
+			padding: 0 20upx;
 			text-align: center;
 			line-height: 90upx;
 			font-size: 30upx;
@@ -489,8 +646,8 @@
 		.current {
 			color: #fb7299;
 			font-weight: bold;
-			font-size: $list-title-m;
-			transform: translateY(5upx);
+			font-size: $list-title;
+			// transform: translateY(5upx);
 
 			&:after {
 				width: 50%;
@@ -504,5 +661,25 @@
 		height: 200rpx;
 		background: #fff;
 		margin-top: 10rpx;
+	}
+
+	.cityBox {
+		position: absolute;
+		width: 4em;
+		white-space: nowrap;
+		font-size: $list-title;
+		display: inline-block;
+		top: 50%;
+		margin-top: -0.8em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.navBox {
+		position: relative;
+
+		.iconfont {
+			font-size: $list-title;
+		}
 	}
 </style>

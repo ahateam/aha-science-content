@@ -3,7 +3,7 @@
 		<view v-if="pageStatus == false">
 			<uniLoadMore status="loading"></uniLoadMore>
 		</view>
-		
+
 		<view class="video-wrapper" v-if="pageStatus">
 			<video class="video" :src="contentObj.url" controls objectFit="contain" :autoplay="false"></video>
 		</view>
@@ -14,8 +14,8 @@
 					<text class="title">{{detailData.title}}</text>
 					<view class="introduce">
 						<text class="introduce">{{contentObj.text}}</text>
-						<button type="primary" @click="createUserFavorite" class="followBtn" v-if="followStatus == false">关注</button>
-						<button type="primary" class="followBtn" v-else-if="followStatus == true">已关注</button>
+						<button @click="createUserFavorite" class="followBtn" v-if="followStatus == false">关注</button>
+						<button @click="delUserFavorite" class="followBtn" v-else-if="followStatus == true">已关注</button>
 						<!-- <text class="yticon icon-xia show-icon"></text> -->
 					</view>
 					<!-- 点赞评论等操作 -->
@@ -43,7 +43,7 @@
 
 				</view>
 				<!-- 评论区 -->
-				<comment :comment="comment" @upZan="upZan"></comment>
+				<comment :comment="comment" @upZan="upZan" @repaly="openReplay"></comment>
 				<!-- 评论end -->
 			</view>
 		</scroll-view>
@@ -67,11 +67,17 @@
 
 
 		<view class="bottom" v-if="pageStatus">
-			<view class="input-box">
+			<view class="input-box" v-if="!replayBox">
 				<text class="yticon icon-huifu"></text>
 				<input class="input" type="text" placeholder="点评一下把.." v-model="commentContent" placeholder-style="color:#adb1b9;" />
 			</view>
-			<text class="confirm-btn" @click="createComment">提交</text>
+			<text class="confirm-btn" @click="createComment" v-if="!replayBox">提交</text>
+
+			<view class="input-box" v-if="replayBox">
+				<text class="yticon icon-huifu"></text>
+				<input focus class="input" type="text" :placeholder="'@'+repalyName+'：'" v-model="commentContent" placeholder-style="color:#adb1b9;" />
+			</view>
+			<text class="confirm-btn" @click="replayAfter" v-if="replayBox">提交</text>
 		</view>
 	</view>
 </template>
@@ -127,10 +133,18 @@
 				totalCount: Number, //文章评论数
 				contentUpvote: Number, //文章点赞数
 				commentContent: '', //评论内容
+
+				//二級回復
+				repalyId: '', //评论id
+				replayBox: false, //二级回复盒子开关
+				repalyIndex: '', //回复列表下标
+				repalyName: '', //回复的人的name
 				/* 评论end */
 
 				followStatus: false,
-				pageStatus:false,
+				followId: '',
+
+				pageStatus: false,
 			}
 		},
 		onLoad(res) {
@@ -145,18 +159,52 @@
 			this.getAppraiseCount()
 		},
 		methods: {
+			openReplay(id, index, name) {
+				console.log('id:' + id + 'index:' + index + 'name:' + name)
+				this.repalyId = id
+				this.repalyIndex = index
+				this.repalyName = name
+				this.replayBox = true
+			},
+
+			//取关
+			delUserFavorite() {
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					id: this.followId, // Long id
+				}
+				this.$api.delUserFavorite(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title: '已取消关注',
+							icon: 'none'
+						})
+						this.followStatus = false
+					} else {
+						uni.showToast({
+							title: '服务器错误！',
+							icon: 'none'
+						})
+					}
+				})
+			},
+
 			//查询是否关注
-			getBoolFavoriteUser() {
+			getBoolFavoriteUser(id) {
 				let cnt = {
 					moduleId: this.$constData.module, // String 模块编号
 					userId: uni.getStorageSync('userId'), // Long 用户id
-					concernId: this.upInfo.id, // Long 被关注用户id,true没有关注
+					concernId: id, // Long 被关注用户id,true没有关注
 					count: 10, // int 
 					offset: 0, // int 
 				}
 				this.$api.getBoolFavoriteUser(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.followStatus = this.$util.tryParseJson(res.data.c)
+						let data = this.$util.tryParseJson(res.data.c)
+						this.followStatus = data.bool
+						if (this.followStatus == true) {
+							this.followId = data.info.id
+						}
 					} else {
 						console.log('失败')
 					}
@@ -180,6 +228,7 @@
 				}
 				this.$api.createUserFavorite(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.followId = this.$util.tryParseJson(res.data.c).id
 						uni.showToast({
 							title: '关注成功'
 						})
@@ -211,14 +260,14 @@
 					})
 					return
 				}
-				if(status == this.$constData.userStatus[1].key){
+				if (status == this.$constData.userStatus[1].key) {
 					uni.showToast({
-						title:'已被管理员禁言',
-						icon:'none'
+						title: '已被管理员禁言',
+						icon: 'none'
 					})
 					return
 				}
-				
+
 				let cnt = {
 					// module: this.$constData.module, // String 隶属
 					ownerId: this.contentId, // Long 内容编号
@@ -530,6 +579,7 @@
 						console.log(this.detailData)
 						this.pageStatus = true
 						this.getUserById(detailData.upUserId)
+						this.getBoolFavoriteUser(detailData.upUserId)
 						this.getCommentByContentId()
 					}
 				}))
@@ -545,7 +595,6 @@
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.upInfo = this.$util.tryParseJson(res.data.c)
 						console.log(this.upInfo)
-						this.getBoolFavoriteUser()
 					}
 				}))
 			}

@@ -3,17 +3,7 @@
 		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="activityTitle"></navBar>
 		<view class="imgBox" @click="navToPlace">
 			<image :src="imgSrc" mode="aspectFill"></image>
-			<view class="titleBox">
-				{{placeTitle}}
-			</view>
 		</view>
-		<view class="placeInfo">
-			*点击图片查看相关基地详情哦*
-		</view>
-		<!-- <view class="placeInfo">
-			<rich-text :nodes="placeInfo"></rich-text>
-		</view> -->
-
 
 		<view class="autoTitle">
 			活动介绍： <view class="liveBtn" @click="navLive">
@@ -59,16 +49,12 @@
 		data() {
 			return {
 				contentId: '', //活动id
-				placeId: '', //基地id
-
-				imgSrc: '', //基地图片
-				placeTitle: '', //基地标题
-				placeInfo: '', //基地简介
-
 				activityTitle: '', //活动标题
 				activityInfo: '', //活动简介
 				address: '', //活动地址
 				time: '', //活动时间
+				
+				imgSrc:'图片地址',
 
 				isRotate: 'false',
 
@@ -134,24 +120,6 @@
 
 			},
 
-			//获取基地详情
-			getTourBase(cnt) {
-				this.$api.getTourBase(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						console.log('基地详情------------------------↓')
-						let info = this.$util.tryParseJson(res.data.c)
-						console.log(info)
-						let data = this.$util.tryParseJson(info.data)
-						this.placeInfo = data.info
-						this.placeTitle = info.name
-						this.imgSrc = data.img[0]
-						this.shopSrc = info.buyTicketsLink
-					} else {
-						console.log('error')
-					}
-				})
-			},
-
 			datetime_to_unix(datetime) { //能转换的格式'yyyy-mm-dd hh:mm:ss'
 				let tmp_datetime = datetime.replace(/:/g, '-')
 				tmp_datetime = tmp_datetime.replace(/ /g, '-')
@@ -179,7 +147,7 @@
 							moduleId: this.$constData.module, // Long 模块编号
 							id: this.placeId, // Long id
 						}
-						this.getTourBase(cnt1)
+						this.imgSrc = data.imgList[0].src
 					} else {
 						console.log('Error')
 					}
@@ -220,19 +188,6 @@
 		font-weight: bold;
 	}
 
-	// .placeInfo {
-	// 	box-sizing: border-box;
-	// 	padding: $box-margin-top $box-margin-left;
-	// 	font-size: $list-title;
-	// 	text-indent: 2em;
-	// }
-
-	.placeInfo {
-		padding: 0 $box-margin-left;
-		font-size: $list-info;
-		color: #AAAAAA;
-	}
-
 	.autoTitle {
 		position: relative;
 		box-sizing: border-box;
@@ -271,10 +226,6 @@
 		background-color: rgba($color: #FFFFFF, $alpha: 1);
 		text-align: center;
 	}
-
-	// .shopBtn {
-	// 	background: linear-gradient(to right, rgba(255, 179, 89, 0.7), rgba(255, 179, 89, 0.6));
-	// }
 
 	.leftBox,
 	.rightBox {

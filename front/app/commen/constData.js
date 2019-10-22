@@ -13,6 +13,44 @@ constData.userStatus = [{
 	}
 ]
 
+/* 登录平台常量 */
+constData.providerList = [{
+		key: 0,
+		id: 'weixin',
+		name: '微信登录'
+	},
+	{
+		key: 1,
+		id: 'toutiao',
+		name: '头条登录'
+	},
+	{
+		key: 2,
+		id: 'qq',
+		name: 'qq登录'
+	},
+	{
+		key: 3,
+		id: 'sinaweibo',
+		name: '新浪微博登录'
+	},
+	{
+		key: 4,
+		id: 'xiaomi',
+		name: '小米登录'
+	},
+	{
+		key: 5,
+		id: 'alipay',
+		name: '支付宝登录'
+	},
+	{
+		key: 6,
+		id: 'baidu',
+		name: '百度登录'
+	}
+]
+
 /** 资讯内容状态*/
 constData.contentStatus = [{
 	key: 0,
@@ -43,24 +81,12 @@ constData.tagStatus = [{
 		val: '启用'
 	}],
 
-	/* 标签分组 */
-	constData.tagGroupType = [{
-			key: '0',
-			val: '首页'
-		},
-		{
-			key: '1',
-			val: 'VIP'
-		},
-		{
-			key: '2',
-			val: '任务墙'
-		},
-		{
-			key: '3',
-			val: '模板'
-		}
-	]
+/* 标签分组 */
+constData.tagGroupType = [{
+		key: '0',
+		val: '掌上科普首页'
+	}
+]
 
 /* 首页文章展示样式 */
 constData.contentShow = [{
@@ -107,19 +133,6 @@ constData.appraise = [{
 		key: '1',
 		val: '踩'
 	}
-]
-
-/* 渐变色数组 */
-constData.colorData = [
-	'linear-gradient(120deg,#69b5e1,#bedbed)',
-	'linear-gradient(90deg,#ff9a9e,#fad0c4)',
-	'linear-gradient(151deg,#a18cd1,#fbc2eb)',
-	'linear-gradient(65deg,#465EFB,#C2FFD8)',
-	'linear-gradient(71deg,#fcb69f,#ffecd2)',
-	'linear-gradient(123deg,#ff8177,#b12a5b)',
-	'linear-gradient(30deg,#114357,#F29492)',
-	'linear-gradient(40deg,#64b3f4,#c2e59c)',
-	'linear-gradient(50deg,#fc00ff,#00dbde)'
 ]
 
 export default constData

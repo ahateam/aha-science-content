@@ -41,14 +41,14 @@
 			return {
 				showWant: false, //猜你想搜显示
 				searchText: '', //搜索内容
-				hList: uni.getStorageSync('search_cache'), //搜索历史
+				hList: uni.getStorageSync('search_place'), //搜索历史
 				wantList: ['栏目1', '栏目2', '栏目3', '栏目4'], //初始化推荐
 			};
 		},
 		
 		onLoad() {
 			uni.setStorage({
-				key: 'search_cache',
+				key: 'search_place',
 				data: []
 			})
 		},
@@ -73,13 +73,13 @@
 					return false
 				} else {
 					uni.getStorage({
-						key: 'search_cache',
+						key: 'search_place',
 						success: (res) => {
 							let list = res.data
 							console.log(list)
 							console.log('-------------------------')
 							uni.navigateTo({
-								url: `/pages/index/search/searchList/searchList?value=${this.searchText}`,
+								url: `/pages/index/searchPlace/searchList/searchList?value=${this.searchText}`,
 								"animationType": "none",
 							})
 							if (list.length > 5) {
@@ -100,7 +100,7 @@
 							}
 							this.hList = list
 							uni.setStorage({
-								key: 'search_cache',
+								key: 'search_place',
 								data: this.hList
 							})
 

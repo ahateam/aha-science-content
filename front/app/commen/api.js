@@ -83,7 +83,7 @@ api.getAccessToken = function(cnt, callback) {
 }
 //微信登录 
 api.loginByWxOpenId = function(cnt, callback) {
-	util.call(baseUrl + '/weixin/loginByWxOpenId', cnt, callback)
+	util.call(baseUrl + '/ZskpUserService/wxlogin', cnt, callback)
 }
 
 //头条获取openid  
@@ -105,6 +105,17 @@ api.alipayGetSessionkey = function(cnt, callback) {
 api.loginByAlipayOpenId = function(cnt, callback) {
 	util.call(baseUrl + '/otherLogin/loginByAlipayOpenId', cnt, callback)
 }
+
+//手机号绑定 
+api.bindingPhone = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/bindingPhone', cnt, callback)
+}
+
+//微信绑定 
+api.bindingwx = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/bindingwx', cnt, callback)
+}
+
 /*************************************** 点赞评论接口 ********************************************/
 //点赞 
 api.createUpvote = function(cnt, callback) {
@@ -132,7 +143,7 @@ api.getTourBase = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/getTourBase', cnt, callback)
 }
 
-//查询科普基地的景点 
+//查询科普基地景点 
 api.getTourBases = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/getTourBases', cnt, callback)
 }
@@ -165,6 +176,11 @@ api.createUserFavorite = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpUserService/createUserFavorite', cnt, callback)
 }
 
+//取消关注
+api.delUserFavorite = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/delUserFavorite', cnt, callback)
+}
+
 //查询用户关注用户列表 
 api.getFavoriteUser = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpUserService/getFavoriteUser', cnt, callback)
@@ -176,9 +192,13 @@ api.getBoolFavoriteUser = function(cnt, callback) {
 }
 
 /*回复*/
-	
+//获取回列表	
 api.getReplyList = function(cnt, callback) {
 	util.call(baseUrl + '/reply/getReplyList', cnt, callback)
 }
 
+//二级评论 
+api.createComment = function(cnt, callback) {
+	util.call(baseUrl + '/reply/createComment', cnt, callback)
+}
 export default api

@@ -10,12 +10,13 @@
 		<view class="autoInput">
 			<input type="text" v-model="phone" placeholder="请填写电话号码" />
 		</view>
-
+		
 		<view class="autoInput">
 			<input type="text" v-model="people" placeholder="参与人数" />
 		</view>
-
+		
 		<view class="fixBox">
+			<view class="info">*报名后可在报名中心查看哦*</view>
 			<wButton text="报 名" :rotate="isRotate" @click.native="signUp" style="margin-top: 96upx;"></wButton>
 		</view>
 	</view>
@@ -122,5 +123,12 @@
 		position: fixed;
 		bottom: 20upx;
 		width: 100%;
+	}
+	
+	.info{
+		text-align: center;
+		font-size: $list-info;
+		color: #AAAAAA;
+		margin-bottom: 10upx;
 	}
 </style>

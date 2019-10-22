@@ -72,42 +72,73 @@
 				"navigationBarTitleText": "搜索",
 				"navigationStyle": "custom"
 			}
-		}
-	    ,{
-            "path" : "pages/index/search/searchList/searchList",
-            "style" : {
+		}, {
+			"path": "pages/index/search/searchList/searchList",
+			"style": {
 				"navigationBarTitleText": "搜索",
 				"navigationStyle": "custom"
 			}
-        }
-        ,{
-            "path" : "pages/index/activity/activity",
-            "style" : {
+		}, {
+			"path": "pages/index/activity/activity",
+			"style": {
 				"navigationBarTitleText": "活动",
 				"navigationStyle": "custom"
 			}
-        },
+		},
 		{
-		    "path" : "pages/index/activity/signUp",
-		    "style" : {
+			"path": "pages/index/activity/noAct",
+			"style": {
+				"navigationBarTitleText": "活动",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/index/activity/signUp",
+			"style": {
 				"navigationBarTitleText": "活动报名",
 				"navigationStyle": "custom"
 			}
+		}, {
+			"path": "pages/user/userData/userData",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/follow/channel/channel",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/user/shopping/shopping",
+			"style": {}
+		},
+		{
+			"path": "pages/user/userLogin/bindPhone",
+			"style": {
+				"navigationBarTitleText": "绑定手机"
+			}
+		}, {
+			"path": "pages/user/userSpace/userSpace",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/index/tourBases/tourBases",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/index/searchPlace/searchPlace",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/index/searchPlace/searchList/searchList",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
-        ,{
-            "path" : "pages/user/userData/userData",
-            "style" : {
-				"navigationStyle": "custom"
-			}
-        }
-        ,{
-            "path" : "pages/follow/channel/channel",
-            "style" : {
-				"navigationStyle": "custom"
-			}
-        }
-        ,{
-            "path" : "pages/user/shopping/shopping",
+	    ,{
+            "path" : "pages/Reply/replyView/replyView",
             "style" : {}
         }
     ],

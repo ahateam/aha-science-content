@@ -3,7 +3,7 @@
 		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="title"></navBar>
 		<view class="topBox">
 			<image :src="channelInfo.data.img" mode="aspectFill"></image>
-			<view class="block"></view>
+			<!-- <view class="block"></view> -->
 			<view class="infoBox">
 				{{channelInfo.data.info}}
 			</view>

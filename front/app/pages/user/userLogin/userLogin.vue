@@ -13,22 +13,22 @@
 			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin" style="margin-top: 96upx;"></wButton>
 
 			<!-- 其他登录 -->
-			<!-- <view class="other_login cuIcon" style="margin-top: 206upx;">
+			<view class="other_login cuIcon" style="margin-top: 206upx;">
 				<view class="login_icon">
-					<button class="cuIcon-weixin otherBtn" @click="login_weixin" open-type="getUserInfo"></button>
+					<button class="cuIcon-weixin otherBtn" @click="login_weixin"></button>
 				</view>
-				<view class="login_icon">
+				<!-- <view class="login_icon">
 					<button class="iconfont kk-big-Pay otherBtn" @click="login_alipay"></button>
 				</view>
 				<view class="login_icon">
 					<button class="iconfont kk-toutiao otherBtn" @click="login_toutiao"></button>
-				</view>
-			</view> -->
+				</view> -->
+			</view>
 
 			<!-- 底部信息 -->
 			<view class="footer">
 				<navigator url="/pages/user/userLogin/forget" open-type="navigate">找回密码</navigator>
-				<text>|</text>
+				<text style="font-size: 26upx;">|</text>
 				<navigator url="/pages/user/userLogin/register" open-type="navigate">注册账号</navigator>
 			</view>
 		</view>
@@ -106,7 +106,7 @@
 						uni.setStorageSync('status', userInfo.status)
 						if (userInfo.company) {
 							uni.setStorageSync('company', userInfo.company)
-						}else{
+						} else {
 							uni.setStorageSync('company', '你还没有提交单位哦')
 						}
 						uni.switchTab({
@@ -195,11 +195,6 @@
 			},
 
 			login_weixin() {
-				this.appWxLogin()
-			},
-
-			//微信app登录
-			appWxLogin() {
 				uni.login({
 					success: (res) => {
 						uni.showLoading({
@@ -214,18 +209,16 @@
 					}
 				})
 			},
+
 			appGetUserInfo(openId) {
 				uni.getUserInfo({
 					provider: 'weixin',
 					success: (infoRes) => {
-						let data = {
-							userHead: infoRes.userInfo.avatarUrl
-						}
-						data = JSON.stringify(data)
 						let cnt = {
-							wxOpenId: openId,
 							name: infoRes.userInfo.nickName,
-							ext: data
+							moduleId: this.$constData.module, // String 模块编号
+							openid: openId, // String openid
+							head: infoRes.userInfo.avatarUrl, // String 头像
 						}
 						this.wxLoginEnd(cnt)
 					}
@@ -236,22 +229,28 @@
 				this.$api.loginByWxOpenId(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let userData = this.$util.tryParseJson(res.data.c)
-						console.log(userData)
-						let userId = userData.id
-						let userName = userData.name
-						let userHead = this.$util.tryParseJson(userData.ext).userHead
-						/* 将用户信息存至本地 */
-						uni.setStorageSync('userId', userId)
-						uni.setStorageSync('userName', userName)
-						uni.setStorageSync('userHead', userHead)
-						uni.hideLoading()
-						uni.switchTab({
-							url: '/pages/user/user'
-						})
-						uni.showToast({
-							title: '已登录！',
-							duration: 1000
-						});
+						if (userData.phone) {
+							console.log(userData)
+							let userId = userData.id
+							let userName = userData.name
+							let userHead = this.$util.tryParseJson(userData.ext).userHead
+							/* 将用户信息存至本地 */
+							uni.setStorageSync('userId', userId)
+							uni.setStorageSync('userName', userName)
+							uni.setStorageSync('userHead', userHead)
+							uni.hideLoading()
+							uni.switchTab({
+								url: '/pages/user/user'
+							})
+							uni.showToast({
+								title: '已登录！'
+							})
+						} else {
+							uni.hideLoading()
+							uni.navigateTo({
+								url: `/pages/user/userLogin/bindPhone?id=${userData.id}`
+							})
+						}
 					} else {
 						console.log(res.data.c)
 					}

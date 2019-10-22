@@ -146,6 +146,13 @@
       "unicode_decimal": 58885
     },
     {
+      "icon_id": "9336343",
+      "name": "定位",
+      "font_class": "location",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
       "icon_id": "9704704",
       "name": "夸赞",
       "font_class": "kuazan",

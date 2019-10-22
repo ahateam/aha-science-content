@@ -2,53 +2,55 @@
 	<view class="body">
 		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF">推荐</navBar>
 		<!-- 顶部选项卡 -->
-		<view v-if="pageLoading">
-			<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
-				<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
-				 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
-			</scroll-view>
-			<view style="padding-top: 90upx;"></view>
+		<view v-if="loginStatus">
+			<view v-if="pageLoading">
+				<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
+					<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
+					 :id="'tab'+index" @click="changeTag(index)">{{item.name}}</view>
+				</scroll-view>
+				<view style="padding-top: 90upx;"></view>
 
-			<scroll-view scroll-x class="userList" v-if="tabCurrentIndex == 0">
-				<view v-if="userList.length == 0" class="noUser">
-					还没有关注其他用户哦
-				</view>
-				<view class="item-user" v-for="(item,index) in userList" :key="index">
-					<image :src="item.user.head" mode="aspectFill"></image>
-					<view class="userName">
-						{{item.user.name}}
+				<scroll-view scroll-x class="userList" v-if="tabCurrentIndex == 0">
+					<view v-if="userList.length == 0" class="noUser">
+						还没有关注其他用户哦
+					</view>
+					<view class="item-user" v-for="(item,index) in userList" :key="index" @click="navToUser(item)">
+						<image :src="item.user.head" mode="aspectFill"></image>
+						<view class="userName">
+							{{item.user.name}}
+						</view>
+					</view>
+				</scroll-view>
+
+				<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1" style="background-color: #FFFFFF;">
+					<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
+						<view v-if="item.show == constData.contentShow[0].key">
+							<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
+						</view>
+
+						<view v-else-if="item.show == constData.contentShow[1].key">
+							<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
+						</view>
+
+						<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
+							<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+						</view>
+					</view>
+					<view v-else-if="item.type == constData.contentType[0].key">
+						<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
 					</view>
 				</view>
-			</scroll-view>
 
-			<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1" style="background-color: #FFFFFF;">
-				<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
-					<view v-if="item.show == constData.contentShow[0].key">
-						<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
-					</view>
-
-					<view v-else-if="item.show == constData.contentShow[1].key">
-						<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
-					</view>
-
-					<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-						<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+				<view :hidden="tabCurrentIndex == 0">
+					<view v-for="(item,index) in channelList" :key="index" @click="navChannle(item)">
+						<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
 					</view>
 				</view>
-				<view v-else-if="item.type == constData.contentType[0].key">
-					<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
-				</view>
+
+				<uni-load-more :status="pageStatus"></uni-load-more>
 			</view>
-
-			<view :hidden="tabCurrentIndex == 0">
-				<view v-for="(item,index) in channelList" :key="index" @click="navChannle(item)">
-					<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
-				</view>
-			</view>
-
-			<uni-load-more :status="pageStatus"></uni-load-more>
 		</view>
-		<view v-if="pageLoading == false" class="noLoading">
+		<view v-if="pageLoading == false||loginStatus == false" class="noLoading">
 			没有获取到数据哦
 		</view>
 	</view>
@@ -78,6 +80,7 @@
 		},
 		data() {
 			return {
+				loginStatus: false,
 
 				constData: this.$constData, //全局变量引入，防止头条html中报错
 
@@ -126,7 +129,40 @@
 			this.getAUserFavorite(cnt)
 			this.getFavoriteUser(cnt)
 		},
+		onShow() {
+			let userId = uni.getStorageSync('userId')
+			if (userId == '' || userId == '1234567890') {
+				this.loginStatus = false
+			} else {
+				if (userId == this.userId) {
+					console.log('和之前一样的用户')
+					return
+				}
+				this.loginStatus = true
+				this.contents = []
+				this.userList = []
+				this.page = 1
+				this.tabCurrentIndex = 0
+				this.tagsList[0].page = 1
+				this.tagsList[0].pageOver = false
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					userId: userId, // Long 用户id
+					count: this.count, // int 
+					offset: this.offset, // int 
+				}
+				this.getAUserFavorite(cnt)
+				this.getFavoriteUser(cnt)
+			}
+		},
 		methods: {
+			//跳转对应用户个人中心
+			navToUser(item) {
+				uni.navigateTo({
+					url: `/pages/user/userSpace/userSpace?id=${item.user.id}`
+				})
+			},
+
 			//获取专题
 			getChannels(cnt) {
 				let index = this.tabCurrentIndex
@@ -184,6 +220,7 @@
 				this.pageStatus = 'loading'
 				this.$api.getAUserFavorite(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.userId = cnt.userId
 						this.pageLoading = true
 						let list = this.$util.tryParseJson(res.data.c)
 						for (let i = 0; i < list.length; i++) {
@@ -299,29 +336,13 @@
 			/* 跳转至详情 */
 			navToInfo(info) {
 				if (info.type == this.constData.contentType[2].key || info.type == this.constData.contentType[0].key) {
-					if (info.upChannelId) {
-						uni.navigateTo({
-							url: `/pages/vip/column/details/details?id=${info.id}`
-						})
-					} else {
-						uni.navigateTo({
-							url: `/pages/index/articleView/articleView?id=${info.id}`
-						})
-					}
-
+					uni.navigateTo({
+						url: `/pages/index/articleView/articleView?id=${info.id}`
+					})
 				} else if (info.type == this.constData.contentType[1].key) {
-					// uni.navigateTo({
-					// 	url: `/pages/index/videoView/videoView?id=${info.id}&id1=${info._id}`
-					// })
-					if (info.upChannelId) {
-						uni.navigateTo({
-							url: `/pages/vip/column/detailsVideo/detailsVideo?id=${info.id}`
-						})
-					} else {
-						uni.navigateTo({
-							url: `/pages/index/videoView/videoView?id=${info.id}`
-						})
-					}
+					uni.navigateTo({
+						url: `/pages/index/videoView/videoView?id=${info.id}`
+					})
 				}
 			},
 
