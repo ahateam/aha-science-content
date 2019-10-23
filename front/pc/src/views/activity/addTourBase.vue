@@ -12,7 +12,12 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 基地简介：</span>
-				<el-input type="textarea" placeholder="请输入简介" autosize v-model="info" style="display: inline-block;width: 400px"></el-input>
+				<el-row style="margin-bottom: 10px">
+					<el-col :span="2" style="min-height: 20px"></el-col>
+					<el-col :span="20">
+						<div id="editor"></div>
+					</el-col>
+				</el-row>
 			</el-col>
 		</el-row>
 
@@ -20,7 +25,8 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 基地地点：</span>
-				<el-input placeholder="请输入基地地址" v-model="address" style="display: inline-block;width: 400px"></el-input>
+				<v-distpicker @selected="onSelected" style="display: inline-block;"></v-distpicker>
+				<el-input placeholder="详细地址:如道路街道,小区" v-model="detail_address" style="width: 300px;margin-left: 5px;"></el-input>
 			</el-col>
 		</el-row>
 
@@ -28,8 +34,9 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 营业时间：</span>
-				<el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-				</el-date-picker>
+				<el-time-picker is-range arrow-control v-model="time" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
+				 placeholder="选择时间范围">
+				</el-time-picker>
 			</el-col>
 		</el-row>
 
@@ -41,7 +48,6 @@
 				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
 			</el-col>
 		</el-row>
-
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -54,7 +60,7 @@
 
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
-			<el-button type="primary" @click="createBtn" style=";padding: 15px 50px">提交
+			<el-button type="primary" @click="createBtn" style="margin-bottom: 100px;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
 
@@ -62,20 +68,26 @@
 </template>
 
 <script>
+	import wangEditor from 'wangeditor'
 	import ossAuth from '@/commen/oss/ossAuth.js'
-
+	import VDistpicker from 'v-distpicker'
 	let client = ossAuth.client
 
 	export default {
+		components: {
+			VDistpicker
+		},
 		name: "addTourBase",
 		data() {
 			return {
+				detail_address: '',
+				editor: {},
 				homeTagName: '',
 				homeTag: '',
 				imgSrc: '',
 				imgList: [],
 				tag: '',
-				time: '',
+				time: [new Date(2019, 10, 20, 8, 30), new Date(2019, 10, 20, 17, 30)],
 				workTime: '',
 				shopLink: '',
 				address: '',
@@ -137,49 +149,42 @@
 				}
 			},
 
-			getTime(time) {
-				let y = time.getFullYear()
-				let m = time.getMonth() * 1 + 1
-				let d = time.getDate()
-				return `${y}-${m}-${d}`
+			getTime(date) {
+				let h = date.getHours();
+				let m = date.getMinutes();
+				let s = date.getSeconds();
+				return `${h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`
 			},
 
 			createBtn() {
-				if (this.title == '') {
-					this.$message({
-						message: '请填写名称',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.info == '') {
-					this.$message({
-						message: '请填写简介',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.imgSrc == '') {
-					this.$message({
-						message: '请上传封面图',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.place == '') {
-					this.$message({
-						message: '请填写地点',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.time == '') {
-					this.$message({
-						message: '请选择营业时间',
-						type: 'warning'
-					})
-					return
-				}
+				// if (this.title == '') {
+				// 	this.$message({
+				// 		message: '请填写名称',
+				// 		type: 'warning'
+				// 	})
+				// 	return
+				// }
+				// if (this.imgSrc == '') {
+				// 	this.$message({
+				// 		message: '请上传封面图',
+				// 		type: 'warning'
+				// 	})
+				// 	return
+				// }
+				// if (this.place == '') {
+				// 	this.$message({
+				// 		message: '请填写地点',
+				// 		type: 'warning'
+				// 	})
+				// 	return
+				// }
+				// if (this.time == '') {
+				// 	this.$message({
+				// 		message: '请选择营业时间',
+				// 		type: 'warning'
+				// 	})
+				// 	return
+				// }
 				this.editorBtn()
 			},
 			editorBtn() {
@@ -189,17 +194,18 @@
 				let time2 = new Date(this.time[1])
 				let newTime = this.getTime(time1) + '至' + this.getTime(time2)
 				let data = {
-					info: this.info,
+					info: this.editor.txt.html(),
 					img: this.imgList,
 					workTime: newTime,
 				}
 				let cnt = {
 					moduleId: this.$constData.module,
-					name:this.title, 
-					address: this.address,
+					name: this.title,
+					address: this.address + '' + this.detail_address,
 					data: JSON.stringify(data),
-					buyTicketsLink: this.shopLink, 
+					buyTicketsLink: this.shopLink,
 				}
+				console.log(cnt)
 				that.$api.createTourBase(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
@@ -216,8 +222,49 @@
 					}
 				}))
 			},
+			onSelected(data) {
+				let temp = data.province.value + '' + data.city.value + '' + data.area.value;
+				this.address = temp;
+			}
 		},
-		mounted() {}
+		mounted() {
+			this.editor = new wangEditor('#editor')
+			let _this = this
+			this.editor.customConfig.customUploadImg = function(files, insert) {
+				try {
+					let date = new Date()
+					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+						encodeURIComponent(files[0].name)
+					client.multipartUpload(tmpName, files[0], {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						console.log(address)
+						let _index = address.indexOf('?')
+						if (_index == -1) {
+							_this.imgSrc = address
+						} else {
+							_this.imgSrc = address.substring(0, _index)
+						}
+						insert(_this.imgSrc)
+					}).catch(err => {
+						console.log(err)
+					})
+
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			}
+			this.editor.create();
+		}
 	}
 </script>
 
@@ -229,5 +276,12 @@
 		font-weight: 600;
 		color: #666;
 		text-align: right;
+	}
+
+	.disabled-select>>>select {
+		background-color: #f5f7fa;
+		border-color: #e4e7ed;
+		color: #c0c4cc;
+		cursor: not-allowed;
 	}
 </style>
