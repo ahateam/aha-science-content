@@ -46,13 +46,6 @@
 			};
 		},
 		
-		onLoad() {
-			uni.setStorage({
-				key: 'search_cache',
-				data: []
-			})
-		},
-		
 		methods: {
 			startRecognize() { //语音输入
 				let options = {}

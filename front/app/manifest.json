@@ -21,7 +21,8 @@
             "Speech" : {},
             "VideoPlayer" : {},
             "Maps" : {},
-            "LivePusher" : {}
+            "LivePusher" : {},
+            "Share" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -41,6 +42,7 @@
                     "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
                     "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
                     "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
@@ -57,7 +59,13 @@
             "ios" : {},
             /* SDK配置 */
             "sdkConfigs" : {
-                "oauth" : {},
+                "oauth" : {
+                    "weixin" : {
+                        "appid" : "wxc5a7520814c89f2d",
+                        "appsecret" : "0eb2041974c520362e3550db68d889bd",
+                        "UniversalLinks" : ""
+                    }
+                },
                 "speech" : {
                     "ifly" : {}
                 },
@@ -65,6 +73,12 @@
                     "baidu" : {
                         "appkey_ios" : "SOOpwhK5pwWkiC6X0TWgQY5RHGdlQGgt",
                         "appkey_android" : "SOOpwhK5pwWkiC6X0TWgQY5RHGdlQGgt"
+                    }
+                },
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wxc5a7520814c89f2d",
+                        "UniversalLinks" : ""
                     }
                 }
             },

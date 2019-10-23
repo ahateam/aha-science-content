@@ -48,12 +48,23 @@
 
 			</view>
 
-			<view class="autoBox" @click="changeLevel">
+			<view class="autoBox" @click="createApplyAuthority">
 				<view class="leftBox">
 					权限
 				</view>
 				<view class="rightBox">
 					<text class="infoBox">正式会员</text>
+					<text class="iconfont kk-xiayibu leftMargin"></text>
+				</view>
+			</view>
+
+			<view class="autoBox" @click="changeLevel">
+				<view class="leftBox">
+					微信号
+				</view>
+				<view class="rightBox">
+					<text class="infoBox" v-if="openId">已绑定</text>
+					<text class="infoBox" v-if="openId == ''">未绑定</text>
 					<text class="iconfont kk-xiayibu leftMargin"></text>
 				</view>
 			</view>
@@ -88,16 +99,37 @@
 				companyBox: false,
 
 				userNameBox: false,
+
+				openId: uni.getStorageSync('openId'),
 			}
 		},
 		methods: {
-			changeLevel(){
-				uni.showToast({
-					title:'功能开发中~',
-					icon:'none'
+			createApplyAuthority() {
+				let cnt = {
+					moduleId: this.$constData.module, // Long 模块编号
+					userId: uni.getStorageSync('userId'), // Long 用户id
+				}
+				this.$api.createApplyAuthority(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title:'已申请，待审核'
+						})
+					}else{
+						uni.showToast({
+							title:'错误！',
+							icon:'none'
+						})
+					}
 				})
 			},
-			
+
+			changeLevel() {
+				uni.showToast({
+					title: '功能开发中~',
+					icon: 'none'
+				})
+			},
+
 			//打开修改盒子
 			openBox(e) {
 				if (e == 'name') {
@@ -136,7 +168,7 @@
 						this.userUnit = this.company
 						this.companyBox = false
 						uni.showToast({
-							title:'修改成功！'
+							title: '修改成功！'
 						})
 					}
 				})

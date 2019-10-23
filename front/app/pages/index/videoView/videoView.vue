@@ -27,18 +27,18 @@
 							</button>
 						</view>
 						<view class="action-item">
-							<button type="primary" open-type="share">
+							<button type="primary" @click="shareBtn">
 								<i class="yticon iconfont kk-share"></i>
 								<text>分享</text>
 							</button>
 						</view>
 
-						<view class="action-item">
+						<!-- <view class="action-item">
 							<button type="primary" @click="createHb">
 								<i class="yticon iconfont kk-friendzone centerBox"></i>
 								<text>朋友圈</text>
 							</button>
-						</view>
+						</view> -->
 					</view>
 
 				</view>
@@ -165,6 +165,30 @@
 				this.repalyIndex = index
 				this.repalyName = name
 				this.replayBox = true
+			},
+			
+			//分享按钮
+			shareBtn() {
+				uni.share({
+					provider: "weixin",
+					scene: "WXSceneSession",
+					type: 0,
+					href: "http://weapp.datanc.cn/science/app/100/android/zskp.apk",
+					title: "掌上科普",
+					summary: "我正在使用掌上科普app，赶紧跟我一起来体验！",
+					imageUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572435385&di=3633a97230e161bda396cb159418e90c&imgtype=jpg&er=1&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201210%2F05%2F20121005184845_rSCUj.thumb.700_0.jpeg",
+					success: function(res) {
+						uni.showToast({
+							title:'分享成功！'
+						})
+					},
+					fail: function(err) {
+						uni.showToast({
+							title:'分享失败',
+							icon:'none'
+						})
+					}
+				})
 			},
 
 			//取关
@@ -370,6 +394,15 @@
 
 			//点赞
 			upvote(conid, index) {
+				let userId = uni.getStorageSync('userId')
+				if (userId == '' || userId == '1234567890') {
+					uni.showToast({
+						title: '请登录',
+						duration: 1000,
+						icon: 'none'
+					})
+					return
+				}
 				if (this.upvoteStatus == true) {
 					uni.showToast({
 						title: '你已经赞过他啦',
@@ -384,14 +417,6 @@
 
 			createUpvote(index) {
 				let userId = uni.getStorageSync('userId')
-				if (userId == '' || userId == '1234567890') {
-					uni.showToast({
-						title: '请登录',
-						duration: 1000,
-						icon: 'none'
-					})
-					return
-				}
 				let cnt = {
 					ownerId: this.commentId, // Long 内容编号/评论编号
 					userId: 0 + userId, // Long 用户编号

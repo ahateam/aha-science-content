@@ -35,18 +35,18 @@
 							</button>
 						</view>
 						<view class="action-item">
-							<button type="primary" open-type="share" @click="shareBtn">
+							<button type="primary" @click="shareBtn">
 								<i class="yticon iconfont kk-share"></i>
 								<text>分享</text>
 							</button>
 						</view>
 
-						<view class="action-item">
+						<!-- <view class="action-item">
 							<button type="primary" @click="createHb">
 								<i class="yticon iconfont kk-friendzone centerBox"></i>
 								<text>朋友圈</text>
 							</button>
-						</view>
+						</view> -->
 					</view>
 					<!-- 点赞分享end -->
 				</view>
@@ -178,6 +178,24 @@
 			},
 
 			replayAfter() {
+				let userId = uni.getStorageSync('userId')
+				let status = uni.getStorageSync('status')
+				if (userId == '' || userId == '1234567890') {
+					uni.showToast({
+						title: '登录后可评论',
+						icon: 'none'
+					})
+					return
+				}
+
+				if (status == this.$constData.userStatus[1].key) {
+					uni.showToast({
+						title: '已被管理员禁言',
+						icon: 'none'
+					})
+					return
+				}
+
 				let cnt = {
 					replyId: this.repalyId, // Long 回复评论id
 					upUserId: uni.getStorageSync('userId'), // Long 提交者编号
@@ -198,7 +216,7 @@
 							upUserName: uni.getStorageSync('userName'),
 							text: this.commentContent
 						}
-						this.comment[this.repalyIndex].comment.list.push(user)
+						this.comment[this.repalyIndex].comment.list.splice(0, 0, user)
 						this.commentContent = ''
 					} else {
 						uni.showToast({
@@ -413,6 +431,15 @@
 
 			//点赞
 			upvote(conid, index) {
+				let userId = uni.getStorageSync('userId')
+				if (userId == '' || userId == '1234567890') {
+					uni.showToast({
+						title: '请登录',
+						duration: 1000,
+						icon: 'none'
+					})
+					return
+				}
 				if (this.upvoteStatus == true) {
 					uni.showToast({
 						title: '你已经赞过他啦',
@@ -426,14 +453,6 @@
 			},
 			createUpvote(index) {
 				let userId = uni.getStorageSync('userId')
-				if (userId == '' || userId == '1234567890') {
-					uni.showToast({
-						title: '请登录',
-						duration: 1000,
-						icon: 'none'
-					})
-					return
-				}
 				let cnt = {
 					ownerId: this.commentId, // Long 内容编号/评论编号
 					userId: 0 + userId, // Long 用户编号
@@ -647,20 +666,27 @@
 
 			//分享按钮
 			shareBtn() {
-				console.log('点击分享')
-				// #ifdef APP-PLUS
-				this.appShare()
-				// #endif
+				uni.share({
+					provider: "weixin",
+					scene: "WXSceneSession",
+					type: 0,
+					href: "http://weapp.datanc.cn/science/app/100/android/zskp.apk",
+					title: "掌上科普",
+					summary: "我正在使用掌上科普app，赶紧跟我一起来体验！",
+					imageUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572435385&di=3633a97230e161bda396cb159418e90c&imgtype=jpg&er=1&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201210%2F05%2F20121005184845_rSCUj.thumb.700_0.jpeg",
+					success: function(res) {
+						uni.showToast({
+							title:'分享成功！'
+						})
+					},
+					fail: function(err) {
+						uni.showToast({
+							title:'分享失败',
+							icon:'none'
+						})
+					}
+				})
 			},
-
-			//app分享
-			appShare() {
-				// uni.share({
-				// 	provider:this.$constData.providerList[0].id,
-				// 	scene:'WXSceneSession'
-
-				// })
-			}
 		},
 		onShareAppMessage(res) {
 			let pages = getCurrentPages() //获取加载的页面

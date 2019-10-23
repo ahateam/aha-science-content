@@ -25,7 +25,7 @@
 
 		<!-- 搜索内容列表 -->
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
-			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
+			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
 				<view v-if="item.show == constData.contentShow[0].key">
 					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></trans-video>
 				</view>

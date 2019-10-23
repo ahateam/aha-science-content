@@ -3,6 +3,9 @@ const constData = {}
 /** 首页常量*/
 constData.module = 1180
 
+/* 版本常量 */
+ constData.version = 100
+
 constData.userStatus = [{
 		key: 0,
 		val: '正常'

@@ -46,13 +46,6 @@
 			};
 		},
 		
-		onLoad() {
-			uni.setStorage({
-				key: 'search_place',
-				data: []
-			})
-		},
-		
 		methods: {
 			startRecognize() { //语音输入
 				let options = {}
@@ -103,11 +96,9 @@
 								key: 'search_place',
 								data: this.hList
 							})
-
 						},
-						fail: () => {
-							console.log('error')
-							this.hList = []
+						fail: (err) => {
+							console.log(err)
 							this.hList.push(this.searchText)
 							uni.setStorage({
 								key: 'search_cache',

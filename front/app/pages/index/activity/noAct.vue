@@ -1,7 +1,7 @@
 <template>
 	<view style="padding-bottom: 120upx;">
 		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="activityTitle"></navBar>
-		<view class="imgBox" @click="navToPlace">
+		<view class="imgBox">
 			<image :src="imgSrc" mode="aspectFill"></image>
 		</view>
 
@@ -29,7 +29,7 @@
 		</view>
 
 		<view class="fixBox">
-			<button class="signUpBtn" type="primary" @click="signUp">报	名</button>
+			<button class="signUpBtn" type="primary" @click="signUp">报 名</button>
 		</view>
 
 
@@ -53,8 +53,8 @@
 				activityInfo: '', //活动简介
 				address: '', //活动地址
 				time: '', //活动时间
-				
-				imgSrc:'图片地址',
+
+				imgSrc: '图片地址',
 
 				isRotate: 'false',
 
@@ -69,12 +69,6 @@
 			this.getContent(cnt)
 		},
 		methods: {
-			//跳转基地
-			navToPlace() {
-				uni.navigateTo({
-					url: `/pages/index/tourBases/tourBases?id=${this.placeId}`
-				})
-			},
 
 			//直播
 			navLive() {
@@ -156,9 +150,17 @@
 
 			//跳转报名
 			signUp() {
-				uni.navigateTo({
-					url: `/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
-				})
+				let user = uni.getStorageSync('userId')
+				if (user == '' || user == '1234567890') {
+					uni.showToast({
+						title: '登录后可报名',
+						icon: 'none'
+					})
+				} else {
+					uni.navigateTo({
+						url: `/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
+					})
+				}
 			},
 		}
 	}

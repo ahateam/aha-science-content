@@ -112,7 +112,6 @@
 
 	.placeInfo {
 		box-sizing: border-box;
-		text-align: center;
 		padding: $box-margin-top $box-margin-left;
 		font-size: $list-title;
 		text-indent: 2em;

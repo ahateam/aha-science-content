@@ -13,22 +13,7 @@
 
 		<!-- 搜索内容列表 -->
 		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
-			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
-				<view v-if="item.show == constData.contentShow[0].key">
-					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></trans-video>
-				</view>
-
-				<view v-else-if="item.show == constData.contentShow[1].key">
-					<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" time="1小时前" :type="item.type"></right-video>
-				</view>
-
-				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" time="1小时前" :type="item.type"></three-img>
-				</view>
-			</view>
-			<view v-else-if="item.type == constData.contentType[0].key">
-				<only-text :title="item.title" :upName="item.user.name" time="1小时前"></only-text>
-			</view>
+			<right-video :title="item.title" :upName="item.address" :imgSrc="item.imgList[0].src" :time="item.margin+'km'" :type="item.type"></right-video>
 		</view>
 
 		<uni-load-more :status="pageStatus"></uni-load-more>
@@ -63,21 +48,59 @@
 				contents: [],
 
 				searchText: '',
-				
-				pageStatus: 'loading'
+
+				pageStatus: 'loading',
+				location: '',
 			};
 		},
 		onLoad(res) {
 			this.searchText = res.value
-			let cnt = {
-				moduleId: this.$constData.module, // Long 模块编号
-				search: this.searchText, // String 关键字
-				count: this.count, // int 
-				offset: this.offset, // int 
-			}
-			this.searchContentAndUser(cnt)
+			this.getLocation()
 		},
 		methods: {
+			getLocation() {
+				uni.getLocation({
+					type: 'BD09',
+					geocode: true,
+					success: (res) => {
+						console.log(res)
+						this.location = `${res.latitude},${res.longitude}`
+						let cnt = {
+							moduleId: this.$constData.module, // Long 模块编号
+							search: this.searchText, // String 关键字
+							userCoordinate: this.location, // String 用户定位经纬度
+							count: this.count, // int 
+							offset: this.offset, // int 
+						}
+						this.searchTourBase(cnt)
+					},
+					fail: (err) => {
+						console.log('错误!————:' + err)
+					}
+				})
+			},
+
+			getMargin(code) {
+				let arr1 = this.location.split(',')
+				let arr2 = code.split(',')
+
+				let lat1 = arr1[0]
+				let lat2 = arr2[0]
+
+				let lng1 = arr1[1]
+				let lng2 = arr2[1]
+
+				let radLat1 = lat1 * Math.PI / 180.0;
+				let radLat2 = lat2 * Math.PI / 180.0;
+				let a = radLat1 - radLat2;
+				let b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0;
+				let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+					Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+				s = s * 6378.137; // EARTH_RADIUS;
+				s = Math.round(s * 10000) / 10000;
+				return s.toFixed(2)
+			},
+
 			//跳转对应用户个人中心
 			navToUser(item) {
 				uni.navigateTo({
@@ -86,15 +109,12 @@
 			},
 
 			//查询
-			searchContentAndUser(cnt) {
+			searchTourBase(cnt) {
 				this.pageStatus = 'loading'
-				this.$api.searchContentAndUser(cnt, (res) => {
+				this.$api.searchTourBase(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let searchs = this.$util.tryParseJson(res.data.c)
-						console.log(searchs)
-						this.userList = searchs.userSearch
-
-						this.setContentList(searchs.contentSearch)
+						let searchs = this.$util.tryParseJson(res.data.c).list
+						this.setContentList(searchs)
 					} else {
 						console.log('error')
 					}
@@ -104,27 +124,23 @@
 			//内容列表更改
 			setContentList(list) {
 				for (let i = 0; i < list.length; i++) {
-					let show = this.$util.tryParseJson(list[i].data).show
-					list[i].show = show
-					if (list[i].type == this.$constData.contentType[2].key || list[i].type == this.$constData.contentType[3].key) {
-						let imgList = this.$util.tryParseJson(list[i].data).imgList
-						list[i].imgList = imgList
-					}
-					if (list[i].type == this.$constData.contentType[1].key) {
-						let imgList = [{
-							src: this.$util.tryParseJson(list[i].data).imgSrc
-						}]
-						list[i].imgList = imgList
-						// if(this.versionStatus == this.$constData.showStatus[0].key){
-						// 	list[i].type = 999
-						// }
-					}
+					list[i].title = list[i].name
+					list[i].type = -1
+					list[i].show = Math.round(Math.random())
 					let time = new Date(list[i].createTime)
 					let y = time.getFullYear()
 					let m = 1 * time.getMonth() + 1
 					let d = time.getDate()
 					list[i].time = `${y}-${m}-${d}`
+
+					let data = this.$util.tryParseJson(list[i].data)
+					list[i].imgList = [{
+						src: data.img[0]
+					}]
+
+					list[i].margin = this.getMargin(list[i].coordinate)
 				}
+				// console.log(list)
 				this.tryDataList(list)
 			},
 
@@ -153,19 +169,9 @@
 
 			/* 跳转至详情 */
 			navToInfo(info) {
-				if (info.type == this.constData.contentType[2].key || info.type == this.constData.contentType[0].key) {
-					uni.navigateTo({
-						url: `/pages/index/articleView/articleView?id=${info.id}`
-					})
-				} else if (info.type == this.constData.contentType[1].key) {
-					uni.navigateTo({
-						url: `/pages/index/videoView/videoView?id=${info.id}`
-					})
-				} else if (info.type == this.constData.contentType[3].key) {
-					uni.navigateTo({
-						url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
-					})
-				}
+				uni.navigateTo({
+					url: `/pages/index/tourBases/tourBases?id=${info.id}`
+				})
 			}
 		}
 	}

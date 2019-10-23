@@ -39,7 +39,8 @@
 		</view>
 
 		<view class="fixBox">
-			<button class="signUpBtn" type="primary" @click="signUp">报	名</button>
+			<button class="signUpBtn" type="primary" @click="signUp" v-if="shopStatus == false">报 名</button>
+			<button class="signUpBtn cntShop" type="primary" @click="signUp" v-if="shopStatus == true">报 名</button>
 		</view>
 
 
@@ -73,6 +74,8 @@
 				isRotate: 'false',
 
 				liveSrc: '', //直播地址
+				
+				shopStatus:true,
 			}
 		},
 		onLoad(res) {
@@ -81,8 +84,33 @@
 				id: this.contentId, // String 内容编号
 			}
 			this.getContent(cnt)
+
+			this.getEnrolls()
 		},
 		methods: {
+			//获取报名
+			getEnrolls() {
+				let cnt = {
+					moduleId: this.$constData.module, // Long 模块编号
+					userId: uni.getStorageSync('userId'), // Long <选填> 用户id
+					contenId: this.contentId, // Long <选填> 内容id
+					count: 10, // int 
+					offset: 0, // int
+				}
+				this.$api.getEnrolls(cnt,(res)=>{
+					if(res.data.rc == this.$util.RC.SUCCESS){
+						let list = this.$util.tryParseJson(res.data.c)
+						if(list.length == 0){
+							this.shopStatus = false
+						}else{
+							this.shopStatus = true
+						}
+					}else{
+						console.log('error')
+					}
+				})
+			},
+
 			//跳转基地
 			navToPlace() {
 				uni.navigateTo({
@@ -121,7 +149,7 @@
 						plus.runtime.openURL(this.shopSrc)
 					} else {
 						uni.showToast({
-							title: '直播地址错误',
+							title: '购票地址错误',
 							icon: 'none'
 						})
 					}
@@ -188,9 +216,25 @@
 
 			//跳转报名
 			signUp() {
-				uni.navigateTo({
-					url: `/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
-				})
+				if(this.shopStatus == true){
+					uni.showToast({
+						title: '您已报名',
+						icon: 'none'
+					})
+					return
+				}
+				
+				let user = uni.getStorageSync('userId')
+				if (user == '' || user == '1234567890') {
+					uni.showToast({
+						title: '登录后可报名',
+						icon: 'none'
+					})
+				} else {
+					uni.navigateTo({
+						url: `/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
+					})
+				}
 			},
 		}
 	}
@@ -272,27 +316,6 @@
 		text-align: center;
 	}
 
-	// .shopBtn {
-	// 	background: linear-gradient(to right, rgba(255, 179, 89, 0.7), rgba(255, 179, 89, 0.6));
-	// }
-
-	.leftBox,
-	.rightBox {
-		display: inline-block;
-	}
-
-	.leftBox {
-		.button-hover {
-			background: linear-gradient(to right, rgba(255, 179, 89, 0.9), rgba(255, 179, 89, 0.8));
-		}
-	}
-
-	.rightBox {
-		.button-hover {
-			background: linear-gradient(to right, rgba(251, 114, 153, 0.9), rgba(251, 114, 153, 0.8));
-		}
-	}
-
 	.liveBtn {
 		position: absolute;
 		top: $box-margin-top;
@@ -307,5 +330,9 @@
 			padding: 0 40upx;
 			font-size: 40upx;
 		}
+	}
+	
+	.cntShop{
+		background: linear-gradient(to right, rgba($color: #AAAAAA, $alpha: 0.4), rgba($color: #AAAAAA, $alpha: 0.3));
 	}
 </style>

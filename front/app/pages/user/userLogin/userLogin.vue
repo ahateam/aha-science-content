@@ -104,6 +104,13 @@
 						uni.setStorageSync('userName', userInfo.name)
 						uni.setStorageSync('phone', userInfo.phone)
 						uni.setStorageSync('status', userInfo.status)
+						
+						if(userInfo.openId){
+							uni.setStorageSync('openId',userInfo.openId)
+						}else{
+							uni.setStorageSync('openId','')
+						}
+						
 						if (userInfo.company) {
 							uni.setStorageSync('company', userInfo.company)
 						} else {
@@ -233,11 +240,19 @@
 							console.log(userData)
 							let userId = userData.id
 							let userName = userData.name
-							let userHead = this.$util.tryParseJson(userData.ext).userHead
+							let userHead = userData.head
 							/* 将用户信息存至本地 */
 							uni.setStorageSync('userId', userId)
 							uni.setStorageSync('userName', userName)
 							uni.setStorageSync('userHead', userHead)
+							uni.setStorageSync('status',userData.status)
+							uni.setStorageSync('phone', userData.phone)
+							uni.setStorageSync('openId', userData.openId)
+							if (userData.company) {
+								uni.setStorageSync('company', userData.company)
+							} else {
+								uni.setStorageSync('company', '你还没有提交单位哦')
+							}
 							uni.hideLoading()
 							uni.switchTab({
 								url: '/pages/user/user'

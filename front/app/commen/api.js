@@ -137,6 +137,11 @@ api.createReply = function(cnt, callback) {
 	util.call(baseUrl + '/reply/createReply', cnt, callback)
 }
 
+//id获取评论 
+api.getReplyListByReplyId = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getReplyListByReplyId', cnt, callback)
+}
+
 /* 科普活动 */
 //查询科普基地详情 
 api.getTourBase = function(cnt, callback) {
@@ -170,6 +175,11 @@ api.searchContentAndUser = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/searchContentAndUser', cnt, callback)
 }
 
+//搜索景点 
+api.searchTourBase = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/searchTourBase', cnt, callback)
+}
+
 /* 关注 */
 //关注 
 api.createUserFavorite = function(cnt, callback) {
@@ -200,5 +210,15 @@ api.getReplyList = function(cnt, callback) {
 //二级评论 
 api.createComment = function(cnt, callback) {
 	util.call(baseUrl + '/reply/createComment', cnt, callback)
+}
+
+/* 获取版本 */ 
+api.getVersion = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getVersion', cnt, callback)
+}
+
+/* 权限 */
+api.createApplyAuthority = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/createApplyAuthority', cnt, callback)
 }
 export default api
