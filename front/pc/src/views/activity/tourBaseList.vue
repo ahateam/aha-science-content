@@ -23,6 +23,7 @@
                 <el-table-column label="操作" width="200">
                     <template slot-scope="scope">
                         <el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">详情</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -70,8 +71,7 @@
             getContents(cnt) {
                 this.$api.getTourBases(cnt, (res) => {
                     if (res.data.rc == this.$util.RC.SUCCESS) {
-                        this.tableData = this.$util.tryParseJson(res.data.c)
-						console.log(this.tableData)
+                        this.tableData = this.$util.tryParseJson(res.data.c).list
                     } else {
                         this.tableData = []
                     }
@@ -130,6 +130,16 @@
                     });
                 });
             },
+			infoBtn(info){
+				this.$router.push({
+					path: '/tourBaseInfo',
+					name: 'tourBaseInfo',
+					params: {
+						info: info
+					}
+				})
+			},
+				
 			addtourbase(){
 				this.$router.push({
 					path: '/addTourBase',
@@ -141,6 +151,7 @@
 		    //获取内容列表
 		    let cnt = {
 		       moduleId: this.$constData.module, // Long 模块编号
+			   userCoordinate:'0,0',
 		       count: this.count,
 		       offset: (this.page - 1) * this.count,
 		    }

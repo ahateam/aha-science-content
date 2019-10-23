@@ -158,5 +158,10 @@ api.createTourBase = function (cnt, callback) {
 api.delupdateTourBase = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/delupdateTourBase', cnt, callback)
 }
+
+
+
+
+
 export default api
 

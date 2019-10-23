@@ -24,6 +24,7 @@ const activityList = () => import('./views/activity/activityList')
 const addActivity = () => import('./views/activity/addActivity')
 const addTourBase = () => import('./views/activity/addTourBase')
 const tourBaseList = () => import('./views/activity/tourBaseList')
+const tourBaseInfo = () => import('./views/activity/tourBaseInfo')
 
 //广告
 const advertList = () => import('./views/advert/advertList')
@@ -129,6 +130,10 @@ export default new Router({
 					path: '/tourBaseList',
 					name: 'tourBaseList',
 					component: tourBaseList
+				},{
+					path: '/tourBaseInfo',
+					name: 'tourBaseInfo',
+					component: tourBaseInfo
 				},
 				//评论
 				{

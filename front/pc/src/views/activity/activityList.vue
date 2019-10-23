@@ -27,8 +27,6 @@
                 </el-table-column>
                 <el-table-column prop="type" label="类型" :formatter="typeFliter">
                 </el-table-column>
-                <el-table-column prop="power" label="付费" :formatter="powerFliter">
-                </el-table-column>
                 <el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
                 </el-table-column>
                 <el-table-column prop="status" label="状态" :formatter="statusFliter">
@@ -105,14 +103,6 @@
                 for (let i = 0; i < statusList.length; i++) {
                     if (statusList[i].value == val) {
                         return statusList[i].name
-                    }
-                }
-            },
-            powerFliter(row, col, val) {
-                let powerList = this.powerList
-                for (let i = 0; i < powerList.length; i++) {
-                    if (powerList[i].value == val) {
-                        return powerList[i].name
                     }
                 }
             },
@@ -216,6 +206,9 @@
             getContentsBtn() {
                 this.searchData.status = ''
                 this.page = 1
+				let tag = {
+					hom
+				}
                 let cnt = {
                     module: this.$constData.module,
                     count: this.count,

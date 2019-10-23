@@ -12,7 +12,7 @@
             <el-col :span="2" style="min-height: 20px"></el-col>
             <el-col :span="20">
                 <span class="title-box"> 活动简介：</span>
-                <el-input type="textarea" placeholder="请输入标题" autosize v-model="info" style="display: inline-block;width: 400px"></el-input>
+                <el-input type="textarea" placeholder="请输入" autosize v-model="info" style="display: inline-block;width: 400px"></el-input>
             </el-col>
         </el-row>
 
@@ -180,13 +180,6 @@
                 if (this.imgSrc == '') {
                     this.$message({
                         message: '请上传封面图',
-                        type: 'warning'
-                    })
-                    return
-                }
-                if (this.place == '') {
-                    this.$message({
-                        message: '请填写活动地点',
                         type: 'warning'
                     })
                     return
