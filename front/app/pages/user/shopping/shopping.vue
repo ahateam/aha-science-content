@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<nav-bar home bgColor="#fb7299" fontColor="#FFF" :titleCenter="false" title="报名中心"></nav-bar>
 		<view v-if='list.length >0'>
 			<view class="list">
 				<view class="item" v-for="(item,index) in list" :key="index" @click="navToInfo(item)">
@@ -21,7 +22,12 @@
 </template>
 
 <script>
+	import navBar from '@/components/zhouWei-navBar/index.vue'
+	
 	export default {
+		components:{
+			navBar,
+		},
 		data() {
 			return {
 				page: 1,
@@ -109,6 +115,5 @@
 		font-size: 26rpx;
 		color: #aaa;
 		text-align: right;
-
 	}
 </style>

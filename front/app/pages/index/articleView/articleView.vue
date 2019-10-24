@@ -34,12 +34,12 @@
 								<text>{{contentUpvote}}赞</text>
 							</button>
 						</view>
-						<view class="action-item">
+						<!-- <view class="action-item">
 							<button type="primary" @click="shareBtn">
 								<i class="yticon iconfont kk-share"></i>
 								<text>分享</text>
 							</button>
-						</view>
+						</view> -->
 
 						<!-- <view class="action-item">
 							<button type="primary" @click="createHb">
@@ -355,9 +355,9 @@
 							text: this.commentContent,
 							time: `${y}-${m}-${d}`,
 							jsAdd: true,
-							userHead: uni.getStorageSync('userHead'),
 							user: {
 								name: uni.getStorageSync('userName'),
+								head: uni.getStorageSync('userHead'),
 							}
 						}
 						this.comment.splice(0, 0, data)
@@ -462,7 +462,7 @@
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						if (this.$util.tryParseJson(res.data.c).value == 10) {
 							uni.showToast({
-								title: '您已经点过赞啦',
+								title: '你已经赞过他啦',
 								icon: 'none'
 							})
 							return
@@ -864,7 +864,7 @@
 	}
 
 	.articleInfo {
-		margin-top: 20upx;
+		margin-top: 40upx;
 	}
 
 	.centerBox {
@@ -923,13 +923,16 @@
 	.followBtn {
 		position: absolute;
 		right: $box-margin-left;
-		top: -10upx;
+		top: 50%;
+		margin-top: -1em;
 		display: inline-block;
 		// width: 3em;
 		text-align: center;
 		font-size: $list-info;
+		line-height: 2em;
 		color: $color-button-back;
 		background-color: $color-main;
+		
 
 		&:after {
 			border: none;

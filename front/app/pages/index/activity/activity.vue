@@ -3,11 +3,11 @@
 		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="activityTitle"></navBar>
 		<view class="imgBox" @click="navToPlace">
 			<image :src="imgSrc" mode="aspectFill"></image>
-			<view class="titleBox">
+			<view class="titleBox" v-if="placeInit">
 				{{placeTitle}}
 			</view>
 		</view>
-		<view class="placeInfo">
+		<view class="placeInfo" v-if="placeInit">
 			*点击图片查看相关基地详情哦*
 		</view>
 		<!-- <view class="placeInfo">
@@ -19,8 +19,7 @@
 			活动介绍： <view class="liveBtn" @click="navLive">
 				<text class="iconfont kk-zhibobofangshexiangjitianxianxianxing"></text>
 			</view>
-			<view class="autoInfo" style="text-indent: 2em;">
-				{{activityInfo}}
+			<view class="autoInfo" style="padding-left: 0;padding-right: 0;" v-html="activityInfo">
 			</view>
 		</view>
 
@@ -66,6 +65,9 @@
 				placeTitle: '', //基地标题
 				placeInfo: '', //基地简介
 
+				placeInit: false, //是否绑定基地
+
+				activiImg: '', //活动封面图
 				activityTitle: '', //活动标题
 				activityInfo: '', //活动简介
 				address: '', //活动地址
@@ -74,8 +76,8 @@
 				isRotate: 'false',
 
 				liveSrc: '', //直播地址
-				
-				shopStatus:true,
+
+				shopStatus: true,
 			}
 		},
 		onLoad(res) {
@@ -97,15 +99,15 @@
 					count: 10, // int 
 					offset: 0, // int
 				}
-				this.$api.getEnrolls(cnt,(res)=>{
-					if(res.data.rc == this.$util.RC.SUCCESS){
+				this.$api.getEnrolls(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let list = this.$util.tryParseJson(res.data.c)
-						if(list.length == 0){
+						if (list.length == 0) {
 							this.shopStatus = false
-						}else{
+						} else {
 							this.shopStatus = true
 						}
-					}else{
+					} else {
 						console.log('error')
 					}
 				})
@@ -113,9 +115,11 @@
 
 			//跳转基地
 			navToPlace() {
-				uni.navigateTo({
-					url: `/pages/index/tourBases/tourBases?id=${this.placeId}`
-				})
+				if (this.placeInit) {
+					uni.navigateTo({
+						url: `/pages/index/tourBases/tourBases?id=${this.placeId}`
+					})
+				}
 			},
 
 			//直播
@@ -180,7 +184,7 @@
 				})
 			},
 
-			datetime_to_unix(datetime) { //能转换的格式'yyyy-mm-dd hh:mm:ss'
+			datetime_to_unix(datetime) { //能转换的时间格式'yyyy-mm-dd hh:mm:ss'
 				let tmp_datetime = datetime.replace(/:/g, '-')
 				tmp_datetime = tmp_datetime.replace(/ /g, '-')
 				let arr = tmp_datetime.split("-")
@@ -192,38 +196,55 @@
 			getContent(cnt) {
 				this.$api.getContentById(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let info = this.$util.tryParseJson(res.data.c)
-						console.log(info)
-						let data = this.$util.tryParseJson(info.data)
-						this.address = data.address
-						this.time = data.time
-						this.activityInfo = data.info
-						this.activityTitle = info.title
+						if (res.data.c) {
+							let info = this.$util.tryParseJson(res.data.c)
+							console.log(info)
+							let data = this.$util.tryParseJson(info.data)
+							this.address = data.address
+							this.time = data.time
+							this.activityInfo = data.info
+							this.activityTitle = info.title
 
-						this.placeId = data.place
+							if (data.place) {
+								this.placeId = data.place
+								this.placeInit = true
+								let cnt1 = {
+									moduleId: this.$constData.module, // Long 模块编号
+									id: this.placeId, // Long id
+								}
+								this.getTourBase(cnt1)
+							} else {
+								this.imgSrc = data.imgList[0].src
+							}
 
-						this.liveSrc = data.live
-						let cnt1 = {
-							moduleId: this.$constData.module, // Long 模块编号
-							id: this.placeId, // Long id
+							this.liveSrc = data.live
+						} else {
+							uni.showToast({
+								title: '没有找到该活动哦',
+								icon: 'none'
+							})
 						}
-						this.getTourBase(cnt1)
+
+
 					} else {
-						console.log('Error')
+						uni.showToast({
+							title: '服务器错误',
+							icon: 'none'
+						})
 					}
 				})
 			},
 
 			//跳转报名
 			signUp() {
-				if(this.shopStatus == true){
+				if (this.shopStatus == true) {
 					uni.showToast({
 						title: '您已报名',
 						icon: 'none'
 					})
 					return
 				}
-				
+
 				let user = uni.getStorageSync('userId')
 				if (user == '' || user == '1234567890') {
 					uni.showToast({
@@ -331,8 +352,8 @@
 			font-size: 40upx;
 		}
 	}
-	
-	.cntShop{
+
+	.cntShop {
 		background: linear-gradient(to right, rgba($color: #AAAAAA, $alpha: 0.4), rgba($color: #AAAAAA, $alpha: 0.3));
 	}
 </style>

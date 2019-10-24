@@ -22,16 +22,16 @@
 					<view class="actions">
 						<view class="action-item">
 							<button type="primary" @click="upvote(contentId)">
-								<i class="yticon iconfont kk-dianzan" :style="upvoteStatus == true?'color:red':''"></i>
+								<i class="yticon iconfont kk-dianzan"></i>
 								<text>{{contentUpvote}}赞</text>
 							</button>
 						</view>
-						<view class="action-item">
+						<!-- <view class="action-item">
 							<button type="primary" @click="shareBtn">
 								<i class="yticon iconfont kk-share"></i>
 								<text>分享</text>
 							</button>
-						</view>
+						</view> -->
 
 						<!-- <view class="action-item">
 							<button type="primary" @click="createHb">
@@ -272,6 +272,57 @@
 				this.comment[index].appraiseCount += 1
 				this.comment[index].upZan = true
 			},
+			
+			//回复评论
+			replayAfter() {
+				let userId = uni.getStorageSync('userId')
+				let status = uni.getStorageSync('status')
+				if (userId == '' || userId == '1234567890') {
+					uni.showToast({
+						title: '登录后可评论',
+						icon: 'none'
+					})
+					return
+				}
+			
+				if (status == this.$constData.userStatus[1].key) {
+					uni.showToast({
+						title: '已被管理员禁言',
+						icon: 'none'
+					})
+					return
+				}
+			
+				let cnt = {
+					replyId: this.repalyId, // Long 回复评论id
+					upUserId: uni.getStorageSync('userId'), // Long 提交者编号
+					upUserHead: uni.getStorageSync('userHead'), // String 提交者头像
+					upUserName: uni.getStorageSync('userName'), // String 提交者昵称
+					// toUserId: toUserId, // Long 目标用户编号
+					text: this.commentContent, // String 正文
+					// toUserId: toUserId, // Long <选填> 目标用户编号
+					// toUserName: toUserName, // String <选填> 目标用户昵称
+				}
+				this.$api.createComment(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.replayBox = false
+						uni.showToast({
+							title: '回复成功！',
+						})
+						let user = {
+							upUserName: uni.getStorageSync('userName'),
+							text: this.commentContent
+						}
+						this.comment[this.repalyIndex].comment.list.splice(0, 0, user)
+						this.commentContent = ''
+					} else {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					}
+				})
+			},
 
 			/* 评论 */
 			createComment() {
@@ -319,9 +370,9 @@
 							text: this.commentContent,
 							time: `${y}-${m}-${d}`,
 							jsAdd: true,
-							userHead: uni.getStorageSync('userHead'),
 							user: {
 								name: uni.getStorageSync('userName'),
+								head: uni.getStorageSync('userHead'),
 							}
 						}
 						this.comment.splice(0, 0, data)
@@ -426,7 +477,7 @@
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						if (this.$util.tryParseJson(res.data.c).value == 10) {
 							uni.showToast({
-								title: '请勿重复点赞',
+								title: '你已经赞过他啦',
 								icon: 'none'
 							})
 							return
@@ -845,11 +896,13 @@
 
 	.followBtn {
 		position: absolute;
-		top: -10upx;
-		right: 0;
+		top:$box-margin-top;
+		right: $box-margin-left;
 		font-size: $list-info;
 		background-color: $color-main;
-
+		color: $color-button-back;
+		line-height: 2em;
+		
 		&:after {
 			border: none;
 		}

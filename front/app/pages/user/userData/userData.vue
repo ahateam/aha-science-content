@@ -53,7 +53,7 @@
 					权限
 				</view>
 				<view class="rightBox">
-					<text class="infoBox">正式会员</text>
+					<text class="infoBox">{{authority()}}</text>
 					<text class="iconfont kk-xiayibu leftMargin"></text>
 				</view>
 			</view>
@@ -112,12 +112,12 @@
 				this.$api.createApplyAuthority(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						uni.showToast({
-							title:'已申请，待审核'
+							title: '已申请，待审核'
 						})
-					}else{
+					} else {
 						uni.showToast({
-							title:'错误！',
-							icon:'none'
+							title: res.data.rm,
+							icon: 'none'
 						})
 					}
 				})
@@ -136,6 +136,17 @@
 					this.userNameBox = true
 				} else if (e == 'company') {
 					this.companyBox = true
+				}
+			},
+
+			authority() {
+				let authority = uni.getStorageSync('authority')
+				if (authority == this.$constData.authority[0].key) {
+					return this.$constData.authority[0].val
+				} else if (authority == this.$constData.authority[1].key) {
+					return this.$constData.authority[1].val
+				} else if (authority == this.$constData.authority[2].key) {
+					return this.$constData.authority[2].val
 				}
 			},
 
@@ -166,6 +177,7 @@
 				this.$api.updateUserInfo(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.userUnit = this.company
+						uni.setStorageSync('company', this.userUnit)
 						this.companyBox = false
 						uni.showToast({
 							title: '修改成功！'
@@ -318,6 +330,12 @@
 	.infoBox {
 		color: $list-info-color;
 		font-size: $list-title;
+		width: 8em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space:nowrap;
+		display: inline-block;
+		text-align: right;
 	}
 
 	.leftMargin {

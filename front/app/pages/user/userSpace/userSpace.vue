@@ -10,7 +10,7 @@
 			<button class="followBtn" v-else-if="followStatus == true" @click="delUserFavorite">已关注</button>
 			<view class="userName">
 				{{userName}}
-				<text class="tagBox">正式会员</text>
+				<text class="tagBox">{{authority()}}</text>
 			</view>
 		</view>
 
@@ -34,6 +34,7 @@
 				<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
 			</view>
 		</view>
+		<uniLoadMore :status="pageStatus"></uniLoadMore>
 	</view>
 </template>
 
@@ -43,6 +44,7 @@
 	import onlyText from '@/components/article/onlyText.vue'
 	import rightVideo from '@/components/video/rightVideo.vue'
 	import threeImg from '@/components/article/threeImg.vue'
+	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
 
 	export default {
 		components: {
@@ -50,7 +52,8 @@
 			transVideo,
 			onlyText,
 			rightVideo,
-			threeImg
+			threeImg,
+			uniLoadMore
 		},
 		data() {
 			return {
@@ -70,6 +73,7 @@
 				offset: 0,
 				pageOver: false, //是否结束拉取数据
 				pageStatus: 'loading',
+				page: 1,
 
 			}
 		},
@@ -92,6 +96,17 @@
 			this.getContent(cnt1)
 		},
 		methods: {
+			authority() {
+				let authority = uni.getStorageSync('authority')
+				if (authority == this.$constData.authority[0].key) {
+					return this.$constData.authority[0].val
+				} else if (authority == this.$constData.authority[1].key) {
+					return this.$constData.authority[1].val
+				} else if (authority == this.$constData.authority[2].key) {
+					return this.$constData.authority[2].val
+				}
+			},
+
 			//取关
 			delUserFavorite() {
 				let cnt = {
@@ -112,6 +127,25 @@
 						})
 					}
 				})
+			},
+
+			/* 跳转至详情 */
+			navToInfo(info) {
+				if (info.type == this.constData.contentType[2].key || info.type == this.constData.contentType[0].key) {
+					uni.navigateTo({
+						url: `/pages/index/articleView/articleView?id=${info.id}`
+					})
+				} else if (info.type == this.constData.contentType[1].key) {
+					uni.navigateTo({
+						url: `/pages/index/videoView/videoView?id=${info.id}`
+					})
+				} else if (info.type == this.constData.contentType[3].key) {
+					uni.navigateTo({
+						url: `/pages/index/activity/activity?contentId=${info.id}`
+					})
+				} else if (info.type == -1) {
+					this.navToPlace(info)
+				}
 			},
 
 			//内容列表
@@ -229,6 +263,35 @@
 					}
 				})
 			},
+		},
+		//下拉刷新
+		onPullDownRefresh() {
+			this.page = 1
+			this.contents = []
+			this.pageStatus = 'loading'
+			let cnt1 = {
+				module: this.$constData.module, // String 模块
+				status: this.$constData.contentStatus[4].key, // Byte <选填> 状态编号
+				upUserId: this.id, // Long <选填> 上传用户编号
+				count: this.count, // int 
+				offset: this.offset, // int 
+			}
+			this.getContent(cnt1)
+		},
+		//上滑加载
+		onReachBottom() {
+			if (this.pageOver == false) {
+				this.page += 1
+				this.pageStatus = 'loading'
+				let cnt1 = {
+					module: this.$constData.module, // String 模块
+					status: this.$constData.contentStatus[4].key, // Byte <选填> 状态编号
+					upUserId: this.id, // Long <选填> 上传用户编号
+					count: this.count, // int 
+					offset: (this.page - 1) * this.count, // int 
+				}
+				this.getContent(cnt1)
+			}
 		}
 	}
 </script>

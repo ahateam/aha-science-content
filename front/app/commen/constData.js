@@ -4,7 +4,23 @@ const constData = {}
 constData.module = 1180
 
 /* 版本常量 */
- constData.version = 100
+ constData.version = 102
+ 
+ /*  用户权限  */
+ constData.authority = [
+	 {
+		 key:1,
+		 val:'普通用户'
+	 },
+	 {
+		 key:2,
+		 val:'内部成员'
+	 },
+	 {
+		 key:3,
+		 val:'管理员'
+	 }
+ ]
 
 constData.userStatus = [{
 		key: 0,

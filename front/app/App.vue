@@ -12,6 +12,8 @@
 			this.getVersion()
 			
 			this.setStorage()
+			
+			this.getLocation()
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -20,12 +22,21 @@
 			console.log('App Hide')
 		},
 		methods: {
+			getLocation(){
+				plus.geolocation.getCurrentPosition(this.getSuccess, this.getError)
+			},
+			
+			getSuccess(res){
+				console.log(res)
+			},
+			
+			getError(err){
+				console.log(err)
+			},
+			
 			setStorage(){
 				uni.getStorage({
 					key: 'search_cache',
-					success: function(res) {
-						console.log(res.data);
-					},
 					fail: () => {
 						console.log('111')
 						uni.setStorage({
@@ -36,9 +47,6 @@
 				})
 				uni.getStorage({
 					key: 'search_place',
-					success: function(res) {
-						console.log(res.data);
-					},
 					fail: () => {
 						console.log('111')
 						uni.setStorage({

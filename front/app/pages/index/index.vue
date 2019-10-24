@@ -121,7 +121,7 @@
 				pageStatus: 'loading', //加载状态 more（loading前）、loading（loading中）、noMore（没有更多了）
 
 				location: '', // 纬 经 度
-				cityName: '遵义', //城市名
+				cityName: '', //城市名
 
 				searchTitle: '搜索(用户、资讯)',
 			}
@@ -178,7 +178,9 @@
 						// #endif
 					},
 					fail: (err) => {
-						console.log('错误!————:' + err)
+						this.location = `27.73298,106.933426`
+						this.cityName = '遵义市'
+						console.log(this.location)
 					}
 				})
 			},
@@ -313,7 +315,7 @@
 				this.$api.getTourBases(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						uni.stopPullDownRefresh()
-						
+
 						let list = this.$util.tryParseJson(res.data.c).list
 						console.log(list)
 						for (let i = 0; i < list.length; i++) {
@@ -336,7 +338,8 @@
 						// console.log(list)
 						this.tryDataList(list, index)
 					} else {
-						console.log('error')
+						console.log(cnt)
+						console.log(res.data.c)
 					}
 				})
 			},
@@ -568,16 +571,9 @@
 						url: `/pages/index/videoView/videoView?id=${info.id}`
 					})
 				} else if (info.type == this.constData.contentType[3].key) {
-					let data = this.$util.tryParseJson(info.data)
-					if (data.place) {
-						uni.navigateTo({
-							url: `/pages/index/activity/activity?contentId=${info.id}`
-						})
-					} else {
-						uni.navigateTo({
-							url: `/pages/index/activity/noAct?contentId=${info.id}`
-						})
-					}
+					uni.navigateTo({
+						url: `/pages/index/activity/activity?contentId=${info.id}`
+					})
 				} else if (info.type == -1) {
 					this.navToPlace(info)
 				}
@@ -643,7 +639,7 @@
 					// status: this.$constData.tagStatus[1].key, // Byte <选填> 状态
 					// tags: tags, // String <选填> 标签（json）
 					count: this.count, // int 
-					offset: (this.page - 1)*this.count, // int 
+					offset: (this.page - 1) * this.count, // int 
 				}
 				this.getChannels(cnt1)
 				return

@@ -21,7 +21,7 @@
 				</view>
 
 				<view class="contentInfo">
-					<text class="tagName">正式会员</text>
+					<text class="tagName">{{authority()}}</text>
 				</view>
 
 				<view class="contentInfo" style="color: #fdc7d6;">
@@ -32,10 +32,10 @@
 
 			<view class="iconfont kk-jiantou nextIcon"></view>
 		</view>
-		
+
 		<view class="bottomBox" v-if="loginStatus">
 			<navigator class="autoBox" url="/pages/user/shopping/shopping">
-				<text class="iconfont kk-money iconColor" ></text>
+				<text class="iconfont kk-money iconColor"></text>
 				<text class="bottomTitle">报名中心</text>
 				<!-- <text class="iconfont kk-jiantou rightIcon"></text> -->
 			</navigator>
@@ -80,12 +80,23 @@
 			}
 		},
 		methods: {
-			navToUser(){
+			authority() {
+				let authority = uni.getStorageSync('authority')
+				if (authority == this.$constData.authority[0].key) {
+					return this.$constData.authority[0].val
+				} else if (authority == this.$constData.authority[1].key) {
+					return this.$constData.authority[1].val
+				} else if (authority == this.$constData.authority[2].key) {
+					return this.$constData.authority[2].val
+				}
+			},
+
+			navToUser() {
 				uni.navigateTo({
-					url:'/pages/user/userData/userData'
+					url: '/pages/user/userData/userData'
 				})
 			},
-			
+
 			register() {
 				uni.navigateTo({
 					url: '/pages/user/userLogin/register'
@@ -101,12 +112,12 @@
 </script>
 
 <style lang="scss" scoped>
-	.iconColor{
+	.iconColor {
 		color: $color-main;
 		font-size: 40upx;
 		vertical-align: middle;
 	}
-	
+
 	.userBox {
 		position: relative;
 		background-color: $color-main;
@@ -187,24 +198,24 @@
 		font-size: 40upx;
 		margin-right: $box-margin-left;
 	}
-	
+
 	.bottomBox {
 		padding: $box-margin-top 0;
 		line-height: 60upx;
 		font-size: 40upx;
 	}
-	
+
 	.rightIcon {
 		float: right;
 		font-size: $list-title;
 	}
-	
+
 	.autoBox {
-		padding: 10upx;
+		padding: 20upx;
 		background-color: rgba($color: $uni-text-color-grey, $alpha: 0.1);
 	}
-	
-	.bottomTitle{
+
+	.bottomTitle {
 		margin-left: 15upx;
 		font-size: $list-title;
 		color: $uni-text-color-placeholder;

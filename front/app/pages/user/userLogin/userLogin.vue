@@ -13,17 +13,17 @@
 			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin" style="margin-top: 96upx;"></wButton>
 
 			<!-- 其他登录 -->
-			<view class="other_login cuIcon" style="margin-top: 206upx;">
+			<!-- <view class="other_login cuIcon" style="margin-top: 206upx;">
 				<view class="login_icon">
 					<button class="cuIcon-weixin otherBtn" @click="login_weixin"></button>
 				</view>
-				<!-- <view class="login_icon">
+				<view class="login_icon">
 					<button class="iconfont kk-big-Pay otherBtn" @click="login_alipay"></button>
 				</view>
 				<view class="login_icon">
 					<button class="iconfont kk-toutiao otherBtn" @click="login_toutiao"></button>
-				</view> -->
-			</view>
+				</view>
+			</view> -->
 
 			<!-- 底部信息 -->
 			<view class="footer">
@@ -104,13 +104,14 @@
 						uni.setStorageSync('userName', userInfo.name)
 						uni.setStorageSync('phone', userInfo.phone)
 						uni.setStorageSync('status', userInfo.status)
-						
-						if(userInfo.openId){
-							uni.setStorageSync('openId',userInfo.openId)
-						}else{
-							uni.setStorageSync('openId','')
+						uni.setStorageSync('authority', userInfo.authority)
+
+						if (userInfo.openId) {
+							uni.setStorageSync('openId', userInfo.openId)
+						} else {
+							uni.setStorageSync('openId', '')
 						}
-						
+
 						if (userInfo.company) {
 							uni.setStorageSync('company', userInfo.company)
 						} else {
@@ -245,9 +246,11 @@
 							uni.setStorageSync('userId', userId)
 							uni.setStorageSync('userName', userName)
 							uni.setStorageSync('userHead', userHead)
-							uni.setStorageSync('status',userData.status)
+							uni.setStorageSync('status', userData.status)
 							uni.setStorageSync('phone', userData.phone)
 							uni.setStorageSync('openId', userData.openId)
+							uni.setStorageSync('authority', userData.authority)
+
 							if (userData.company) {
 								uni.setStorageSync('company', userData.company)
 							} else {

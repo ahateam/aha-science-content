@@ -104,16 +104,20 @@
 			}
 		},
 		onLoad() {
-
-			let cnt = {
-				moduleId: this.$constData.module, // String 模块编号
-				userId: uni.getStorageSync('userId'), // Long 用户id
-				count: this.count, // int 
-				offset: this.offset, // int 
+			let userId = uni.getStorageSync('userId')
+			if (userId == '' || userId == '1234567890') {
+				this.loginStatus = false
+			} else {
+				this.loginStatus = true
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					userId: uni.getStorageSync('userId'), // Long 用户id
+					count: this.count, // int 
+					offset: this.offset, // int 
+				}
+				this.getAUserFavorite(cnt)
+				this.getFavoriteUser(cnt)
 			}
-			this.getAUserFavorite(cnt)
-			this.getFavoriteUser(cnt)
-			this.pase = false
 		},
 		onShow() {
 			if (this.pase) {
@@ -146,9 +150,9 @@
 					url: `/pages/user/userSpace/userSpace?id=${item.user.id}`
 				})
 			},
-			
-			
-			getUser(cnt){
+
+
+			getUser(cnt) {
 				this.$api.getFavoriteUser(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.userList = []
@@ -222,6 +226,7 @@
 				this.pageStatus = 'loading'
 				this.$api.getAUserFavorite(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.pase = false
 						this.userId = cnt.userId
 						this.pageLoading = true
 						let list = this.$util.tryParseJson(res.data.c)

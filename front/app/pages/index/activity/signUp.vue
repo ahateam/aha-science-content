@@ -62,7 +62,9 @@
 				}
 				this.$api.createEnroll(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						uni.navigateBack()
+						uni.reLaunch({
+							url:'/pages/user/shopping/shopping'
+						})
 						uni.showToast({
 							title:'报名成功'
 						})
