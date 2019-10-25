@@ -15,7 +15,7 @@
 					<text>{{item.time}}</text>
 					<view class="zan-box" @click="upvote(item.sequenceId,index,item)" @click.stop v-if="item.jsAdd == false">
 						<text>{{item.appraiseCount}}</text><!-- 点赞数 -->
-						<text class="yticon iconfont kk-shoucang1"></text>
+						<text class="yticon iconfont kk-shoucang1" :class="{iconCurrent:item.isAppraise}"></text>
 					</view>
 					<text class="content">{{item.text}}</text>
 					<view class="replayBox" v-if="item.comment.list.length > 0" @click.stop @click="navToreplay(item.sequenceId,item.ownerId)">
@@ -60,6 +60,18 @@
 				this.$emit('repaly', id, index, item.user.name)
 			},
 
+			delAppraise(id, index) {
+				let cnt = {
+					ownerId: id,
+					userId: uni.getStorageSync('userId')
+				}
+				this.$api.delAppraise(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.$emit('delZan',index)
+					}
+				})
+			},
+
 			upvote(id, index, item) {
 				let userId = uni.getStorageSync('userId')
 				if (userId == '' || userId == '1234567890') {
@@ -70,11 +82,8 @@
 					return
 				}
 
-				if (item.upZan) {
-					uni.showToast({
-						title: '你已经点过赞啦',
-						icon: 'none'
-					})
+				if (item.isAppraise) {
+					this.delAppraise(id, index)
 					return
 				}
 
@@ -211,9 +220,13 @@
 	}
 
 	.replayText {}
-	
-	.moreReplay{
+
+	.moreReplay {
 		text-align: right;
 		padding-right: 10upx;
+	}
+
+	.iconCurrent {
+		color: $color-main;
 	}
 </style>

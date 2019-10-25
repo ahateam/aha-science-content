@@ -30,7 +30,7 @@
 					<view class="actions">
 						<view class="action-item">
 							<button type="primary" @click="upvote(contentId)">
-								<i class="yticon iconfont kk-dianzan"></i>
+								<i class="yticon iconfont kk-dianzan" :class="{currentIcon:upvoteStatus}"></i>
 								<text>{{contentUpvote}}赞</text>
 							</button>
 						</view>
@@ -52,7 +52,7 @@
 				</view>
 
 				<!-- 评论区 -->
-				<comment :comment="comment" @upZan="upZan" @repaly="openReplay"></comment>
+				<comment :comment="comment" @upZan="upZan" @delZan="delZan" @repaly="openReplay"></comment>
 				<!-- 评论end -->
 
 			</view>
@@ -167,14 +167,39 @@
 
 			this.getContentById()
 			this.getAppraiseCount()
+
+			this.judgeAppraise()
 		},
 		methods: {
+			judgeAppraise() {
+				let cnt = {
+					ownerId: this.contentId, // Long 内容编号
+					userId: uni.getStorageSync('userId'), // Long 用户编号
+					value: this.$constData.appraise[0].key, // Byte 状态0点赞1踩
+				}
+				this.$api.judgeAppraise(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.upvoteStatus = this.$util.tryParseJson(res.data.c)
+					} else {
+						console.log('error')
+					}
+				})
+			},
+
+			//顯示二級回復輸入框
 			openReplay(id, index, name) {
-				console.log('id:' + id + 'index:' + index + 'name:' + name)
-				this.repalyId = id
-				this.repalyIndex = index
-				this.repalyName = name
-				this.replayBox = true
+				if (id) {
+					console.log('id:' + id + 'index:' + index + 'name:' + name)
+					this.repalyId = id
+					this.repalyIndex = index
+					this.repalyName = name
+					this.replayBox = true
+				} else {
+					uni.showToast({
+						title: '无法回复',
+						icon: 'none'
+					})
+				}
 			},
 
 			replayAfter() {
@@ -302,11 +327,17 @@
 					}
 				})
 			},
+			
+			//更新讚數
+			delZan(index){
+				this.comment[index].appraiseCount -= 1
+				this.comment[index].isAppraise = false
+			},
 
 			//更新赞数
 			upZan(index) {
 				this.comment[index].appraiseCount += 1
-				this.comment[index].upZan = true
+				this.comment[index].isAppraise = true
 			},
 
 			/* 评论 */
@@ -378,6 +409,7 @@
 					// module: this.$constData.module, // String 隶属
 					ownerId: this.contentId, // Long 内容编号
 					// status: status, // Byte <选填> 审核状态，不填表示全部，STATUS_UNEXAMINED = 0未审核，STATUS_ACCEPT = 1已通过，STATUS_REJECT = 2已回绝
+					userId: uni.getStorageSync('userId'), // Long <选填> 当前用户id
 					orderDesc: true, // Boolean 是否降序（较新的排前面）
 					count: 10, // Integer 
 					offset: 0, // Integer 
@@ -429,6 +461,19 @@
 				})
 			},
 
+			delAppraise(id) {
+				let cnt = {
+					ownerId: id,
+					userId: uni.getStorageSync('userId')
+				}
+				this.$api.delAppraise(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.upvoteStatus = false
+						this.contentUpvote -= 1
+					}
+				})
+			},
+
 			//点赞
 			upvote(conid, index) {
 				let userId = uni.getStorageSync('userId')
@@ -441,10 +486,7 @@
 					return
 				}
 				if (this.upvoteStatus == true) {
-					uni.showToast({
-						title: '你已经赞过他啦',
-						icon: 'none'
-					})
+					this.delAppraise(conid)
 					return
 				}
 				this.upvoteStatus = true
@@ -676,13 +718,13 @@
 					imageUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572435385&di=3633a97230e161bda396cb159418e90c&imgtype=jpg&er=1&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201210%2F05%2F20121005184845_rSCUj.thumb.700_0.jpeg",
 					success: function(res) {
 						uni.showToast({
-							title:'分享成功！'
+							title: '分享成功！'
 						})
 					},
 					fail: function(err) {
 						uni.showToast({
-							title:'分享失败',
-							icon:'none'
+							title: '分享失败',
+							icon: 'none'
 						})
 					}
 				})
@@ -932,10 +974,14 @@
 		line-height: 2em;
 		color: $color-button-back;
 		background-color: $color-main;
-		
+
 
 		&:after {
 			border: none;
 		}
+	}
+
+	.currentIcon {
+		color: $color-main;
 	}
 </style>

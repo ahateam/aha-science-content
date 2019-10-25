@@ -1,14 +1,14 @@
 <template>
 	<view>
 		<scroll-view class="scroll" scroll-y>
-			<view class="eva-item" v-if="comment.length > 0">
+			<view class="eva-item" v-if="loading">
 				<image style="width: 75upx;height: 75upx;" :src="user.head" mode="aspectFill"></image>
 				<view class="eva-right">
 					<text>{{user.name}}</text>
 					<text>{{replay.time}}</text>
 					<view class="zan-box" @click="upZan(id)">
 						<text>{{appraiseCount}}</text> <!-- 点赞数 -->
-						<text class="yticon iconfont kk-shoucang1"></text>
+						<text class="yticon iconfont kk-shoucang1" :class="{iconCurrent:zanStatus}"></text>
 					</view>
 					<text class="content">{{replay.text}}</text>
 				</view>
@@ -23,7 +23,7 @@
 					<text>{{item.time}}</text>
 					<view class="zan-box" @click="upvote(item.comment.sequenceId,index,item)" @click.stop v-if="item.appraiseCount||item.appraiseCount === 0">
 						<text>{{item.appraiseCount}}</text><!-- 点赞数 -->
-						<text class="yticon iconfont kk-shoucang1"></text>
+						<text class="yticon iconfont kk-shoucang1" :class="{iconCurrent:item.isAppraise}"></text>
 					</view>
 					<text class="content">{{item.comment.text}}</text>
 				</view>
@@ -31,7 +31,7 @@
 			<uniLoadMore :status="pageStatus"></uniLoadMore>
 		</scroll-view>
 
-		<view class="bottom">
+		<view class="bottom" v-if="loading">
 			<view class="input-box">
 				<text class="yticon icon-huifu"></text>
 				<input class="input" type="text" :placeholder="'@'+user.name+'：'" v-model="commentContent" placeholder-style="color:#adb1b9;" />
@@ -53,6 +53,7 @@
 		},
 		data() {
 			return {
+				loading: false,
 				replay: {},
 				user: {},
 				appraiseCount: 0,
@@ -79,6 +80,7 @@
 				orderDesc: true, // Boolean 是否降序（较新的排前面）
 				count: this.count, // Integer 
 				offset: this.offset, // Integer 
+				userId: uni.getStorageSync('userId'), // Long 用户id
 			}
 			this.getReplay(cnt)
 		},
@@ -104,7 +106,7 @@
 					})
 					return
 				}
-				
+
 				let cnt = {
 					replyId: this.id, // Long 回复评论id
 					upUserId: uni.getStorageSync('userId'), // Long 提交者编号
@@ -155,6 +157,21 @@
 				return newTime
 			},
 
+			//取消赞
+			delAppraise(id) {
+				let cnt = {
+					ownerId: id,
+					userId: uni.getStorageSync('userId')
+				}
+				this.$api.delAppraise(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.zanStatus = false
+						this.appraiseCount -= 1
+					}
+				})
+			},
+
+			//讚
 			upZan(id) {
 				let userId = uni.getStorageSync('userId')
 				if (userId == '' || userId == '1234567890') {
@@ -166,10 +183,7 @@
 				}
 
 				if (this.zanStatus) {
-					uni.showToast({
-						title: '你已经点过赞啦',
-						icon: 'none'
-					})
+					this.delAppraise(id)
 					return
 				}
 
@@ -191,11 +205,25 @@
 							title: '点赞成功'
 						})
 						this.zanStatus = true
+						this.appraiseCount += 1
 					} else {
 						uni.showToast({
 							title: res.data.c,
 							icon: 'none'
 						})
+					}
+				})
+			},
+			
+			delZan(id,item){
+				let cnt = {
+					ownerId: id,
+					userId: uni.getStorageSync('userId')
+				}
+				this.$api.delAppraise(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						item.isAppraise = false
+						item.appraiseCount -= 1
 					}
 				})
 			},
@@ -210,11 +238,8 @@
 					return
 				}
 
-				if (item.upZan) {
-					uni.showToast({
-						title: '你已经点过赞啦',
-						icon: 'none'
-					})
+				if (this.comment[index].isAppraise) {
+					this.delZan(id,item)
 					return
 				}
 
@@ -237,6 +262,7 @@
 						})
 						this.comment[index].upZan = true
 						this.comment[index].appraiseCount += 1
+						this.comment[index].isAppraise = true
 					} else {
 						uni.showToast({
 							title: res.data.c,
@@ -255,6 +281,7 @@
 						this.replay = data.reply
 						this.user = data.replyUser
 						this.appraiseCount = data.appraiseCount
+						this.zanStatus = data.isAppraise
 
 						let comment = data.comment
 						for (let i = 0; i < comment.length; i++) {
@@ -263,6 +290,8 @@
 						this.comment = comment
 
 						this.pageStatus = 'more'
+
+						this.loading = true
 					} else {
 						console.log('error')
 					}
@@ -402,5 +431,9 @@
 			padding-left: 20upx;
 			color: #0d9fff;
 		}
+	}
+
+	.iconCurrent {
+		color: $color-main;
 	}
 </style>

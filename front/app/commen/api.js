@@ -142,6 +142,20 @@ api.getReplyListByReplyId = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/getReplyListByReplyId', cnt, callback)
 }
 
+//获取评论以及二级回复列表 
+api.getReplyListByUser = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpOtherContent/getReplyListByUser', cnt, callback)
+}
+
+//获取点赞状态 
+api.judgeAppraise = function(cnt, callback) {
+	util.call(baseUrl + '/appraise/judgeAppraise', cnt, callback)
+}
+
+//取消点赞 
+api.delAppraise = function(cnt, callback) {
+	util.call(baseUrl + '/appraise/delAppraise', cnt, callback)
+}
 /* 科普活动 */
 //查询科普基地详情 
 api.getTourBase = function(cnt, callback) {
