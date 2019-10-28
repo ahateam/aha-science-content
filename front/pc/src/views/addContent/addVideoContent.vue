@@ -97,21 +97,21 @@
 
 <script>
 	import ossAuth from '@/commen/oss/ossAuth.js'
-	
+
 	let client = ossAuth.client
 	export default {
 		name: "addVideoContent",
 		data() {
 			return {
-				tagGroup:'',
-				tagGroupList:'',
+				tagGroup: '',
+				tagGroupList: '',
 				homeTagName: '',
 				homeTag: '',
 				channelList: [{
 					title: '',
 					id: 0,
 				}],
-				status: '',
+				status: 4,
 				statusList: this.$constData.statusList,
 				conType: '',
 				text: '',
@@ -119,10 +119,6 @@
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				//展示样式
 				showList: [{
-						name: '竖屏',
-						value: 2,
-					},
-					{
 						name: '右侧',
 						value: 1,
 					},
@@ -156,16 +152,16 @@
 				this.size = file.size
 				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 					encodeURIComponent(file.name)
-				this.multipartUpload(tmpName, file,0)
+				this.multipartUpload(tmpName, file, 0)
 			},
 			doUpload2(file) {
 				let date = new Date()
 				this.size = file.size
 				let tmpName = 'zskp/img/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 					encodeURIComponent(file.name)
-				this.multipartUpload(tmpName, file,1)
+				this.multipartUpload(tmpName, file, 1)
 			},
-			multipartUpload(upName, upFile,val) {
+			multipartUpload(upName, upFile, val) {
 				//Vue中封装的分片上传方法（详见官方文档）
 				let _this = this
 				try {
@@ -184,10 +180,10 @@
 						} else {
 							src = address.substring(0, _index)
 						}
-						if(val == 0){
-						this.src = src 
-						}else if(val ==1){
-							this.imgSrc = src 
+						if (val == 0) {
+							this.src = src
+						} else if (val == 1) {
+							this.imgSrc = src
 						}
 					}).catch(err => {
 						console.log(err)
@@ -255,24 +251,24 @@
 			},
 			getTagGroup() {
 				let cnt = {
-						moduleId: this.$constData.module,
-						count: 200,
-						offset: 0,
-					};
+					moduleId: this.$constData.module,
+					count: 200,
+					offset: 0,
+				};
 				this.$api.getContentTagGroup(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tagGroupList = this.$util.tryParseJson(res.data.c)
 					}
 				})
 			},
-			changeTagGroup(){
+			changeTagGroup() {
 				let cnt = {
-						moduleId: this.$constData.module,
-						group: this.tagGroup, 
-						status: 1,
-						count: 200, 
-						offset: 0,  
-					};
+					moduleId: this.$constData.module,
+					group: this.tagGroup,
+					status: 1,
+					count: 200,
+					offset: 0,
+				};
 				this.$api.getContentTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.homeTag = this.$util.tryParseJson(res.data.c)

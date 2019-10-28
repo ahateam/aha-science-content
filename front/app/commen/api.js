@@ -29,7 +29,7 @@ api.getAUserFavorite = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpUserService/getAUserFavorite', cnt, callback)
 }
 
-/********************* 专栏接口 ******************************/ 
+/********************* 专栏接口 ******************************/
 //获取专栏列表 
 api.getChannel = function(cnt, callback) {
 	util.call(baseUrl + '/channel/getChannels', cnt, callback)
@@ -226,7 +226,7 @@ api.createComment = function(cnt, callback) {
 	util.call(baseUrl + '/reply/createComment', cnt, callback)
 }
 
-/* 获取版本 */ 
+/* 获取版本 */
 api.getVersion = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/getVersion', cnt, callback)
 }
@@ -234,5 +234,20 @@ api.getVersion = function(cnt, callback) {
 /* 权限 */
 api.createApplyAuthority = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpUserService/createApplyAuthority', cnt, callback)
+}
+
+/* 验证码 */
+api.sendSms = function(cnt, callback) {
+	util.call(baseUrl + '/sms/sendSms', cnt, callback)
+}
+
+//验证码登录 
+api.loginByCode = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/loginByCode', cnt, callback)
+}
+
+//验证码重置密码 
+api.forgetPwd = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpUserService/forgetPwd', cnt, callback)
 }
 export default api

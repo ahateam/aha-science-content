@@ -27,7 +27,24 @@
 		},
 		methods: {
 			getVerCode() {
-
+				let cnt = {
+					moduleId: this.$constData.module, // Long 模块编号
+					phone: this.phoneData, // Long 手机号
+				}
+				this.$api.sendSms(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title: '验证码已发送'
+						})
+						this.$refs.runCode.$emit('runCode'); //触发倒计时（一般用于请求成功验证码后调用）
+						console.log(this.$util.tryParseJson(res.data.c))
+					} else {
+						uni.showToast({
+							title: '验证码获取失败！',
+							icon: 'none'
+						})
+					}
+				})
 			},
 			bindingPhone() {
 				if (this.isRotate == true) {
@@ -38,6 +55,7 @@
 					moduleId: this.$constData.module, // String 模块编号
 					id: this.userId, // Long 用户id
 					phone: this.phoneData, // String 手机号
+					code:this.verCode,//String 
 				}
 				console.log(cnt)
 				this.$api.bindingPhone(cnt, (res) => {
@@ -57,7 +75,10 @@
 							title: '已登录！'
 						})
 					} else {
-						console.log(res.data.c)
+						uni.showToast({
+							title:res.data.rm,
+							icon:'none'
+						})
 					}
 				})
 			},

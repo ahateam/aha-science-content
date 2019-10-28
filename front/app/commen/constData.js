@@ -4,7 +4,7 @@ const constData = {}
 constData.module = 1180
 
 /* 版本常量 */
- constData.version = 102
+ constData.version = 103
  
  /*  用户权限  */
  constData.authority = [

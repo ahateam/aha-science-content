@@ -8,7 +8,9 @@
 			<!-- 主体表单 -->
 			<view class="main">
 				<wInput v-model="phoneData" type="text" maxlength="11" placeholder="用户名/电话"></wInput>
-				<wInput v-model="passData" type="password" maxlength="11" placeholder="密码"></wInput>
+				<wInput v-model="verCode" type="number" maxlength="6" placeholder="验证码" isShowCode ref="runCode" @setCode="getVerCode()"
+				 v-if="phoneLogin"></wInput>
+				<wInput v-model="passData" type="password" maxlength="11" placeholder="密码" v-else></wInput>
 			</view>
 			<wButton text="登 录" :rotate="isRotate" @click.native="startLogin" style="margin-top: 96upx;"></wButton>
 
@@ -27,6 +29,8 @@
 
 			<!-- 底部信息 -->
 			<view class="footer">
+				<view @click="phoneLoginBtn">{{phoneStatus}}</view>
+				<text style="font-size: 26upx;">|</text>
 				<navigator url="/pages/user/userLogin/forget" open-type="navigate">找回密码</navigator>
 				<text style="font-size: 26upx;">|</text>
 				<navigator url="/pages/user/userLogin/register" open-type="navigate">注册账号</navigator>
@@ -53,6 +57,10 @@
 
 				phoneData: '', //账号
 				passData: '', //密码
+				verCode: '', //验证码
+
+				phoneStatus: this.changeStatus(),
+				phoneLogin: false,
 
 				providerList: [], //登录服务商列表
 			};
@@ -66,18 +74,123 @@
 			}
 		},
 		methods: {
+			//验证码登录
+			infoLogin() {
+				let cnt = {
+					moduleId: this.$constData.module, // String 模块编号
+					phone: this.phoneData, // String 手机号
+					code: this.verCode, // String 验证码
+				}
+				this.$api.loginByCode(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let userInfo = this.$util.tryParseJson(res.data.c)
+						uni.setStorageSync('userHead', userInfo.head)
+						uni.setStorageSync('userId', userInfo.id)
+						uni.setStorageSync('userName', userInfo.name)
+						uni.setStorageSync('phone', userInfo.phone)
+						uni.setStorageSync('status', userInfo.status)
+						uni.setStorageSync('authority', userInfo.authority)
+
+						if (userInfo.openId) {
+							uni.setStorageSync('openId', userInfo.openId)
+						} else {
+							uni.setStorageSync('openId', '')
+						}
+
+						if (userInfo.company) {
+							uni.setStorageSync('company', userInfo.company)
+						} else {
+							uni.setStorageSync('company', '你还没有提交单位哦')
+						}
+						uni.switchTab({
+							url: '/pages/user/user'
+						})
+						uni.showToast({
+							title: '已登录'
+						})
+					} else {
+						uni.showToast({
+							title: res.data.rm,
+							icon: 'none'
+						})
+					}
+				})
+			},
+
+			//获取验证码
+			getVerCode() {
+				//获取验证码
+				if (this.phoneData.length != 11) {
+					uni.showToast({
+						icon: 'none',
+						position: 'bottom',
+						title: '手机号不正确',
+					})
+					return false;
+				}
+				let cnt = {
+					moduleId: this.$constData.module, // Long 模块编号
+					phone: this.phoneData, // Long 手机号
+					type: 'loginByCode', // String 验证类型
+				}
+				this.$api.sendSms(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title: '验证码已发送'
+						})
+						this.$refs.runCode.$emit('runCode'); //触发倒计时（一般用于请求成功验证码后调用）
+						console.log(this.$util.tryParseJson(res.data.c))
+					} else {
+						uni.showToast({
+							title: '验证码获取失败！',
+							icon: 'none'
+						})
+					}
+				})
+			},
+
+			//切换登录方式
+			phoneLoginBtn() {
+				this.phoneLogin = !this.phoneLogin
+				this.phoneStatus = this.changeStatus()
+			},
+
+			//获取登录方式显示
+			changeStatus() {
+				if (!this.phoneLogin) {
+					return '验证码登录'
+				} else {
+					return '密码登录'
+				}
+			},
+
 			//登录按钮触发
 			startLogin() {
 				if (this.isRotate) {
 					return
 				}
+
 				if (this.phoneData.length != 11) {
 					uni.showToast({
-						title: '请输入正确的账号',
+						title: '请输入正确手机号',
 						icon: 'none'
 					})
 					return
 				}
+
+
+
+				if (this.phoneLogin) {
+					if (this.verCode.length != 6) {
+						uni.showToast({
+							title: '验证码错误',
+							icon: 'none'
+						})
+					}
+					this.infoLogin()
+					return
+				}
+
 				if (this.passData == '') {
 					uni.showToast({
 						title: '请输入密码',
@@ -85,6 +198,10 @@
 					})
 					return
 				}
+
+
+
+
 				this.isRotate = true
 				let cnt = {
 					moduleId: this.$constData.module, // String 模块编号

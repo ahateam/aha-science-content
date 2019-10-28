@@ -10,9 +10,9 @@
 			<view class="main">
 				<wInput v-model="nameData" type="text" maxlength="11" placeholder="昵称"></wInput>
 				<wInput v-model="phoneData" type="text" maxlength="11" placeholder="手机号"></wInput>
-				<wInput v-model="passData" type="password" maxlength="11" placeholder="登录密码" isShowPass></wInput>
-				<wInput v-model="passDataAgin" type="password" maxlength="11" placeholder="再次输入密码" isShowPass></wInput>
-				<!-- <wInput v-model="verCode" type="number" maxlength="4" placeholder="验证码" isShowCode ref="runCode" @setCode="getVerCode()"></wInput> -->
+				<!-- <wInput v-model="passDataAgin" type="password" maxlength="11" placeholder="再次输入密码" isShowPass></wInput> -->
+				<wInput v-model="verCode" type="number" maxlength="6" placeholder="验证码" isShowCode ref="runCode" @setCode="getVerCode()"></wInput>
+				<wInput v-model="passData" type="password" maxlength="11" placeholder="设置登录密码" isShowPass></wInput>
 			</view>
 
 			<wButton text="注 册" :rotate="isRotate" @click.native="startReg"></wButton>
@@ -38,7 +38,7 @@
 				nameData: '', //用户昵称
 				phoneData: '', // 用户/电话
 				passData: '', //密码
-				passDataAgin: '', //再次输入密码
+				// passDataAgin: '', //再次输入密码
 				verCode: "", //验证码
 				showAgree: true, //协议是否选择
 				isRotate: false, //是否加载旋转
@@ -49,21 +49,70 @@
 			wButton,
 		},
 		methods: {
+
+			//获取验证码
+			getVerCode() {
+				//获取验证码
+				if (this.phoneData.length != 11) {
+					uni.showToast({
+						icon: 'none',
+						position: 'bottom',
+						title: '手机号不正确'
+					});
+					return false;
+				}
+				console.log("获取验证码")
+
+				let cnt = {
+					moduleId: this.$constData.module, // Long 模块编号
+					phone: this.phoneData, // Long 手机号
+					type: 'register', // String 验证类型
+				}
+				this.$api.sendSms(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.showToast({
+							title: '验证码已发送'
+						})
+						this.$refs.runCode.$emit('runCode'); //触发倒计时（一般用于请求成功验证码后调用）
+						console.log(this.$util.tryParseJson(res.data.c))
+					} else {
+						uni.showToast({
+							title: '验证码获取失败！',
+							icon: 'none'
+						})
+					}
+				})
+			},
+
+			//注册按钮
 			startReg() {
 				if (this.isRotate == true) {
 					return
 				}
-				if (this.phoneData.length != 11) {
+				
+				if (this.nameData == '') {
+					uni.showToast({
+						position: 'bottom',
+						title: '请填写用户名',
+						icon: 'none'
+					})
+					return
+				} else if (this.phoneData.length != 11) {
 					uni.showToast({
 						position: 'bottom',
 						title: '手机号不正确',
 						icon: 'none'
 					})
 					return
-				}
-				if (this.passData != this.passDataAgin) {
+				} else if (this.verCode.length != 6) {
 					uni.showToast({
-						title: '密码不相符！',
+						title: '验证码不正确',
+						icon: 'none'
+					})
+					return
+				} else if (this.passData == '') {
+					uni.showToast({
+						title: '请填写密码',
 						icon: 'none'
 					})
 					return
@@ -72,25 +121,25 @@
 				let cnt = {
 					moduleId: this.$constData.module, // Long 模块编号
 					name: this.nameData, // String 昵称
+					code: this.verCode, // String 验证码
 					phone: this.phoneData, // String 手机号
 					pwd: this.passData, // String 密码
 				}
 				this.register(cnt)
 			},
-			register(cnt){
-				this.$api.register(cnt,(res)=>{
-					if(res.data.rc == this.$util.RC.SUCCESS){
+			register(cnt) {
+				this.$api.register(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
 						uni.redirectTo({
-							url:`/pages/user/userLogin/userLogin?phoneData=${this.phoneData}&passData=${this.passData}`
+							url: `/pages/user/userLogin/userLogin?phoneData=${this.phoneData}&passData=${this.passData}`
 						})
 						uni.showToast({
-							title:'注册成功！'
+							title: '注册成功！'
 						})
-					}else{
+					} else {
 						uni.showToast({
-							title:'注册失败！',
-							icon:'none',
-							position:'bottom'
+							title: res.data.rm,
+							icon: 'none',
 						})
 						this.isRotate = false
 					}

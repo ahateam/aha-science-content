@@ -12,7 +12,7 @@
 				<span class="svg-container">
 					<i class="iconfont course_user"></i>
 				</span>
-				<el-input v-model="username" placeholder="请输入账号/手机号" type="text" />
+				<el-input v-model="username" placeholder="请输入账号/手机号" type="text"/>
 			</el-form-item>
 			<el-form-item prop="password">
 				<span class="svg-container">
@@ -63,6 +63,7 @@
 					this.$api.login(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
 							localStorage.setItem("loginUser",res.data.c)
+							console.log(localStorage.getItem('loginUser'))
 							this.$router.push('/content')
 						} else {
 							this.$message.error('登录信息不正确')

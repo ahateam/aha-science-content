@@ -28,12 +28,13 @@
 
 					<div class="system-mech">
 						<div style="float: right">
+							<span class="userName">{{userName}}</span>
 							<el-button type="danger" plain size="mini" @click="outLogin">注销登录</el-button>
 						</div>
 					</div>
 				</el-header>
-				<el-main :style="mainBoxStyle" >
-					<div class="main" >
+				<el-main :style="mainBoxStyle">
+					<div class="main">
 						<router-view v-if="isRouterActive"></router-view>
 					</div>
 				</el-main>
@@ -49,22 +50,29 @@
 		components: {},
 		data() {
 			return {
+				userName: this.getUserName(),
+
 				showActive: false,
 				showActive1: true,
 				tableData: [],
 				orgName: '',
 				isRouterActive: true,
 				menuList: [],
-				mainBoxStyle:{
-					
-					background:'#f0f2f5',
-					height:parseInt(document.body.clientHeight-150)+'px',
-					
+				mainBoxStyle: {
+
+					background: '#f0f2f5',
+					height: parseInt(document.body.clientHeight - 150) + 'px',
+
 				}
 
 			}
 		},
 		methods: {
+			getUserName() {
+				let userData = localStorage.getItem('loginUser')
+				userData = this.$util.tryParseJson(userData)
+				return userData.name
+			},
 
 			//事件层
 			//一级菜单选中事件
@@ -89,11 +97,11 @@
 				spinner: 'el-icon-loading'
 			})
 			let loginUser = JSON.parse(localStorage.getItem('loginUser'))
-			if(loginUser.authority == 3){
+			if (loginUser.authority == 3) {
 				this.menuList = menu.menu
-			}else if(loginUser.authority == 2){
+			} else if (loginUser.authority == 2) {
 				this.menuList = menu.insiderMenu
-			}else if(loginUser.authority == 1){
+			} else if (loginUser.authority == 1) {
 				this.menuList = menu.userMenu
 			}
 			this.$router.push('/contentList')
@@ -195,5 +203,10 @@
 		color: #fff;
 		border: 1px solid #ddd;
 		background: rgba(255, 255, 255, .3);
+	}
+	
+	.userName{
+		font-size: 14px;
+		padding: 6px;
 	}
 </style>
