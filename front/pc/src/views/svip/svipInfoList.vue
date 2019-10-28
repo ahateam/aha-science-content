@@ -13,7 +13,7 @@
 				</el-col>
 			</el-col>
 		</el-row>
-		<el-row class="row-box1">
+		<!-- <el-row class="row-box1">
 			<el-col :span="24" style="margin-bottom: 10px">
 				<el-col :span="4">
 					<div class="title-box">简介:</div>
@@ -24,9 +24,9 @@
 					</div>
 				</el-col>
 			</el-col>
-		</el-row>
+		</el-row> -->
 
-		<el-row>
+		<!-- <el-row>
 			<el-col :span="4">
 				<div class="title-box">你可输入的标签:</div>
 			</el-col>
@@ -55,7 +55,7 @@
 				</el-input>
 				<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
 			</el-col>
-		</el-row>
+		</el-row> -->
 		<el-col :span="24" style="text-align: center">
 			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">提交修改</el-button>
 		</el-col>

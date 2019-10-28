@@ -7,7 +7,6 @@
 				<el-input placeholder="请输入名称" v-model="title" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -20,34 +19,6 @@
 				</el-row>
 			</el-col>
 		</el-row>
-
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 基地地点：</span>
-				<v-distpicker @selected="onSelected" style="display: inline-block;"></v-distpicker>
-				<el-input placeholder="详细地址:如道路街道,小区" v-model="detail_address" style="width: 300px;margin-left: 5px;"></el-input>
-			</el-col>
-		</el-row>
-
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 营业时间：</span>
-				<el-time-picker is-range arrow-control v-model="time" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
-				 placeholder="选择时间范围">
-				</el-time-picker>
-			</el-col>
-		</el-row>
-
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 基地封面图：</span>
-				<img width="500" :src="imgSrc" v-if="imgSrc">
-				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
-			</el-col>
-		</el-row>
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -55,12 +26,9 @@
 				<el-input placeholder="请输入购票链接" v-model="shopLink" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-
-
-
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
-			<el-button type="primary" @click="createBtn" style="margin-bottom: 100px;padding: 15px 50px">提交
+			<el-button type="primary" @click="editorBtn" style="margin-bottom: 100px;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
 
@@ -70,34 +38,21 @@
 <script>
 	import wangEditor from 'wangeditor'
 	import ossAuth from '@/commen/oss/ossAuth.js'
-	import VDistpicker from 'v-distpicker'
 	let client = ossAuth.client
 
 	export default {
-		components: {
-			VDistpicker
-		},
-		name: "addTourBase",
+		name: "editTourBase",
 		data() {
 			return {
-				detail_address: '',
-				editor: {},
-				homeTagName: '',
-				homeTag: '',
-				imgSrc: '',
-				imgList: [],
-				tag: '',
-				time: [new Date(2019, 10, 20, 8, 30), new Date(2019, 10, 20, 17, 30)],
-				workTime: '',
-				shopLink: '',
-				address: '',
-				show: Math.round(Math.random()),
-				title: '',
-				info: '',
-				power: 0,
+				id:'',
+				title:'',
+				shopLink:'',
+				address:'',
+				editor:{},
+				imgList:[],
+				workTime:'',
 				status: this.$constData.statusList[3].value,
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
-
 				contentType: this.$constData.typeList[3].value,
 			}
 		},
@@ -148,78 +103,31 @@
 					console.log(e)
 				}
 			},
-
-			getTime(date) {
-				let h = date.getHours();
-				let m = date.getMinutes();
-				let s = date.getSeconds();
-				return `${h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`
-			},
-
 			createBtn() {
-				if (this.title == '') {
-					this.$message({
-						message: '请填写名称',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.imgSrc == '') {
-					this.$message({
-						message: '请上传封面图',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.address == '' || this.detail_address == '') {
-					this.$message({
-						message: '请填写地点',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.time == '') {
-					this.$message({
-						message: '请选择营业时间',
-						type: 'warning'
-					})
-					return
-				}
-				if (this.shopLink == '') {
-					this.$message({
-						message: '请输入购票链接',
-						type: 'warning'
-					})
-					return
-				}
-				this.editorBtn()
 			},
 			editorBtn() {
 				let that = this
-				this.imgList.push(this.imgSrc)
-				let time1 = new Date(this.time[0])
-				let time2 = new Date(this.time[1])
-				let newTime = this.getTime(time1) + '至' + this.getTime(time2)
 				let data = {
 					info: this.editor.txt.html(),
 					img: this.imgList,
-					workTime: newTime,
+					workTime: this.workTime,
 				}
 				let cnt = {
+					id:this.id,
 					moduleId: this.$constData.module,
 					name: this.title,
-					address: this.address + '' + this.detail_address,
+					address:this.address,
 					data: JSON.stringify(data),
 					buyTicketsLink: this.shopLink,
 				}
 				console.log(cnt)
-				that.$api.createTourBase(cnt, (res => {
+				that.$api.updateTourBase(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
-							message: '创建成功',
+							message: '修改成功',
 							type: 'success'
 						});
-						that.$router.push('/contentList')
+						that.$router.push('/tourBaseList')
 					} else {
 						this.$message({
 							message: res.data.c,
@@ -229,10 +137,6 @@
 					}
 				}))
 			},
-			onSelected(data) {
-				let temp = data.province.value + '' + data.city.value + '' + data.area.value;
-				this.address = temp;
-			}
 		},
 		mounted() {
 			this.editor = new wangEditor('#editor')
@@ -271,6 +175,15 @@
 				}
 			}
 			this.editor.create();
+			let info = this.$route.params.info
+			console.log(info)
+			this.id = info.id
+			this.title = info.name;
+			this.editor.txt.html(JSON.parse(info.data).info)
+			this.shopLink = info.buyTicketsLink
+			this.address = info.address
+			this.imgList = JSON.parse(info.data).img
+			this.workTime = JSON.parse(info.data).workTime
 		}
 	}
 </script>

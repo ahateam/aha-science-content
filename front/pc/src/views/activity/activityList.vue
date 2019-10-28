@@ -33,7 +33,7 @@
                 </el-table-column>
                 <el-table-column label="操作" width="200">
                     <template slot-scope="scope">
-                        <el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button>
+                        <!-- <el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button> -->
                         <el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
                         <el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
                     </template>
@@ -70,16 +70,6 @@
                 statusList: this.$constData.statusList,
                 powerList: this.$constData.powerList,
             }
-        },
-        mounted() {
-            //获取内容列表
-            let cnt = {
-                module: this.$constData.module,
-                count: this.count,
-                offset: (this.page - 1) * this.count,
-                type: this.typeList[3].value, // Byte <选填> 类型
-            }
-            this.getContents(cnt)
         },
         methods: {
             /** 过滤器*/
@@ -126,9 +116,10 @@
                 this.page = page
                 //获取内容列表
                 let cnt = {
-                    module: this.$constData.module,
-                    count: this.count,
-                    offset: (this.page - 1) * this.count
+                   module: this.$constData.module,
+                   count: this.count,
+                   offset: (this.page - 1) * this.count,
+                   type: this.typeList[3].value, // Byte <选填> 类型
                 }
                 this.getContents(cnt)
             },
@@ -136,9 +127,10 @@
             searchBtn() {
                 this.page = 1
                 let cnt = {
-                    module: this.$constData.module,
-                    count: this.count,
-                    offset: (this.page - 1) * this.count
+                   module: this.$constData.module,
+                   count: this.count,
+                   offset: (this.page - 1) * this.count,
+                   type: this.typeList[3].value, // Byte <选填> 类型
                 }
                 if (this.searchData.status) {
                     cnt.status = this.searchData.status
@@ -153,6 +145,7 @@
                     type: 'warning'
                 }).then(async () => {
                     let cnt = {
+						moduleId:this.$constData.module,
                         id: info.id,
                     }
                     this.$api.delContentById(cnt, (res) => {
@@ -195,8 +188,8 @@
             //编辑修改
             updateBtn(info) {
                 this.$router.push({
-                    path: '/editContent',
-                    name: 'editContent',
+                    path: '/editActivity',
+                    name: 'editActivity',
                     params: {
                         info: info
                     }
@@ -218,6 +211,16 @@
                 this.getContents(cnt)
             }
         },
+		mounted() {
+		    //获取内容列表
+		    let cnt = {
+		        module: this.$constData.module,
+		        count: this.count,
+		        offset: (this.page - 1) * this.count,
+		        type: this.typeList[3].value, // Byte <选填> 类型
+		    }
+		    this.getContents(cnt)
+		},
     }
 </script>
 

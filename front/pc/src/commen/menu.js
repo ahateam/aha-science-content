@@ -148,12 +148,7 @@ const userMenu=[
 	{
 	    title:'内容管理',
 	    icon:'course_shouye',
-	    child:[
-	        {
-	            path:'/replyList',
-	            title:'评论管理'
-	        }
-	    ]
+	    
 	}
 ]
 

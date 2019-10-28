@@ -25,6 +25,8 @@ const addActivity = () => import('./views/activity/addActivity')
 const addTourBase = () => import('./views/activity/addTourBase')
 const tourBaseList = () => import('./views/activity/tourBaseList')
 const tourBaseInfo = () => import('./views/activity/tourBaseInfo')
+const editActivity = () => import('./views/activity/editActivity')
+const editTourBase = () => import('./views/activity/editTourBase')
 
 //广告
 const advertList = () => import('./views/advert/advertList')
@@ -134,6 +136,14 @@ export default new Router({
 					path: '/tourBaseInfo',
 					name: 'tourBaseInfo',
 					component: tourBaseInfo
+				},{
+					path: '/editActivity',
+					name: 'editActivity',
+					component: editActivity
+				},{
+					path: '/editTourBase',
+					name: 'editTourBase',
+					component: editTourBase
 				},
 				//评论
 				{

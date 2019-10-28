@@ -166,6 +166,12 @@
 								type: 'success',
 								message: '成功!'
 							});
+							let cnt = {
+								module: this.$constData.module,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
@@ -214,7 +220,7 @@
 					}
 				})
 			},
-			addSvip(){
+			addSvip() {
 				this.$router.push('/addSvip')
 			}
 		},

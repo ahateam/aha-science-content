@@ -91,7 +91,7 @@
 					}
 				}
 			},
-			/*获取首页标签列表*/
+			/*获取标签列表*/
 			getContents(cnt) {
 				this.$api.getContentTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -122,7 +122,6 @@
 				this.page = 1
 				let cnt = {
 					moduleId: this.$constData.module,
-					group: '首页',
 					count: this.count,
 					status: this.searchData.status,
 					offset: (this.page - 1) * this.count
@@ -138,7 +137,7 @@
 				}).then(async () => {
 					let cnt = {
 						moduleId: this.$constData.module,
-						group: '首页',
+						group: info.GroupName,
 						name: info.name,
 						status: 0,
 					}
@@ -197,7 +196,7 @@
 					} else {
 						this.$message({
 							type: 'error',
-							message: '操作失败!'
+							message: res.data.rm
 						});
 					}
 				})
@@ -212,7 +211,6 @@
 				this.page = 1
 				let cnt = {
 					moduleId: this.$constData.module,
-					group: '首页',
 					count: this.count,
 					offset: (this.page - 1) * this.count,
 				}

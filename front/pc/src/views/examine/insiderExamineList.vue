@@ -73,7 +73,7 @@
 				this.page = page
 				//获取内容列表
 				let cnt = {
-					module: this.$constData.module,
+					moduleId: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}

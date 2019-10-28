@@ -47,7 +47,7 @@
 				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
 			</el-col>
 		</el-row>
-		<el-row>
+		<!-- <el-row>
 			<el-col :span="4">
 				<div class="title-box">你可输入的标签:</div>
 			</el-col>
@@ -68,7 +68,7 @@
 				</el-input>
 				<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
 			</el-col>
-		</el-row>
+		</el-row> -->
 		<el-col :span="24" style="text-align: center">
 			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">创建专栏</el-button>
 		</el-col>

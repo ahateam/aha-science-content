@@ -18,8 +18,8 @@
 					</el-button>
 				</div>
 			</el-tab-pane>
-			<el-tab-pane label="发布内容" name="second">无数据</el-tab-pane>
-			<el-tab-pane label="发布评论" name="third">无数据</el-tab-pane>
+			<!-- <el-tab-pane label="发布内容" name="second">无数据</el-tab-pane>
+			<el-tab-pane label="发布评论" name="third">无数据</el-tab-pane> -->
 		</el-tabs>
 
 		<el-row v-if="isShowl">

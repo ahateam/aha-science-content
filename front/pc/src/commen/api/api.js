@@ -28,7 +28,7 @@ api.addContent = function (cnt, callback) {
 }
 //删除内容
 api.delContentById = function (cnt, callback) {
-    util.call(baseUrl + '/content/delContentById', cnt, callback)
+    util.call(baseUrl + '/ZskpOtherContent/delContentById', cnt, callback)
 }
 //添加专栏
 api.createChannel = function (cnt, callback) {
@@ -158,7 +158,10 @@ api.createTourBase = function (cnt, callback) {
 api.delupdateTourBase = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/delupdateTourBase', cnt, callback)
 }
-
+//修改景点
+api.updateTourBase = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/updateTourBase', cnt, callback)
+}
 
 
 

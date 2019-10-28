@@ -126,6 +126,7 @@
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
+					type:this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -155,12 +156,13 @@
 			},
 			/* 删除内容*/
 			delBtn(info) {
-				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+				this.$confirm('此操作将永久删除该文件及其该内容下评论, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
+						moduleId:this.$constData.module,
 						id: info.id,
 					}
 					this.$api.delContentById(cnt, (res) => {
@@ -169,6 +171,13 @@
 								type: 'success',
 								message: '删除成功!'
 							});
+							let cnt = {
+								module: this.$constData.module,
+								type:this.typeList[0].value,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
@@ -212,6 +221,7 @@
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
+					type:this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -225,7 +235,7 @@
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,
-				type:5,
+				type:this.typeList[0].value,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

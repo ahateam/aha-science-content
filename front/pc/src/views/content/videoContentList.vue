@@ -35,7 +35,7 @@
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button>
-						<el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
+						<!-- <el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button> -->
 						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
 					</template>
 				</el-table-column>
@@ -126,6 +126,7 @@
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
+					type:this.typeList[1].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -161,6 +162,7 @@
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
+						moduleId:this.$constData.module,
 						id: info.id,
 					}
 					this.$api.delContentById(cnt, (res) => {
@@ -212,6 +214,7 @@
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
+					type:this.typeList[1].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -226,7 +229,7 @@
 			let cnt = {
 				module: this.$constData.module,
 				count: this.count,
-				type:3,
+				type:this.typeList[1].value,
 				offset: (this.page - 1) * this.count
 			}
 			this.getContents(cnt)

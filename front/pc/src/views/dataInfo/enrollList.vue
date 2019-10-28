@@ -15,7 +15,7 @@
 				</el-table-column>
 				<el-table-column prop="number" label="报名人数">
 				</el-table-column>
-				<el-table-column prop="createTime" label="注册日期" :formatter="timeFliter">
+				<el-table-column prop="createTime" label="报名日期" :formatter="timeFliter">
 				</el-table-column>
 			</el-table>
 		</el-row>
@@ -67,7 +67,7 @@
 				this.page = page
 				//获取内容列表
 				let cnt = {
-					module: this.$constData.module,
+					moduleId: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}

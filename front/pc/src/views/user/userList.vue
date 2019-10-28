@@ -76,7 +76,7 @@
 				this.page = page
 				//获取内容列表
 				let cnt = {
-					module: this.$constData.module,
+					moduleId: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -85,9 +85,9 @@
 			delBtn(info) {
 				let msg =''
 				if(info.state == 0){
-					msg = '封禁'
-				}else{
 					msg = '解封'
+				}else{
+					msg = '封禁'
 				}
 				this.$confirm('此操作将'+msg+'用户的评论功能, 是否继续?', '提示', {
 					confirmButtonText: '确定',
@@ -97,10 +97,10 @@
 					let cnt = {
 						moduleId: this.$constData.module,
 						id:info.id,
-						bool:true
+						bool:false
 					};
-					if(info.state == 1){
-						cnt.bool = false
+					if(info.state == 1){//封禁
+						cnt.bool = true
 					}
 					this.$api.closeUser(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {

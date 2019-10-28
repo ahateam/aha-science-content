@@ -103,7 +103,7 @@
 				}],
 				show: 0,
 				title: '',
-				status: '',
+				status: this.$constData.statusList[3].value,
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
 				showList: this.$constData.showList,

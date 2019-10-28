@@ -33,6 +33,7 @@
 				remark: '',
 			}
 		},
+		
 		methods: {
 			subBtn() {
 				if(this.tagGroupName == ''){
@@ -56,7 +57,7 @@
 						this.$router.push('/homeTag')
 					} else {
 						this.$message({
-							message: res.data.c,
+							message: res.data.rm,
 							type: 'warning'
 						});
 						this.imgList = []

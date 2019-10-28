@@ -74,7 +74,7 @@
 				this.page = page
 				//获取内容列表
 				let cnt = {
-					module: this.$constData.module,
+					moduleId: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -98,6 +98,13 @@
 								type: 'success',
 								message: '操作成功!'
 							});
+							let cnt = {
+								moduleId: this.$constData.module,
+								authority:3,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
