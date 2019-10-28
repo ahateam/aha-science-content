@@ -199,9 +199,6 @@
             getContentsBtn() {
                 this.searchData.status = ''
                 this.page = 1
-				let tag = {
-					hom
-				}
                 let cnt = {
                     module: this.$constData.module,
                     count: this.count,

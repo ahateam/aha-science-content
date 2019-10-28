@@ -92,7 +92,7 @@
 				tagList: [],
 				inputVisible: false,
 				inputValue: '',
-				status: '',
+				status: 0,
 				generalStatus: this.$constData.generalStatus,
 			}
 		},

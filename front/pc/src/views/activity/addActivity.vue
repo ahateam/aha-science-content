@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div style="padding-bottom: 20px;">
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -11,8 +11,7 @@
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
-				<span class="title-box"> 活动简介：</span>
-				<el-col :span="2" style="min-height: 20px"></el-col>
+				<div class="title-box" style="float: left;"> 活动简介：</div>
 				<el-col :span="20">
 					<div id="editor"></div>
 				</el-col>
@@ -21,15 +20,12 @@
 
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
+			<el-col :span="10">
 				<span class="title-box"> 活动地点：</span>
-				<el-input placeholder="请输入活动地点" v-model="address" style="display: inline-block;width: 400px"></el-input>
+				<el-input placeholder="请输入活动地点" v-model="address" style="display: inline-block;width: 350px"></el-input>
 			</el-col>
-		</el-row>
 
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
+			<el-col :span="10">
 				<span class="title-box"> 活动时间：</span>
 				<el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
 				</el-date-picker>
@@ -38,16 +34,12 @@
 
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 活动封面图：</span>
-				<img width="500" :src="imgSrc" v-if="imgSrc">
-				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
+			<el-col :span="10">
+				<span class="title-box"> 直播链接：</span>
+				<el-input placeholder="请输入直播链接" v-model="zhibo" style="display: inline-block;width: 350px"></el-input>
 			</el-col>
-		</el-row>
 
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
+			<el-col :span="10">
 				<span class="title-box"> 科普基地：</span>
 				<el-select filterable v-model="place" placeholder="请选择科普基地" style="margin-right: 10px;">
 					<el-option v-for="(item,index) in placeList" :key="index" :label="item.name" :value="item.id"></el-option>
@@ -55,20 +47,26 @@
 			</el-col>
 		</el-row>
 
-		<el-row style="padding: 20px">
+		<el-row style="padding: 20px" v-if="imgSrc == ''">
 			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 直播链接：</span>
-				<el-input placeholder="请输入直播链接" v-model="zhibo" style="display: inline-block;width: 400px"></el-input>
+			<el-col :span="10" >
+				<span class="title-box"> 活动封面图：</span>
+				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
 
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
-			<el-button type="primary" @click="createBtn" style=";padding: 15px 50px">提交
+			<el-button type="primary" @click="createBtn" style="width: 50vw;padding: 15px 50px;font-size: 20px;">提 交
 			</el-button>
 		</el-row>
 
+		<el-row style="margin-top: 20px;padding-bottom: 10px" v-if="imgSrc">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<span class="title-box"> 封面图预览：</span>
+			<img width="300" :src="imgSrc">
+			<input @change="getMechData1($event)" type="file" class="upload"/>
+		</el-row>
 	</div>
 </template>
 
@@ -169,7 +167,7 @@
 					})
 					return
 				}
-				
+
 				if (this.imgSrc == '') {
 					this.$message({
 						message: '请上传封面图',
@@ -256,8 +254,8 @@
 		},
 		mounted() {
 			this.getPlace()
-				this.editor = new wangEditor('#editor')
-				this.editor.create();
+			this.editor = new wangEditor('#editor')
+			this.editor.create();
 		}
 	}
 </script>

@@ -63,8 +63,8 @@
 		name: "homeTag",
 		data() {
 			return {
-				options:'',
-				tagGroup:'',
+				options: '',
+				tagGroup: '',
 				showTagGroup: false,
 				tagTitle: '',
 				tableData: [],
@@ -151,7 +151,15 @@
 							this.$message({
 								type: 'success',
 								message: '成功!'
-							});
+							})
+							//获取标签列表
+							let cnt = {
+								moduleId: this.$constData.module,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
+							this.searchData.status = ''
 						} else {
 							this.$message({
 								type: 'error',
@@ -169,13 +177,13 @@
 			/* 添加标签*/
 			subBtn() {
 				this.showTagGroup = false
-				if(this.tagGroup == ''){
+				if (this.tagGroup == '') {
 					this.$message({
 						type: 'error',
 						message: '请选择一个标签分组'
 					});
 					return;
-				}else if(this.tagTitle == ''){
+				} else if (this.tagTitle == '') {
 					this.$message({
 						type: 'error',
 						message: '请填写标签名称'
@@ -183,7 +191,7 @@
 					return;
 				}
 				let cnt = {
-					moduleId: this.$constData.module, 
+					moduleId: this.$constData.module,
 					group: this.tagGroup, //  分组
 					name: this.tagTitle,
 				}
@@ -200,7 +208,7 @@
 						});
 					}
 				})
-				this.$router.push('/contentList')
+				this.getTagGroup()
 			},
 			//获取默认列表
 			getContentsBtn() {
@@ -216,10 +224,10 @@
 				}
 				this.getContents(cnt)
 			},
-			getTagGroup(){
+			getTagGroup() {
 				let cnt = {
 					moduleId: this.$constData.module,
-					count:200,
+					count: 200,
 					offset: 0,
 				};
 				this.$api.getContentTagGroup(cnt, (res) => {
