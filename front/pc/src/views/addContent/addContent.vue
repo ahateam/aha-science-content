@@ -111,6 +111,13 @@
 		},
 		methods: {
 			subBtn() {
+				if(this.title == ''){
+					this.$message({
+						message: '请填写标题',
+						type: 'warning'
+					});
+					return
+				}
 				let that = this
 				let a = this.editor.txt.getJSON()
 				for (let i = 0; i < a.length; i++) {
@@ -161,8 +168,8 @@
 						that.$router.push('/contentList')
 					} else {
 						this.$message({
-							message: res.data.c,
-							type: 'warning'
+							message: res.data.rm,
+							type: 'error'
 						});
 						that.imgList = []
 					}
