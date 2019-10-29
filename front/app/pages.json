@@ -21,7 +21,9 @@
 		{
 			"path": "pages/Reply/Reply",
 			"style": {
-				"navigationBarTitleText": "回复"
+				"navigationBarTitleText": "回复",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 10
 			}
 		},
 		{

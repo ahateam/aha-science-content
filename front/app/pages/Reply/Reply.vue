@@ -3,9 +3,9 @@
 		<!-- 顶部选项卡 -->
 		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
 			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
-			 :id="'tab'+index" @click="changeTime(index)">{{item.name}}</view>
+			 :id="'tab'+index" @click="changeTime(index)">{{item.val}}</view>
 		</scroll-view>
-		<view style="padding-top: 70upx;"></view>
+		<view style="padding-top: 90upx;"></view>
 
 		<view v-if='replyList.length >0'>
 			<view class="list">
@@ -34,32 +34,27 @@
 				</view>
 			</view>
 		</view>
-		<view v-else>
-			<view class="msg-box">
-				暂无任何回复消息...
-			</view>
-		</view>
+		<uni-load-more :status="pageStatus"></uni-load-more>
 	</view>
 </template>
 
 <script>
+	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
+
 	export default {
+		components: {
+			uniLoadMore,
+		},
 		data() {
 			return {
+				oneLoading:true,
+				pageOver: false,
+				pageStatus: 'loading',
 				page: 1,
 				count: 10,
-				tagsList: [{
-						name: '一周'
-					}, {
-						name: '一个月'
-					},
-					{
-						name: '三个月'
-					},
-					{
-						name: '全部'
-					}
-				],
+				offset: 0,
+
+				tagsList: [],
 				replyList: [],
 				replays: [],
 
@@ -76,8 +71,40 @@
 			},
 
 			changeTime(index) {
-				this.tabCurrentIndex = index
+				console.log(this.tagsList)
+				if (this.pageStatus == 'loading') {
+					return
+				}
 
+				this.tabCurrentIndex = index
+				this.page = this.tagsList[index].page
+				this.replyList = []
+
+				let userId = uni.getStorageSync('userId')
+				if (userId == '' || userId == '1234567890') {
+					return
+				}
+
+				if (this.tagsList[index].child) {
+					this.replyList = this.tagsList[index].child
+					this.pageOver = this.tagsList[index].pageOver
+					this.pageStatus = this.tagsList[index].pageStatus
+					return
+				}
+
+				this.pageStatus = 'loading'
+
+				let cnt = {
+					upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
+					// status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
+					orderDesc: true, // Boolean 是否降序（较新的排前面）
+					count: this.count, // Integer 
+					offset: this.offset, // Integer 
+				}
+				if (index != 3) {
+					cnt.time = this.$constData.timeData[index].key
+				}
+				this.getReplyListByUser(cnt, index)
 			},
 
 			timeFilter(timer) {
@@ -88,20 +115,47 @@
 				return `${y}-${m}-${d}`
 			},
 
-			getReplyListByUser(cnt) {
+			getReplyListOnshow(cnt, index) {
 				this.$api.getReplyListByUser(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.oneLoading = false
+						this.replyList = []
 						let list = this.$util.tryParseJson(res.data.c)
-						console.log(list)
-						// for (let i = 0; i.length < list.length; i++) {
-
-						// }
-						this.replyList = list
+						this.tryDataPush(list, index)
 					} else {
 						console.log('error')
 					}
 				})
+			},
 
+			getReplyListByUser(cnt, index) {
+				this.$api.getReplyListByUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						uni.stopPullDownRefresh()
+						let list = this.$util.tryParseJson(res.data.c)
+						this.tryDataPush(list, index)
+					} else {
+						console.log('error')
+					}
+				})
+			},
+
+			tryDataPush(list, index) {
+				if (list.length < this.count) {
+					this.tagsList[index].pageStatus = 'nomore'
+					this.tagsList[index].pageOver = true
+				} else {
+					this.tagsList[index].pageStatus = 'more'
+					this.tagsList[index].pageOver = false
+				}
+
+				this.pageStatus = this.tagsList[index].pageStatus
+				this.pageOver = this.tagsList[index].pageOver
+				let arr = this.replyList.concat(list)
+				this.tagsList[index].child = arr
+				this.replyList = arr
+				console.log(this.tagsList)
+				console.log(this.replyList)
 			},
 
 			/* 跳转至详情 */
@@ -126,24 +180,114 @@
 						icon: 'none'
 					})
 				}
+			},
 
+			getTagList() {
+				this.tagsList = [{
+						key: this.$constData.timeData[0].key,
+						val: '七天'
+					},
+					{
+						key: this.$constData.timeData[1].key,
+						val: '一个月'
+					},
+					{
+						key: this.$constData.timeData[2].key,
+						val: '三个月'
+					},
+					{
+						val: '全部'
+					}
+				]
+				for (let i = 0; i < this.tagsList.length; i++) {
+					this.tagsList[i].page = 1
+				}
+				let index = this.tabCurrentIndex
+				let cnt = {
+					upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
+					status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
+					orderDesc: true, // Boolean 是否降序（较新的排前面）
+					count: this.count, // Integer 
+					offset: this.offset, // Integer 
+					time: this.$constData.timeData[this.tabCurrentIndex].key
+				}
+				this.getReplyListOnshow(cnt, index)
 			}
 		},
+
+		onLoad() {
+			this.getTagList()
+		},
+
 		onShow() {
+			if(this.oneLoading){
+				return
+			}
+			
 			if (uni.getStorageSync('userId') == '' || uni.getStorageSync('userId') == '1234567890') {
+				this.pageStatus = 'nomore'
+				this.replyList = []
+				this.tagsList = []
+				this.getTagList()
 				return
 			}
 
+			this.pageStatus = 'loading'
+			let index = this.tabCurrentIndex
+			let cnt = {
+				upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
+				status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
+				orderDesc: true, // Boolean 是否降序（较新的排前面）
+				count: this.count, // Integer 
+				offset: this.offset, // Integer 
+				time: this.$constData.timeData[this.tabCurrentIndex].key
+			}
+			this.getReplyListOnshow(cnt, index)
+		},
+		onPullDownRefresh() {
+			if (uni.getStorageSync('userId') == '' || uni.getStorageSync('userId') == '1234567890') {
+				setTimeout(() => {
+					uni.stopPullDownRefresh()
+					this.pageStatus = 'nomore'
+				}, 300)
+				return
+			}
+
+			this.pageStatus = 'loading'
+			this.page = 1
+			let index = this.tabCurrentIndex
+			this.tagsList[index].page = 1
+			this.replyList = []
+			let cnt = {
+				upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
+				status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
+				orderDesc: true, // Boolean 是否降序（较新的排前面）
+				count: this.count, // Integer 
+				offset: this.offset, // Integer 
+				time: this.$constData.timeData[this.tabCurrentIndex].key
+			}
+			this.getReplyListByUser(cnt, index)
+		},
+		
+		//加载更多
+		onReachBottom() {
+			if (this.pageOver) {
+				return
+			}
+			let index = this.tabCurrentIndex
+			this.page += 1
+			this.tagsList[index].page += 1
 			let cnt = {
 				upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
 				status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
 				orderDesc: true, // Boolean 是否降序（较新的排前面）
 				count: this.count, // Integer 
 				offset: (this.page - 1) * this.count, // Integer 
+				time: this.$constData.timeData[index].key
 			}
-			this.getReplyListByUser(cnt)
-
+			this.getReplyListByUser(cnt, index)
 		}
+
 	}
 </script>
 

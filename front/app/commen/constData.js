@@ -6,6 +6,25 @@ constData.module = 1180
 /* 版本常量 */
  constData.version = 103
  
+/* 时间常量 */
+constData.timeData = [
+	{
+		key:7,
+		val:'七天'
+	},
+	{
+		key:30,
+		val:'一个月'
+	},
+	{
+		key:90,
+		val:'三个月'
+	},
+	{
+		val:'全部'
+	}
+]
+
  /*  用户权限  */
  constData.authority = [
 	 {

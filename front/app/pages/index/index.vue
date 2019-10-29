@@ -436,6 +436,9 @@
 
 			/* 触发改变选中标签*/
 			async changeTag(_index) {
+				if (this.pageStatus == 'loading') {
+					return
+				}
 				this.tabCurrentIndex = _index
 				this.tagName = this.tagsList[_index].name
 				this.page = this.tagsList[_index].page
