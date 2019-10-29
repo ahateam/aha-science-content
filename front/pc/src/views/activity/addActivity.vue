@@ -42,7 +42,7 @@
 
 			<el-col :span="10">
 				<span class="title-box"> 活动时间：</span>
-				<el-date-picker style="z-index: 2;" v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+				<el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
 				</el-date-picker>
 			</el-col>
 		</el-row>

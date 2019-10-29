@@ -17,6 +17,14 @@
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
+				<span class="title-box"> 排序权重：</span>
+				<!-- <el-input type="number" placeholder="请输入" autosize v-model="" style="display: inline-block;width: 400px"></el-input> -->
+				<el-input-number v-model="level" label="请输入"></el-input-number>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
 				<span class="title-box"> 广告banner图：</span>
 				<img width="500" :src="imgSrc" v-if="imgSrc">
 				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
@@ -45,6 +53,7 @@
 				address: '',
 				title: '',
 				info: '',
+				level:'',
 			}
 		},
 		methods: {
@@ -110,6 +119,7 @@
 			},
 			editorBtn() {
 				let that = this
+				// level
 				let cnt = {
 					moduleId: this.$constData.module,
 					imgSrc: this.imgSrc,
