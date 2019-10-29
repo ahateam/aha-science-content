@@ -1,4 +1,4 @@
-const baseUrl = 'http://192.168.1.146:8067/zskp'
+const baseUrl = 'http://192.168.1.189:8067/zskp'
 // const baseUrl = 'https://topoints.cn/zskp'
 
 

@@ -1,11 +1,11 @@
 <template>
 	<view class="body">
 		<!-- 顶部选项卡 -->
-		<!-- <scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
+		<scroll-view id="nav-bar" class="nav-bar" scroll-x scroll-with-animation :scroll-left="scrollLeft">
 			<view v-for="(item,index) in tagsList" :key="index" class="nav-item" :class="{current: index === tabCurrentIndex}"
 			 :id="'tab'+index" @click="changeTime(index)">{{item.name}}</view>
 		</scroll-view>
-		<view style="padding-top: 70upx;"></view> -->
+		<view style="padding-top: 70upx;"></view>
 
 		<view v-if='replyList.length >0'>
 			<view class="list">
@@ -49,23 +49,19 @@
 				page: 1,
 				count: 10,
 				tagsList: [{
-						name: '最近'
+						name: '一周'
+					}, {
+						name: '一个月'
 					},
 					{
-						name: '3个月'
+						name: '三个月'
 					},
 					{
 						name: '全部'
 					}
 				],
 				replyList: [],
-				replays: [{
-					name: '小强',
-					text: '星爷我不行了...'
-				}, {
-					name: '小强',
-					text: '星爷我不行了...'
-				}],
+				replays: [],
 
 				scrollLeft: 0,
 				tabCurrentIndex: 0,

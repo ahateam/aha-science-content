@@ -26,9 +26,10 @@
 			</el-col>
 
 			<el-col :span="10">
-				<span class="title-box"> 活动时间：</span>
-				<el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-				</el-date-picker>
+				<span class="title-box"> 科普基地：</span>
+				<el-select filterable v-model="place" placeholder="请选择科普基地" style="margin-right: 10px;">
+					<el-option v-for="(item,index) in placeList" :key="index" :label="item.name" :value="item.id"></el-option>
+				</el-select>
 			</el-col>
 		</el-row>
 
@@ -40,16 +41,15 @@
 			</el-col>
 
 			<el-col :span="10">
-				<span class="title-box"> 科普基地：</span>
-				<el-select filterable v-model="place" placeholder="请选择科普基地" style="margin-right: 10px;">
-					<el-option v-for="(item,index) in placeList" :key="index" :label="item.name" :value="item.id"></el-option>
-				</el-select>
+				<span class="title-box"> 活动时间：</span>
+				<el-date-picker style="z-index: 2;" v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+				</el-date-picker>
 			</el-col>
 		</el-row>
 
 		<el-row style="padding: 20px" v-if="imgSrc == ''">
 			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="10" >
+			<el-col :span="10">
 				<span class="title-box"> 活动封面图：</span>
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
@@ -65,7 +65,7 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<span class="title-box"> 封面图预览：</span>
 			<img width="300" :src="imgSrc">
-			<input @change="getMechData1($event)" type="file" class="upload"/>
+			<input @change="getMechData1($event)" type="file" class="upload" />
 		</el-row>
 	</div>
 </template>
@@ -255,6 +255,7 @@
 		mounted() {
 			this.getPlace()
 			this.editor = new wangEditor('#editor')
+			this.editor.customConfig.zIndex = 1
 			this.editor.create();
 		}
 	}

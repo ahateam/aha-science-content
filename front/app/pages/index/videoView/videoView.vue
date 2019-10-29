@@ -192,7 +192,7 @@
 					provider: "weixin",
 					scene: "WXSceneSession",
 					type: 0,
-					href: "http://weapp.datanc.cn/science/app/100/android/zskp.apk",
+					href: `http://weapp.datanc.cn/science/app/${this.$constData.version}/android/zskp.apk`,
 					title: "掌上科普",
 					summary: "我正在使用掌上科普app，赶紧跟我一起来体验！",
 					imageUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572435385&di=3633a97230e161bda396cb159418e90c&imgtype=jpg&er=1&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201210%2F05%2F20121005184845_rSCUj.thumb.700_0.jpeg",
