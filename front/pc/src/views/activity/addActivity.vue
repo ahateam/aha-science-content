@@ -84,6 +84,7 @@
 				homeTagName: '',
 				homeTag: '',
 				imgSrc: '',
+				textimgSrc: '',
 				imgList: [],
 				tag: '',
 				time: '',
@@ -256,6 +257,40 @@
 			this.getPlace()
 			this.editor = new wangEditor('#editor')
 			this.editor.customConfig.zIndex = 1
+			let _this = this
+			this.editor.customConfig.customUploadImg = function(files, insert) {
+				try {
+					let date = new Date()
+					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+						encodeURIComponent(files[0].name)
+					client.multipartUpload(tmpName, files[0], {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						console.log(address)
+						let _index = address.indexOf('?')
+						if (_index == -1) {
+							_this.textimgSrc = address
+						} else {
+							_this.textimgSrc = address.substring(0, _index)
+						}
+						insert(_this.textimgSrc)
+					}).catch(err => {
+						console.log(err)
+					})
+				
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			}
 			this.editor.create();
 		}
 	}

@@ -31,11 +31,12 @@
 				</el-table-column>
 				<el-table-column prop="status" label="状态" :formatter="statusFliter">
 				</el-table-column>
-				<el-table-column label="操作" width="100">
+				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status==0">禁用</el-button>
 						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status==1">启用</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -185,6 +186,43 @@
 						message: '已取消'
 					});
 				});
+			},
+			delBtn(info) {
+				this.$confirm('此操作将永久删除此文件，并且删除该专题下的所有内容！是否继续?', '警告', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'error'
+				}).then(async () => {
+					let cnt = {
+						modeuleId: this.$constData.module,
+						channelId: info.id,
+					}
+					this.$api.delChannel(cnt, (res) => {
+						if (res.data.rc == this.$util.RC.SUCCESS) {
+							this.$message({
+								type: 'success',
+								message: '成功!'
+							});
+							let cnt = {
+								module: this.$constData.module,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
+						} else {
+							this.$message({
+								type: 'error',
+								message: '操作失败!'
+							});
+						}
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消'
+					});
+				});
+
 			},
 			//查看 详情
 			infoBtn(info) {

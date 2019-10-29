@@ -52,6 +52,10 @@ api.getContentTagGroup = function (cnt, callback) {
 api.createContentTagGroup = function (cnt, callback) {
     util.call(baseUrl + '/contentTag/createContentTagGroup', cnt, callback)
 }
+//删除标签
+api.delContentTag = function (cnt, callback) {
+    util.call(baseUrl + '/contentTag/delContentTag', cnt, callback)
+}
 
 
 //修改任务状态
@@ -143,6 +147,10 @@ api.getEnrolls = function (cnt, callback) {
 //修改专栏
 api.editChannel = function (cnt, callback) {
     util.call(baseUrl + '/channel/editChannel', cnt, callback)
+}
+//删除专栏
+api.delChannel = function (cnt, callback) {
+    util.call(baseUrl + '/channel/delChannel', cnt, callback)
 }
 
 /* 科普基地景点 */

@@ -52,7 +52,19 @@ constData.typeList = [{
 	{
 		name: '活动',
 		value: 8
-	},
+	},{
+		name: '纯文本',
+		value: '0'
+	}
+]
+
+constData.typeListTemp = [{
+		name: '图文',
+		value: 5
+	},{
+		name: '纯文本',
+		value: '0'
+	}
 ]
 
 constData.showList = [{

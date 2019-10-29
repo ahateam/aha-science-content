@@ -18,9 +18,12 @@
 				</el-table-column>
 				<el-table-column prop="createTime" label="创建日期" :formatter="timeFliter">
 				</el-table-column>
+				<el-table-column prop="sortSize" label="排序大小">
+				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
 						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">删除</el-button>
+						<el-button @click="updateBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">设置排序</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -118,6 +121,46 @@
 						message: '已取消'
 					});
 				});
+			},
+			updateBtn(info){
+					this.$prompt('请输入排序大小,数值越大越靠前', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(({
+						value
+					}) => {
+						let cnt = {
+							moduleId: this.$constData.module,
+							id:info.id,
+							sortSize: value+'',
+						}
+						this.$api.updateAdvert(cnt, (res) => {
+							if (res.data.rc == this.$util.RC.SUCCESS) {
+								this.$message({
+									type: 'success',
+									message: '成功!'
+								});
+							} else {
+								this.$message({
+									type: 'error',
+									message: '操作失败!'
+								});
+							}
+							let cnt = {
+							moduleId: this.$constData.module,
+							authority:3,
+							count: this.count,
+							offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
+						})
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '取消输入'
+						});
+					});
+				
 			},
 			//查看 详情
 			infoBtn(info) {

@@ -43,6 +43,7 @@
 					<template slot-scope="scope">
 						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status==1">禁用</el-button>
 						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status==0">启用</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small" style="color: red">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -174,6 +175,44 @@
 					});
 				});
 			},
+			delBtn(info){
+				this.$confirm('将会永久删除此标签，将会影响该标签下内容的显示，是否继续？', '警告', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'error'
+				}).then(async () => {
+					let cnt = {
+						group: info.GroupName,
+						tagName: info.name,
+					}
+					this.$api.delContentTag(cnt, (res) => {
+						if (res.data.rc == this.$util.RC.SUCCESS) {
+							this.$message({
+								type: 'success',
+								message: '操作成功!该标签下的内容需要重新设置标签'
+							})
+							//获取标签列表
+							let cnt = {
+								moduleId: this.$constData.module,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
+							this.searchData.status = ''
+						} else {
+							this.$message({
+								type: 'error',
+								message: '操作失败!'
+							});
+						}
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消'
+					});
+				});
+			},
 			/* 添加标签*/
 			subBtn() {
 				this.showTagGroup = false
@@ -207,6 +246,13 @@
 							message: res.data.rm
 						});
 					}
+					let cnt = {
+						moduleId: this.$constData.module,
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
+					this.searchData.status = ''
 				})
 				this.getTagGroup()
 			},

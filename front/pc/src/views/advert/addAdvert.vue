@@ -125,6 +125,7 @@
 					imgSrc: this.imgSrc,
 					linkSrc: this.title,
 					remake: this.info,
+					sortSize:this.level,
 				}
 				that.$api.createAdvert(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {

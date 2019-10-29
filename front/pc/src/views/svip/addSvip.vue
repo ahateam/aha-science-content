@@ -44,7 +44,7 @@
 			</el-col>
 			<el-col :span="18">
 				<img width="500" :src="imgSrc" v-if="imgSrc">
-				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
+				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
 		<!-- <el-row>
@@ -155,6 +155,7 @@
 					tags: JSON.stringify(vipTag),
 					data:JSON.stringify(data),
 				}
+				console.log(cnt)
 				this.$api.createChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
@@ -189,21 +190,8 @@
 				this.inputVisible = false;
 				this.inputValue = '';
 			},
-			getContentTag() {
-				let cnt = {
-					moduleId: this.$constData.module,
-					group: '专题', 
-					status: 1, 
-					count: 20, 
-					offset: 0, 
-				};
-				this.$api.getContentTag(cnt, (res) => {
-					this.vipTagList = this.$util.tryParseJson(res.data.c)
-				})
-			}
 		},
 		mounted() {
-			this.getContentTag()
 		}
 	}
 </script>

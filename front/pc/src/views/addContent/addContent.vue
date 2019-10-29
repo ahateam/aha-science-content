@@ -36,6 +36,16 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
+					<el-form-item label="类型:">
+						<el-select v-model="type" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in typeListTemp" :key="item.value" :label="item.name" :value="item.value">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8">
+				<el-form label-width="80px">
 					<el-form-item label="标签分组:">
 						<el-select v-model="tagGroup" placeholder="请选择" style="margin-right: 10px;" @change="changeTagGroup">
 							<el-option v-for="item in tagGroupList" :key="item.groupName" :label="item.groupName" :value="item.groupName">
@@ -103,10 +113,12 @@
 				}],
 				show: 0,
 				title: '',
+				type:5,
 				status: this.$constData.statusList[3].value,
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
 				showList: this.$constData.showList,
+				typeListTemp: this.$constData.typeListTemp,
 			}
 		},
 		methods: {
@@ -197,7 +209,6 @@
 				this.$api.getContentTagGroup(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tagGroupList = this.$util.tryParseJson(res.data.c)
-						console.log(this.tagGroupList)
 					}
 				})
 			},

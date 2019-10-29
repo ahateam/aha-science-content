@@ -13,7 +13,7 @@
 				</el-col>
 			</el-col>
 		</el-row>
-		<!-- <el-row class="row-box1">
+		<el-row class="row-box1">
 			<el-col :span="24" style="margin-bottom: 10px">
 				<el-col :span="4">
 					<div class="title-box">简介:</div>
@@ -24,7 +24,16 @@
 					</div>
 				</el-col>
 			</el-col>
-		</el-row> -->
+		</el-row>
+		<el-row>
+			<el-col :span="4">
+				<div class="title-box">专题图片:</div>
+			</el-col>
+			<el-col :span="18">
+				<img width="200" :src="imgSrc" v-if="imgSrc">
+				<input @change="getMechData1($event)" type="file" class="upload" />
+			</el-col>
+		</el-row>
 
 		<!-- <el-row>
 			<el-col :span="4">
@@ -63,6 +72,8 @@
 </template>
 
 <script>
+	import ossAuth from '@/commen/oss/ossAuth.js'
+	let client = ossAuth.client
 	export default {
 		name: "addSvip",
 		data() {
@@ -82,22 +93,58 @@
 			}
 		},
 		methods: {
+			getMechData1() {
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg)
+			},
+			doUpload(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file)
+			},
+			multipartUpload(upName, upFile) {
+				//Vue中封装的分片上传方法（详见官方文档）
+				let _this = this
+				try {
+					let result = client.multipartUpload(upName, upFile, {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						let _index = address.indexOf('?')
+						if (_index == -1) {
+							_this.imgSrc = address
+						} else {
+							_this.imgSrc = address.substring(0, _index)
+						}
+					}).catch(err => {
+						console.log(err)
+					})
+			
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			},
 			createChannel() {
 				let that = this
 				let data = {
-					info: this.text,
-					src: this.imgSrc
-				}
-				let vipTag = {
-					channel: this.tagList
+					info: this.info,
+					img: this.imgSrc
 				}
 				let cnt = {
 					id: this.id,
 					module: this.$constData.module,
 					title: this.title,
-				}
-				if (vipTag.channel.length != 0) {
-					cnt.tags = JSON.stringify(vipTag)
+					data:JSON.stringify(data),
 				}
 				this.$api.editChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
@@ -133,21 +180,8 @@
 				this.inputVisible = false;
 				this.inputValue = '';
 			},
-			getContentTag() {
-				let cnt = {
-					moduleId: this.$constData.module,
-					group: '专题',
-					status: 1,
-					count: 20,
-					offset: 0,
-				};
-				this.$api.getContentTag(cnt, (res) => {
-					this.vipTagList = this.$util.tryParseJson(res.data.c)
-				})
-			}
 		},
 		mounted() {
-			this.getContentTag()
 			let info = this.$route.params.info
 			this.title = info.title
 			this.nowVipTagList = JSON.parse(info.tags).channel
