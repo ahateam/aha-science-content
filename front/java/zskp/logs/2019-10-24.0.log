@@ -1,0 +1,91 @@
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:88023e53-9e07-794a-5b77-9e9e271e296f	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid field name: "_id", [RequestId]:000595a1-4b66-8f53-cbde-c00b1b6e18ee, [TraceId]:88023e53-9e07-794a-5b77-9e9e271e296f, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:c15c12ef-3e05-92f9-ac47-eebb3d19339b	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid field name: "_id", [RequestId]:000595a1-527c-88ed-16de-c00b1b28f2a7, [TraceId]:c15c12ef-3e05-92f9-ac47-eebb3d19339b, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:08650c60-2ee2-11b9-54c6-77cb4932eddd	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid field name: "_id", [RequestId]:000595a1-656a-747a-4175-d80b1b77b8c0, [TraceId]:08650c60-2ee2-11b9-54c6-77cb4932eddd, [HttpStatus:]400
+TraceId:8fb2f264-26ca-54c8-44e3-5fe55227cd09	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid field name: "_id", [RequestId]:000595a1-6709-f6d6-85c2-980a1af07245, [TraceId]:8fb2f264-26ca-54c8-44e3-5fe55227cd09, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:742d51f7-af7a-4aab-c56f-473d9aa88bda	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid field name: "_id", [RequestId]:000595a1-6d62-5897-04c3-980a193d383c, [TraceId]:742d51f7-af7a-4aab-c56f-473d9aa88bda, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:d879ba69-8d91-0cd0-d1fc-3fe2b4fff613	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-707a-6eaa-cade-c00b19ababd7, [TraceId]:d879ba69-8d91-0cd0-d1fc-3fe2b4fff613, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:ebdb8923-4d27-a8c8-7b6e-214053e21c2a	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:000595a1-7b79-139f-81de-c00b19d153e6, [TraceId]:ebdb8923-4d27-a8c8-7b6e-214053e21c2a, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:c4033dcb-9497-3bd4-3b71-6e2b370507df	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-87b6-fa39-88c2-980a1960904e, [TraceId]:c4033dcb-9497-3bd4-3b71-6e2b370507df, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:ef9b072b-d951-8f01-ec68-8da3989e64cd	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-8bf6-a241-8100-d90b1a62dbe8, [TraceId]:ef9b072b-d951-8f01-ec68-8da3989e64cd, [HttpStatus:]400
+TraceId:e588243b-6974-338a-91a0-cb93d51d681d	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-8e5d-ffb3-8675-d80b19f0f5bf, [TraceId]:e588243b-6974-338a-91a0-cb93d51d681d, [HttpStatus:]400
+TraceId:c37bd308-ad06-af73-d9fe-5ddd0c94d764	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-8eb4-33a3-8675-d80b1bb83bf1, [TraceId]:c37bd308-ad06-af73-d9fe-5ddd0c94d764, [HttpStatus:]400
+TraceId:069e44ea-7166-ff0d-d701-3783c25a08ab	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-93c5-742b-47c3-980a19fbdf2d, [TraceId]:069e44ea-7166-ff0d-d701-3783c25a08ab, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:c2225715-7fbf-3e2e-0595-da27e7a3a4c3	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:000595a1-9e39-de6e-4376-d80b1acd2a69, [TraceId]:c2225715-7fbf-3e2e-0595-da27e7a3a4c3, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited

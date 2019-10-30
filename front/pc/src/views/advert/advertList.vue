@@ -132,7 +132,7 @@
 						let cnt = {
 							moduleId: this.$constData.module,
 							id:info.id,
-							sortSize: value+'',
+							sortSize: value,
 						}
 						this.$api.updateAdvert(cnt, (res) => {
 							if (res.data.rc == this.$util.RC.SUCCESS) {

@@ -78,6 +78,7 @@
 				//获取内容列表
 				let cnt = {
 					moduleId: this.$constData.module,
+					authority:3,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}

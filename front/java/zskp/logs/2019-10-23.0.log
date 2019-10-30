@@ -1,0 +1,436 @@
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:e1c647a0-7a9d-c3ab-1be0-aa9ee7416c3d	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:00059589-cc36-3d40-1575-d80b1433ec37, [TraceId]:e1c647a0-7a9d-c3ab-1be0-aa9ee7416c3d, [HttpStatus:]400
+TraceId:8cb2615a-c426-ea1d-6bbe-d0a9ad5587a5	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:00059589-cd02-7ff8-04c3-980a14de39c1, [TraceId]:8cb2615a-c426-ea1d-6bbe-d0a9ad5587a5, [HttpStatus:]400
+TraceId:942e677a-6683-8c6c-5901-2478f54a5773	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:00059589-cd30-938a-04c3-980a14de4507, [TraceId]:942e677a-6683-8c6c-5901-2478f54a5773, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:460fb0d3-88b4-aa88-70f6-a306f9e23665	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005958a-17fd-6689-41c2-980a153b9983, [TraceId]:460fb0d3-88b4-aa88-70f6-a306f9e23665, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:0e297e04-8c36-c0f1-0029-e8473a60e8bf	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005958a-209a-93be-81de-c00b1382597c, [TraceId]:0e297e04-8c36-c0f1-0029-e8473a60e8bf, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:0c582f9b-f55e-d26b-79b4-f96f8e5503e7	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005958a-42c2-7d3b-417d-da0b14e07a39, [TraceId]:0c582f9b-f55e-d26b-79b4-f96f8e5503e7, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:306bc489-e24d-2949-d745-cdb3aa8a87f1	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005958a-4912-698b-8100-d90b16272f4d, [TraceId]:306bc489-e24d-2949-d745-cdb3aa8a87f1, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:07eb8430-d5ad-221c-7971-6deed1378f91	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005958a-5c94-cd4f-c9c1-980a152d6cf5, [TraceId]:07eb8430-d5ad-221c-7971-6deed1378f91, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:9474957b-1513-5d65-acee-4678cbb05206	Failed	RetriedCount:0	[ErrorCode]:OTSInvalidPK, [Message]:Validate PK size fail. Input: 1, Meta: 3., [RequestId]:0005958a-901b-78b9-c900-d90b14cba165, [TraceId]:9474957b-1513-5d65-acee-4678cbb05206, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:7f5229c7-0451-3b13-e208-cee1994c7a41	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:00059591-b2fa-925a-417d-da0b16fc8f7e, [TraceId]:7f5229c7-0451-3b13-e208-cee1994c7a41, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:3ed5e9ed-1454-08c7-4adb-4dce0da94ac2	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:00059591-cfb8-dc6d-8100-d90b17c7c063, [TraceId]:3ed5e9ed-1454-08c7-4adb-4dce0da94ac2, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:c369a87c-c725-ab0d-776d-d69d6e9de09f	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:00059591-e4ed-fd07-81de-c00b1628b6f9, [TraceId]:c369a87c-c725-ab0d-776d-d69d6e9de09f, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:002b98d3-2c96-96e1-32f7-0f521e9e2331	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:00059591-e5ed-e76a-c900-d90b17751068, [TraceId]:002b98d3-2c96-96e1-32f7-0f521e9e2331, [HttpStatus:]400
+TraceId:012ca860-6040-bdab-f96e-adf44f462028	TotalTime:2282	{RequestId,00059591-eae0-9909-16de-c00b1711d7c7}	{FirstExecution,1571828824273}	{IntoHttpAsyncClient,1571828824273}	{RequestSent,1571828826480}	{ResponseReveived,1571828826555}	{Completed,1571828826555}	
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:ab5d1459-c604-ed8f-95e3-dc3194b5d233	TotalTime:1262	{RequestId,00059591-efe2-28d0-c9c1-980a161f8eb0}	{FirstExecution,1571828910238}	{IntoHttpAsyncClient,1571828910363}	{RequestSent,1571828910465}	{ResponseReveived,1571828911492}	{Completed,1571828911500}	
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:65160d09-7f88-f19b-63a5-63691cd8665d	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid Parameter, [RequestId]:00059591-f332-263e-85c2-980a16778b43, [TraceId]:65160d09-7f88-f19b-63a5-63691cd8665d, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:489e1705-43b1-837b-8049-84e945e92f71	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059591-fe57-584e-4175-d80b17460024, [TraceId]:489e1705-43b1-837b-8049-84e945e92f71, [HttpStatus:]400
+TraceId:07f03da8-f3d7-3743-8f3d-43abd87b4ea8	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059591-feaf-d386-4175-d80b17462639, [TraceId]:07f03da8-f3d7-3743-8f3d-43abd87b4ea8, [HttpStatus:]400
+TraceId:4110f4d5-b8ff-cf5b-4f48-7c0552ac79fa	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059591-fecb-75dc-4175-d80b16361e28, [TraceId]:4110f4d5-b8ff-cf5b-4f48-7c0552ac79fa, [HttpStatus:]400
+TraceId:568cee1b-1f93-0b16-1b17-11a30a862e45	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059591-fefb-3230-4175-d80b17652f29, [TraceId]:568cee1b-1f93-0b16-1b17-11a30a862e45, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:381e249c-1da0-c672-2a0b-36e31c2abd53	TotalTime:1538	{RequestId,00059592-0286-6d6d-cade-c00b17e84aa7}	{FirstExecution,1571829223200}	{IntoHttpAsyncClient,1571829223218}	{RequestSent,1571829223219}	{ResponseReveived,1571829224736}	{Completed,1571829224738}	
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:83b22bbc-bc8d-7968-582e-ced52dab1129	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Field [Value] cannot start with * for the [WILDCARD_QUERY] query, [RequestId]:00059592-33e7-7f34-8dc0-980a17aef6a2, [TraceId]:83b22bbc-bc8d-7968-582e-ced52dab1129, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:bd3bac66-5e41-88b9-efaa-cad28b867b6e	TotalTime:1289	{RequestId,00059592-63a4-043e-88c2-980a16ee07cb}	{FirstExecution,1571830852297}	{IntoHttpAsyncClient,1571830852418}	{RequestSent,1571830852531}	{ResponseReveived,1571830853573}	{Completed,1571830853586}	
+TraceId:a01237e7-d3ae-f721-cafb-e82d4fdef6ad	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059592-6548-46b5-88c2-980a1516d6f0, [TraceId]:a01237e7-d3ae-f721-cafb-e82d4fdef6ad, [HttpStatus:]400
+TraceId:dc990c67-7fc6-099a-0500-565bb232cfee	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059592-6566-d282-88c2-980a1707dda7, [TraceId]:dc990c67-7fc6-099a-0500-565bb232cfee, [HttpStatus:]400
+TraceId:ed2b3919-5353-fa9e-e0a9-547bbcec837d	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Table[tb_zskp_tourBase] not exist., [RequestId]:00059592-65a0-9266-88c2-980a158f0640, [TraceId]:ed2b3919-5353-fa9e-e0a9-547bbcec837d, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:a3c716e2-5546-779c-1274-9f5357bf90d4	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid Parameter, [RequestId]:00059592-680f-256a-cbde-c00b14b7c8ac, [TraceId]:a3c716e2-5546-779c-1274-9f5357bf90d4, [HttpStatus:]400
+TraceId:e4fbfc51-b44b-e50b-f4a0-19a7bf3c5226	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Index [index_zskp_tourBase] not exist., [RequestId]:00059592-6ae8-8550-85c2-980a16b822ac, [TraceId]:e4fbfc51-b44b-e50b-f4a0-19a7bf3c5226, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:2d1e2d2a-9fed-59b9-6ce7-300a642cc793	TotalTime:1509	{RequestId,00059592-75a4-eb5d-46c3-980a16161c5d}	{FirstExecution,1571831154543}	{IntoHttpAsyncClient,1571831154561}	{RequestSent,1571831154562}	{ResponseReveived,1571831156050}	{Completed,1571831156052}	
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited

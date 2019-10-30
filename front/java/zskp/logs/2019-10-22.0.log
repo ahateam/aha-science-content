@@ -1,0 +1,406 @@
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:64dcc428-0112-c428-4b25-c1ac98d0c94d	TotalTime:1537	{RequestId,0005957c-3954-7f99-4376-d80b1258ea9a}	{FirstExecution,1571735654912}	{IntoHttpAsyncClient,1571735654957}	{RequestSent,1571735654958}	{ResponseReveived,1571735656447}	{Completed,1571735656449}	
+TraceId:93ecaedb-a767-62f7-2096-540f38a310af	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid expect:EXPECT_NOT_EXIST when modify row with pk auto increment, [RequestId]:0005957c-5374-1789-8cc0-980a113c0fd1, [TraceId]:93ecaedb-a767-62f7-2096-540f38a310af, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:f6d96f2c-24f2-aef0-90d4-83632b126506	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957c-58f5-1b0e-23de-c00b130d1b52, [TraceId]:f6d96f2c-24f2-aef0-90d4-83632b126506, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:cf81b250-d030-ecdc-39f0-f59fc125f7b7	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957c-59c4-f549-06c3-980a123c0c5a, [TraceId]:cf81b250-d030-ecdc-39f0-f59fc125f7b7, [HttpStatus:]409
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+TraceId:75cbff2c-e877-6c9a-3499-d4cab70c9592	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid expect:EXPECT_NOT_EXIST when modify row with pk auto increment, [RequestId]:0005957c-5aad-e0c7-1575-d80b117b4354, [TraceId]:75cbff2c-e877-6c9a-3499-d4cab70c9592, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:869c53e9-bac2-d669-cba9-1b04e5cf356b	TotalTime:1301	{RequestId,0005957c-634a-18a6-c1c0-980a13379a3e}	{FirstExecution,1571736358658}	{IntoHttpAsyncClient,1571736358785}	{RequestSent,1571736358902}	{ResponseReveived,1571736359952}	{Completed,1571736359959}	
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:37c4861f-5d42-d3c1-b4a2-28fcdf6ad044	TotalTime:1544	{RequestId,0005957c-64a7-44e4-cade-c00b12a96ee5}	{FirstExecution,1571736381761}	{IntoHttpAsyncClient,1571736381780}	{RequestSent,1571736381781}	{ResponseReveived,1571736383303}	{Completed,1571736383305}	
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+TraceId:c318ec1d-c971-1a3c-4dfa-f6a81f57fdd8	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid expect:EXPECT_NOT_EXIST when modify row with pk auto increment, [RequestId]:0005957c-6a75-1798-81de-c00b11ce890a, [TraceId]:c318ec1d-c971-1a3c-4dfa-f6a81f57fdd8, [HttpStatus:]400
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:09dbdfe4-0f2f-9bf6-9e78-cd0ca075b19c	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-6ec7-c0a9-06c3-980a12fd36c8, [TraceId]:09dbdfe4-0f2f-9bf6-9e78-cd0ca075b19c, [HttpStatus:]400
+TraceId:0f79be64-2b3e-f2b8-8d48-a337ba5c8578	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid expect:EXPECT_NOT_EXIST when modify row with pk auto increment, [RequestId]:0005957c-6f08-d52b-06c3-980a12fd3ee1, [TraceId]:0f79be64-2b3e-f2b8-8d48-a337ba5c8578, [HttpStatus:]400
+TraceId:c53c5673-dc66-017f-a596-a6b0b4857b9a	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-713c-8f8f-5cde-c00b10f1b505, [TraceId]:c53c5673-dc66-017f-a596-a6b0b4857b9a, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+TraceId:31812feb-62bd-d033-bd94-471ab0b797ef	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid expect:EXPECT_NOT_EXIST when modify row with pk auto increment, [RequestId]:0005957c-79a4-7e9b-5cde-c00b11a1ad7b, [TraceId]:31812feb-62bd-d033-bd94-471ab0b797ef, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:db3676b8-68eb-568f-517b-1e31af84b2c9	TotalTime:1320	{RequestId,0005957c-86d6-f367-cade-c00b1226c765}	{FirstExecution,1571736955083}	{IntoHttpAsyncClient,1571736955221}	{RequestSent,1571736955326}	{ResponseReveived,1571736956390}	{Completed,1571736956403}	
+TraceId:dd2b0625-b4c9-d307-603f-84ce8102e548	TotalTime:1534	{RequestId,0005957c-86eb-28cd-cade-c00b1226cbde}	{FirstExecution,1571736956622}	{IntoHttpAsyncClient,1571736956649}	{RequestSent,1571736956650}	{ResponseReveived,1571736958154}	{Completed,1571736958156}	
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:81fc5f68-5091-3003-b0ab-5b6107983629	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-88d8-cd87-41c2-980a118b7b78, [TraceId]:81fc5f68-5091-3003-b0ab-5b6107983629, [HttpStatus:]400
+TraceId:e2f1ae3d-2f18-9024-d799-c7066bbaff0b	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-88e7-25a2-41c2-980a130e3757, [TraceId]:e2f1ae3d-2f18-9024-d799-c7066bbaff0b, [HttpStatus:]400
+TraceId:877d85e0-c1f9-b47c-dbe4-362a24e479ae	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-8c88-4790-c1c0-980a129ac8e5, [TraceId]:877d85e0-c1f9-b47c-dbe4-362a24e479ae, [HttpStatus:]400
+TraceId:9c4d2a1a-0bea-2108-3071-2a1d9d2cedc6	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-8cb7-780f-c1c0-980a11795ed9, [TraceId]:9c4d2a1a-0bea-2108-3071-2a1d9d2cedc6, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+TraceId:d27a4cba-6f55-6fe5-7c30-cad9eeda8684	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-9277-5e05-88c2-980a1100d206, [TraceId]:d27a4cba-6f55-6fe5-7c30-cad9eeda8684, [HttpStatus:]400
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:7e8e69a0-01d3-b20d-043e-591628b7003e	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-92a2-232f-88c2-980a1187132f, [TraceId]:7e8e69a0-01d3-b20d-043e-591628b7003e, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:f1179bb0-2a12-4b66-26c0-e18101911c90	TotalTime:1271	{RequestId,0005957c-949e-326e-8100-d90b12675ff7}	{FirstExecution,1571737186253}	{IntoHttpAsyncClient,1571737186374}	{RequestSent,1571737186484}	{ResponseReveived,1571737187513}	{Completed,1571737187524}	
+TraceId:e4e5f78f-d520-9cc9-1ec2-44fc6fd9c81b	TotalTime:1527	{RequestId,0005957c-94b2-366e-8100-d90b12676440}	{FirstExecution,1571737187763}	{IntoHttpAsyncClient,1571737187794}	{RequestSent,1571737187795}	{ResponseReveived,1571737189288}	{Completed,1571737189290}	
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:fcc41571-0d99-05e6-67ff-faff601d3b8e	TotalTime:1325	{RequestId,0005957c-9590-6e4e-8fc0-980a12894569}	{FirstExecution,1571737202107}	{IntoHttpAsyncClient,1571737202247}	{RequestSent,1571737202355}	{ResponseReveived,1571737203419}	{Completed,1571737203432}	
+TraceId:53305924-46d2-3d35-8f3f-f2fd3971d103	TotalTime:1572	{RequestId,0005957c-95a5-4e1d-8fc0-980a11686228}	{FirstExecution,1571737203689}	{IntoHttpAsyncClient,1571737203723}	{RequestSent,1571737203724}	{ResponseReveived,1571737205260}	{Completed,1571737205261}	
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:a41ba6a5-d77f-391b-931d-fc188b2675e5	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957c-9c7a-b104-47c3-980a121fd101, [TraceId]:a41ba6a5-d77f-391b-931d-fc188b2675e5, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:70ed9b52-5ed0-4cd2-0cf4-fb73eac3c167	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957c-a377-0ae6-41c2-980a12248014, [TraceId]:70ed9b52-5ed0-4cd2-0cf4-fb73eac3c167, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:eb0054e7-2746-eda7-07ef-2867d3a024d4	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957c-a6e5-4148-47c3-980a1215d4ee, [TraceId]:eb0054e7-2746-eda7-07ef-2867d3a024d4, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:4753443b-af6c-f3ac-050e-60a2663682cc	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957c-a946-b1c2-c900-d90b1234caaf, [TraceId]:4753443b-af6c-f3ac-050e-60a2663682cc, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:ebc35090-6921-ab7b-7002-5faf6e10326d	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957c-bd08-23bb-4376-d80b12701003, [TraceId]:ebc35090-6921-ab7b-7002-5faf6e10326d, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:00d81cd9-0155-8c62-a0a2-16eef964aa22	TotalTime:1256	{RequestId,0005957c-c5e7-f8a9-c9c1-980a1290ade2}	{FirstExecution,1571738013158}	{IntoHttpAsyncClient,1571738013282}	{RequestSent,1571738013388}	{ResponseReveived,1571738014401}	{Completed,1571738014414}	
+TraceId:296feec1-1d3e-faf6-310c-dec8a363e38d	TotalTime:1513	{RequestId,0005957c-c5fa-fd3d-c9c1-980a12b9e30d}	{FirstExecution,1571738014608}	{IntoHttpAsyncClient,1571738014634}	{RequestSent,1571738014635}	{ResponseReveived,1571738016119}	{Completed,1571738016121}	
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:9f5c1d9f-6317-7d25-028d-784fa24672f8	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-c867-f788-417d-da0b12a8c832, [TraceId]:9f5c1d9f-6317-7d25-028d-784fa24672f8, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:e68f3daf-4b40-3613-551d-64d5d37916b5	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957c-c994-84f6-83dd-c00b12e725fd, [TraceId]:e68f3daf-4b40-3613-551d-64d5d37916b5, [HttpStatus:]400
+TraceId:57dcb41e-ba9f-20c1-9d2d-200094bbdfcf	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-319f-809a-23de-c00b12fe6101, [TraceId]:57dcb41e-ba9f-20c1-9d2d-200094bbdfcf, [HttpStatus:]400
+TraceId:c396236f-45de-c856-4c13-5df29a7673a2	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-31db-2726-23de-c00b131767da, [TraceId]:c396236f-45de-c856-4c13-5df29a7673a2, [HttpStatus:]400
+TraceId:2ea77fd3-7ddf-54b7-4a79-f879c47ffe0a	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-3226-acfd-23de-c00b1008fcca, [TraceId]:2ea77fd3-7ddf-54b7-4a79-f879c47ffe0a, [HttpStatus:]400
+TraceId:18f3e064-6fb5-6757-cd9e-6867c64a31c0	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-3241-cebf-23de-c00b12fe80cc, [TraceId]:18f3e064-6fb5-6757-cd9e-6867c64a31c0, [HttpStatus:]400
+TraceId:a35e95f0-2db6-e56a-6820-6b52e39898e6	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-3257-457d-23de-c00b12fe85f0, [TraceId]:a35e95f0-2db6-e56a-6820-6b52e39898e6, [HttpStatus:]400
+TraceId:093d55b8-d57f-a1dc-2420-66455880d333	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-3261-9c06-23de-c00b12fe87c3, [TraceId]:093d55b8-d57f-a1dc-2420-66455880d333, [HttpStatus:]400
+TraceId:0732eb00-12aa-679a-13bf-53ff33b2bd0b	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-326c-07dd-23de-c00b12fe8a19, [TraceId]:0732eb00-12aa-679a-13bf-53ff33b2bd0b, [HttpStatus:]400
+TraceId:dc8db198-fd29-7f5d-b31e-724c43674170	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-32ac-9d13-23de-c00b12ef56f8, [TraceId]:dc8db198-fd29-7f5d-b31e-724c43674170, [HttpStatus:]400
+TraceId:e6ed8be4-b3bb-171a-5200-79aedb051f29	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-32c1-8baf-23de-c00b12ef57c5, [TraceId]:e6ed8be4-b3bb-171a-5200-79aedb051f29, [HttpStatus:]400
+TraceId:6b6d90de-1c7e-4eb8-5f2a-a36a704e4b02	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-32d1-8c75-23de-c00b1009063b, [TraceId]:6b6d90de-1c7e-4eb8-5f2a-a36a704e4b02, [HttpStatus:]400
+TraceId:2a64e31d-6a40-6cc5-cda0-9e4ec53c6f94	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-32d9-527d-23de-c00b10090695, [TraceId]:2a64e31d-6a40-6cc5-cda0-9e4ec53c6f94, [HttpStatus:]400
+TraceId:64210ffb-08c2-af41-3d29-a19167f4f5f7	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-32ee-2ece-23de-c00b10090800, [TraceId]:64210ffb-08c2-af41-3d29-a19167f4f5f7, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:2bf7f2bc-8b5c-ea61-5097-ce4ed9f08b84	TotalTime:1300	{RequestId,0005957d-344b-307d-88c2-980a11a73305}	{FirstExecution,1571739865128}	{IntoHttpAsyncClient,1571739865248}	{RequestSent,1571739865354}	{ResponseReveived,1571739866415}	{Completed,1571739866428}	
+TraceId:c4e3e552-f207-8af4-e535-e39710317997	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid Parameter, [RequestId]:0005957d-345f-966f-88c2-980a11224d1a, [TraceId]:c4e3e552-f207-8af4-e535-e39710317997, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:9fcf6dbc-8697-aabf-e847-491b82b25373	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-35a1-df9a-83dd-c00b12a56467, [TraceId]:9fcf6dbc-8697-aabf-e847-491b82b25373, [HttpStatus:]404
+TraceId:ca2c8cd7-9b0f-608e-0625-23cc273a8188	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-35a3-dea9-83dd-c00b12a56477, [TraceId]:ca2c8cd7-9b0f-608e-0625-23cc273a8188, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:aff568e7-f6a7-1642-cede-e119d9183f58	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-3870-4f2b-8dc0-980a11bcfc0e, [TraceId]:aff568e7-f6a7-1642-cede-e119d9183f58, [HttpStatus:]404
+TraceId:90f73c53-230a-0312-6a4c-5c6d329a7d8b	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-3872-77a4-8dc0-980a12741c3b, [TraceId]:90f73c53-230a-0312-6a4c-5c6d329a7d8b, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:d22679bf-fd59-dacf-2919-d4c220831c01	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-3a19-8dd5-83dd-c00b11e12271, [TraceId]:d22679bf-fd59-dacf-2919-d4c220831c01, [HttpStatus:]404
+TraceId:41d2fc11-32e3-ef11-22f4-637257c48e98	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-3a1b-9144-83dd-c00b11f07745, [TraceId]:41d2fc11-32e3-ef11-22f4-637257c48e98, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:8f04df9f-a543-b2b8-9d99-dc1941c744b6	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-3b57-f2a3-c9c1-980a1280899d, [TraceId]:8f04df9f-a543-b2b8-9d99-dc1941c744b6, [HttpStatus:]404
+TraceId:a46f500d-f940-6040-c243-194de5fca561	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-3b5b-d4f3-c9c1-980a126b3602, [TraceId]:a46f500d-f940-6040-c243-194de5fca561, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:d2561bd2-24f6-1af4-fcc3-4156d2e09885	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-3c5e-adb2-23de-c00b12569287, [TraceId]:d2561bd2-24f6-1af4-fcc3-4156d2e09885, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:4bda3aef-fdfc-a105-583a-3132ea67def6	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-3dc5-4a9d-06c3-980a1156c1f2, [TraceId]:4bda3aef-fdfc-a105-583a-3132ea67def6, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:f497a79e-b420-d575-ab6b-b0b884af26a6	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-41b3-4750-16de-c00b13863579, [TraceId]:f497a79e-b420-d575-ab6b-b0b884af26a6, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:a631c04f-45ce-dcb7-5de3-6db4037b2b45	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-45d1-4cdb-cdde-c00b12f19711, [TraceId]:a631c04f-45ce-dcb7-5de3-6db4037b2b45, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:b4a22c0f-4192-f507-a86d-6cdf8a4190c5	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-4bd6-6e9c-c1c0-980a12170ecc, [TraceId]:b4a22c0f-4192-f507-a86d-6cdf8a4190c5, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:87f388e2-c542-27a3-7d3f-b19367bd87b7	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid Parameter, [RequestId]:0005957d-5710-c611-8cc0-980a12bd6a09, [TraceId]:87f388e2-c542-27a3-7d3f-b19367bd87b7, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:ff3498b2-0299-7a9c-07fe-d8fb3749ac8b	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-58df-57f1-cdde-c00b129b58e6, [TraceId]:ff3498b2-0299-7a9c-07fe-d8fb3749ac8b, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:460b65ee-1ffe-50c4-b892-61f7074d225c	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-5b8a-38f4-c9c1-980a1222f512, [TraceId]:460b65ee-1ffe-50c4-b892-61f7074d225c, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:d67c946b-42f6-cf0f-bd5a-c65e5993c534	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-5efd-d3a8-06c3-980a112f0e5d, [TraceId]:d67c946b-42f6-cf0f-bd5a-c65e5993c534, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:1f630078-9034-2105-aa9d-0e140f3fbd99	Failed	RetriedCount:0	[ErrorCode]:OTSObjectNotExist, [Message]:Search Index not exist, [RequestId]:0005957d-6147-53ca-1575-d80b12a167f9, [TraceId]:1f630078-9034-2105-aa9d-0e140f3fbd99, [HttpStatus:]404
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:afe241d7-74ab-0321-9a4b-5be106d07caf	TotalTime:1510	{RequestId,0005957d-6acf-f0a5-c1c0-980a12d0cd4f}	{FirstExecution,1571740779994}	{IntoHttpAsyncClient,1571740780012}	{RequestSent,1571740780013}	{ResponseReveived,1571740781502}	{Completed,1571740781504}	
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:0e95c025-fd1f-9e15-9352-e8ed940135cd	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-7168-c37e-cbde-c00b132f01b8, [TraceId]:0e95c025-fd1f-9e15-9352-e8ed940135cd, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+TraceId:d02e283a-c266-11ba-dd7a-1df80f3841de	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:can not find the field in the index, please check the index schema, [RequestId]:0005957d-740b-a5b6-8100-d90b11fe5976, [TraceId]:d02e283a-c266-11ba-dd7a-1df80f3841de, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:221f904e-91f8-5259-e900-b928efd6f0a4	TotalTime:1231	{RequestId,0005957d-76f1-2c4b-46c3-980a129f4901}	{FirstExecution,1571740983315}	{IntoHttpAsyncClient,1571740983434}	{RequestSent,1571740983523}	{ResponseReveived,1571740984533}	{Completed,1571740984546}	
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:210421fa-0fb0-5d31-11da-4f2d062b5324	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:Invalid Parameter, [RequestId]:0005957d-78da-ce0d-cbde-c00b10de9b7d, [TraceId]:210421fa-0fb0-5d31-11da-4f2d062b5324, [HttpStatus:]400
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:c23a430f-e71c-0294-3f78-9e414d21d5fa	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-79dd-2121-5cde-c00b126fb7ea, [TraceId]:c23a430f-e71c-0294-3f78-9e414d21d5fa, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:d4e4f18d-246f-a1f3-28d6-236b6942b1aa	Failed	RetriedCount:0	[ErrorCode]:OTSObjectAlreadyExist, [Message]:Requested table already exists., [RequestId]:0005957d-7dd3-7b5b-41c2-980a12719d7f, [TraceId]:d4e4f18d-246f-a1f3-28d6-236b6942b1aa, [HttpStatus:]409
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\tsDefault.prop
+TraceId:5154984c-4f9b-486f-2754-5310f1adc4c8	TotalTime:1496	{RequestId,0005957d-9090-90ff-46c3-980a12613366}	{FirstExecution,1571741413363}	{IntoHttpAsyncClient,1571741413382}	{RequestSent,1571741413383}	{ResponseReveived,1571741414857}	{Completed,1571741414859}	
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+TraceId:d3052605-d166-c5d9-200d-c37b4f8dc538	ServerTraceInfo:{1521209293612357642[OTSStart start:1571741492219534 latency:688299][SendSQLModifyV4PB start:1571741492219638 latency:688176]{1521209293612423178}}
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+>>>ciname>>configs\tsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+TraceId:c7ec3d08-09ae-cae9-0f35-3f640e02ce73	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957f-a6ce-4c07-c9c1-980a12b6455d, [TraceId]:c7ec3d08-09ae-cae9-0f35-3f640e02ce73, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+TraceId:af03b5ad-8c3d-5fe8-564d-e544edbe5a97	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957f-b25e-684d-06c3-980a12a577ac, [TraceId]:af03b5ad-8c3d-5fe8-564d-e544edbe5a97, [HttpStatus:]400
+TraceId:0a95edfa-997e-c298-5bc2-821236baa6ac	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957f-b308-c604-41c2-980a12c42b72, [TraceId]:0a95edfa-997e-c298-5bc2-821236baa6ac, [HttpStatus:]400
+TraceId:accb4c79-bcfb-b35a-3b86-655a138b20f4	Failed	RetriedCount:0	[ErrorCode]:OTSParameterInvalid, [Message]:failed to query index, please check the request parameter, [RequestId]:0005957f-b331-4f33-41c2-980a12741fdd, [TraceId]:accb4c79-bcfb-b35a-3b86-655a138b20f4, [HttpStatus:]400
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
+verticle<zskp> started
+>>>ciname>>configs\tsDefault.prop
+>>>ciname>>configs\rdsDefault.prop
+removeAbandoned is true, not use in productiion.
+{dataSource-1} inited
