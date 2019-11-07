@@ -3,7 +3,7 @@
 		<el-row class="title-box">
 			图文管理
 		</el-row>
-		<el-row class="content-box">
+		<!-- <el-row class="content-box">
 			<el-row>
 				<el-col :span="8">
 					<el-form label-width="80px">
@@ -18,12 +18,37 @@
 			<el-row>
 				<el-col >
 					<el-button type="primary" @click="searchBtn">查询</el-button>
-					<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
+					
 					<el-button type="primary" @click="createContent" style="float: right;">发布图文</el-button>
 				</el-col>
 			</el-row>
-
+		</el-row> -->
+		<el-row style="padding: 10px;">
+			<el-col :span="18">
+				<span style="font-size: 16px;">栏目：</span>
+				<el-button size="mini" round>超小按钮</el-button>
+				<el-button size="mini" round>超小按钮</el-button>
+				<el-button size="mini" round>超小按钮</el-button>
+				<el-button size="mini" round>超小按钮</el-button>
+			</el-col>
+			<el-col :span="6">
+				 <el-input placeholder="请输入内容" v-model="keyword">
+				    <el-button  slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				  </el-input>
+			</el-col>
 		</el-row>
+		<el-row style="padding: 10px;">
+			<el-col :span="18">
+				<span style="font-size: 16px;">标签：</span>
+				<el-button size="mini" round>超小按钮</el-button>
+				<el-button size="mini" round>超小按钮</el-button>
+				<el-button size="mini" round>超小按钮</el-button>
+			</el-col>
+			<el-col :span="6">
+				<el-button plain @click="getContentsBtn">默认列表</el-button>
+			</el-col> 
+		</el-row>
+
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
@@ -56,6 +81,7 @@
 		name: "contentList",
 		data() {
 			return {
+				keyword:'',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -126,7 +152,7 @@
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
-					type:this.typeList[0].value,
+					type: this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -154,6 +180,31 @@
 				}
 				this.getContents(cnt)
 			},
+			search(){
+				let cnt = {
+					module: this.$constData.module,
+					type: this.typeList[0].value,
+					count: this.count,
+					offset: (this.page - 1) * this.count,
+				}
+				if(this.keyword == ''){
+					this.getContents(cnt)
+					return
+				}
+				cnt.keyword = this.keyword
+				this.$api.searchContents(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableData = this.$util.tryParseJson(res.data.c)
+					} else {
+						this.tableData = []
+					}
+					if (this.tableData.length < this.count) {
+						this.pageOver = true
+					} else {
+						this.pageOver = false
+					}
+				})
+			},
 			/* 删除内容*/
 			delBtn(info) {
 				this.$confirm('此操作将永久删除该文件及其该内容下评论, 是否继续?', '提示', {
@@ -162,7 +213,7 @@
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
-						moduleId:this.$constData.module,
+						moduleId: this.$constData.module,
 						id: info.id,
 					}
 					this.$api.delContentById(cnt, (res) => {
@@ -173,7 +224,7 @@
 							});
 							let cnt = {
 								module: this.$constData.module,
-								type:this.typeList[0].value,
+								type: this.typeList[0].value,
 								count: this.count,
 								offset: (this.page - 1) * this.count
 							}
@@ -221,13 +272,13 @@
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
-					type:this.typeList[0].value,
+					type: this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
 			},
-			createContent(){
+			createContent() {
 				this.$router.push('/addContent')
 			}
 		},
@@ -235,7 +286,7 @@
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,
-				type:this.typeList[0].value,
+				type: this.typeList[0].value,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

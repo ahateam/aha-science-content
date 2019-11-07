@@ -1,20 +1,22 @@
 <template>
 	<div>
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
+		<el-row style="padding-left: 20px;font-size: 16px;">
+			<h2>基本信息：</h2>
+			<el-col :span="10">
+				所属标签：<span>{{tag}}</span>
+			</el-col>
+			<el-col :span="10">
+				所属专栏：<span>{{channelName}}</span>
+			</el-col>	
+		</el-row>
+		<el-row style="padding: 20px;margin-bottom: 20px;">
 			<el-col :span="20">
 				<span class="title-box"> 标题：</span>
 				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-		<el-row style="margin-bottom: 10px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<div id="editor">
-				</div>
-			</el-col>
-		</el-row>
-		<el-row> 
+		
+		<el-row>
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="状态">
@@ -58,12 +60,19 @@
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="专栏">
-						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" >
-							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id" >
+						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;">
+							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-form>
+			</el-col>
+		</el-row>
+		<el-row style="margin-bottom: 10px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<div id="editor">
+				</div>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
@@ -80,13 +89,15 @@
 		name: "addContent",
 		data() {
 			return {
-				cotentHtml:'',
-				tagGroupList:'',
-				tagGroup:'',
-				id:'',
-				homeTagName:'',
-				channelTag:'',
-				homeTag:'',
+				channelName:'',
+				tag:'',
+				cotentHtml: '',
+				tagGroupList: '',
+				tagGroup: '',
+				id: '',
+				homeTagName: '',
+				channelTag: '',
+				homeTag: '',
 				editor: {},
 				imgList: [],
 				tag: '',
@@ -107,6 +118,16 @@
 			}
 		},
 		methods: {
+			channelListFilter(val) {
+				let channelList = this.channelList
+				console.log("q"+channelList[0].id)
+				for (let i = 0; i < channelList.length; i++) {
+					console.log("44")
+					if (channelList[i].id == val) {
+						return channelList[i].title
+					}
+				}
+			},
 			subBtn() {
 				let that = this
 				let a = this.editor.txt.getJSON()
@@ -142,7 +163,7 @@
 					status: this.status,
 					power: this.power,
 					upUserId: this.userId,
-					upChannelId: this.upChannelId, 
+					upChannelId: this.upChannelId,
 					tags: JSON.parse(cid),
 					title: this.title,
 					data: JSON.stringify(data),
@@ -166,7 +187,7 @@
 					}
 				}))
 			},
-			getChannels() {
+			getChannels(info) {
 				let cnt = {
 					module: this.$constData.module,
 					status: 0,
@@ -176,30 +197,31 @@
 				this.$api.getChannels(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.channelList = this.$util.tryParseJson(res.data.c)
+						console.log(this.channelList)
 					}
+					this.channelName = this.channelListFilter(info.upChannelId)
 				})
 			},
 			getTagGroup() {
 				let cnt = {
-						moduleId: this.$constData.module,
-						count: 200,
-						offset: 0,
-					};
+					moduleId: this.$constData.module,
+					count: 200,
+					offset: 0,
+				};
 				this.$api.getContentTagGroup(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tagGroupList = this.$util.tryParseJson(res.data.c)
-						console.log(this.tagGroupList)
 					}
 				})
 			},
-			changeTagGroup(){
+			changeTagGroup() {
 				let cnt = {
-						moduleId: this.$constData.module,
-						group: this.tagGroup, 
-						status: 1,
-						count: 200, 
-						offset: 0,  
-					};
+					moduleId: this.$constData.module,
+					group: this.tagGroup,
+					status: 1,
+					count: 200,
+					offset: 0,
+				};
 				this.$api.getContentTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.homeTag = this.$util.tryParseJson(res.data.c)
@@ -208,9 +230,10 @@
 			}
 		},
 		mounted() {
-			this.getTagGroup()
-			this.getChannels()
 			let info = this.$route.params.info
+			this.getTagGroup()
+			this.getChannels(info)
+			console.log(info)
 			this.id = info.id
 			this.title = info.title
 			this.status = info.status
@@ -218,9 +241,12 @@
 			this.show = JSON.parse(info.data).show
 			this.contentType = info.type
 			this.editor = new wangEditor('#editor')
+			this.editor.customConfig.zIndex = 1
 			this.editor.create()
 			this.cotentHtml = JSON.parse(info.data).editor[0].value
 			this.editor.txt.html(this.cotentHtml)
+			this.tag =  info.tags.homeCotent[0]
+			
 		}
 	}
 </script>

@@ -4,6 +4,11 @@
 			评论管理
 		</el-row>
 		<el-row class="content-box">
+			<el-col :span="6">
+				<el-input placeholder="请输入内容" v-model="keyword">
+					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				</el-input>
+			</el-col>
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
@@ -33,6 +38,7 @@
 		name: "contentList",
 		data() {
 			return {
+				keyword:'',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -50,6 +56,30 @@
 			/*获取评论列表*/
 			getContents(cnt) {
 				this.$api.getContents(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableData = this.$util.tryParseJson(res.data.c)
+					} else {
+						this.tableData = []
+					}
+					if (this.tableData.length < this.count) {
+						this.pageOver = true
+					} else {
+						this.pageOver = false
+					}
+				})
+			},
+			search() {
+				let cnt = {
+					module: this.$constData.module,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				if (this.keyword == '') {
+					this.getContents(cnt)
+					return
+				}
+				cnt.keyword = this.keyword
+				this.$api.searchContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {

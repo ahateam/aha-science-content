@@ -1,16 +1,9 @@
 <template>
 	<div>
 		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 标题：</span>
 				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
-			</el-col>
-		</el-row>
-		<el-row style="margin-bottom: 10px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<div id="editor"></div>
 			</el-col>
 		</el-row>
 		<el-row>
@@ -73,6 +66,12 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
+			</el-col>
+		</el-row>
+		<el-row style="margin-top: 10px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<div id="editor"></div>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
@@ -231,6 +230,7 @@
 			this.getTagGroup()
 			this.getChannels()
 			this.editor = new wangEditor('#editor')
+				this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {
 				try {

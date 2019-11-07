@@ -176,6 +176,13 @@
 				});
 			},
 			delBtn(info){
+				if(info.name == '科普阅读' || info.name == '科普基地' || info.name == '活动' || info.name == '推荐'){
+					this.$message({
+						type: 'error',
+						message: '系统默认标签，不能删除'
+					});
+					return
+				}
 				this.$confirm('将会永久删除此标签，将会影响该标签下内容的显示，是否继续？', '警告', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',

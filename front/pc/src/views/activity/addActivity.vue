@@ -8,15 +8,7 @@
 			</el-col>
 		</el-row>
 
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<div class="title-box" style="float: left;"> 活动简介：</div>
-				<el-col :span="20">
-					<div id="editor"></div>
-				</el-col>
-			</el-col>
-		</el-row>
+	
 
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
@@ -47,26 +39,32 @@
 			</el-col>
 		</el-row>
 
-		<el-row style="padding: 20px" v-if="imgSrc == ''">
+		<el-row >
 			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="10">
+			<el-col :span="8">
 				<span class="title-box"> 活动封面图：</span>
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
+			
 		</el-row>
-
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<div class="title-box" style="float: left;"> 活动简介：</div>
+				<el-col :span="20">
+					<div id="editor"></div>
+				</el-col>
+			</el-col>
+		</el-row>
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
 			<el-button type="primary" @click="createBtn" style="width: 50vw;padding: 15px 50px;font-size: 20px;">提 交
 			</el-button>
 		</el-row>
-
-		<el-row style="margin-top: 20px;padding-bottom: 10px" v-if="imgSrc">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<span class="title-box"> 封面图预览：</span>
-			<img width="300" :src="imgSrc">
-			<input @change="getMechData1($event)" type="file" class="upload" />
-		</el-row>
+		<el-col :span="10" v-if="imgSrc">
+			<div class="title-box" style="float: left;"> 封面图缩略图：</div>
+			<img height="120" :src="imgSrc">
+		</el-col>
 	</div>
 </template>
 

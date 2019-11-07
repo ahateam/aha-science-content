@@ -13,10 +13,15 @@ console.log('开始调用ctrl');
 api.getContents = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/getContents', cnt, callback)
 }
+//获取内容列表
+api.searchContents = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/searchContents', cnt, callback)
+}
 //修改内容
 api.editContent = function (cnt, callback) {
     util.call(baseUrl + '/content/editContent', cnt, callback)
 }
+
 
 //获取专栏
 api.getChannels = function (cnt, callback) {

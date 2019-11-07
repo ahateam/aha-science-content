@@ -8,18 +8,7 @@
 			</el-col>
 		</el-row>
 
-		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 基地简介：</span>
-				<el-row style="margin-bottom: 10px">
-					<el-col :span="2" style="min-height: 20px"></el-col>
-					<el-col :span="20">
-						<div id="editor"></div>
-					</el-col>
-				</el-row>
-			</el-col>
-		</el-row>
+
 
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
@@ -44,8 +33,8 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 基地封面图：</span>
-				<img width="500" :src="imgSrc" v-if="imgSrc">
-				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
+				<img height="100" :src="imgSrc" v-if="imgSrc">
+				<input @change="getMechData1($event)" type="file" class="upload"  />
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px">
@@ -56,7 +45,18 @@
 			</el-col>
 		</el-row>
 
-
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<span class="title-box"> 基地简介：</span>
+				<el-row style="margin-bottom: 10px">
+					<el-col :span="2" style="min-height: 20px"></el-col>
+					<el-col :span="20">
+						<div id="editor"></div>
+					</el-col>
+				</el-row>
+			</el-col>
+		</el-row>
 
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
@@ -236,6 +236,7 @@
 		},
 		mounted() {
 			this.editor = new wangEditor('#editor')
+			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {
 				try {
