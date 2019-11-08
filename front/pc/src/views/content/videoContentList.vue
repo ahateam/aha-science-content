@@ -28,7 +28,7 @@
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="type" label="类型" :formatter="typeFliter">
+				<el-table-column prop="pageView" label="浏览量">
 				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>

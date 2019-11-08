@@ -147,5 +147,15 @@ constData.authList = [{
 	name: '普通用户权限',
 	id: '1'
 }]
+constData.advertTypeList = [{
+	name: 'APP主页广告',
+	id: '0'
+}, {
+	name: '科普栏目广告',
+	id: '1'
+}, {
+	name: '启动页广告',
+	id: '2'
+}]
 
 export default constData

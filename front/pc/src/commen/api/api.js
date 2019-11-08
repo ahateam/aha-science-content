@@ -175,8 +175,18 @@ api.delupdateTourBase = function (cnt, callback) {
 api.updateTourBase = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/updateTourBase', cnt, callback)
 }
-
-
+//查询关键词
+api.getKeywords = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpKeyword/getKeywords', cnt, callback)
+}
+//创建关键词
+api.createKeyword = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpKeyword/createKeyword', cnt, callback)
+}
+//删除关键词
+api.delKeyword = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpKeyword/delKeyword', cnt, callback)
+}
 
 
 export default api

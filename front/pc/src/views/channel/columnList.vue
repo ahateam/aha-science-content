@@ -1,67 +1,42 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			图文管理
+			专题页面
 		</el-row>
-		<!-- <el-row class="content-box">
+		<el-row class="content-box">
 			<el-row>
 				<el-col :span="8">
 					<el-form label-width="80px">
-						<el-form-item label="选择类型:">
-							<el-select v-model="searchData.type" placeholder="请选择类型">
-								<el-option v-for="(item,index) in typeList" :key="index" :label="item.name" :value="item.value"></el-option>
+						<el-form-item label="选择状态">
+							<el-select v-model="searchData.status" placeholder="请选择状态">
+								<el-option v-for="(item,index) in generalStatus" :key="index" :label="item.name" :value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>
 				</el-col>
 			</el-row>
 			<el-row>
-				<el-col >
-					<el-button type="primary" @click="searchBtn">查询</el-button>
-					
-				</el-col>
+				<el-button type="primary" plain @click="searchBtn">查询</el-button>
+				<el-button type="primary" plain @click="getContentsBtn">默认列表</el-button>
+				<el-button type="primary" plain @click="addSvip" style="float: right;">发布专题</el-button>
 			</el-row>
-		</el-row> -->
-		<el-row style="padding: 10px;">
-			<el-col :span="18">
-				<span style="font-size: 16px;">栏目：</span>
-				<el-button size="mini" round>超小按钮</el-button>
-				<el-button size="mini" round>超小按钮</el-button>
-				<el-button size="mini" round>超小按钮</el-button>
-				<el-button size="mini" round>超小按钮</el-button>
-			</el-col>
-			<el-col :span="6">
-				 <el-input placeholder="请输入内容" v-model="keyword">
-				    <el-button  slot="append" icon="el-icon-search" @click="search">搜索</el-button>
-				  </el-input>
-			</el-col>
 		</el-row>
-		<el-row style="padding: 10px;">
-			<el-col :span="18">
-				<span style="font-size: 16px;">标签：</span>
-				<el-button size="mini" round>超小按钮</el-button>
-				<el-button size="mini" round>超小按钮</el-button>
-				<el-button size="mini" round>超小按钮</el-button>
-			</el-col>
-			<el-col :span="6">
-				<el-button plain @click="getContentsBtn">默认列表</el-button>
-					<el-button type="primary" plain @click="createContent" style="float: right;">发布图文</el-button>
-			</el-col> 
-		</el-row>
-
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column prop="title" label="标题" width="400">
+				<el-table-column prop="id" label="编号" width="200">
 				</el-table-column>
-				<el-table-column prop="pageView" label="浏览量">
+				<el-table-column prop="title" label="名称" width="400">
 				</el-table-column>
-				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
+				<el-table-column prop="createTime" width="200" label="发布日期" :formatter="timeFliter">
+				</el-table-column>
+				<el-table-column prop="status" label="状态" :formatter="statusFliter">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button>
-						<el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
-						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">编辑</el-button>
+						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status==0">禁用</el-button>
+						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status==1">启用</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -81,7 +56,6 @@
 		name: "contentList",
 		data() {
 			return {
-				keyword:'',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -92,10 +66,10 @@
 					power: '',
 					tags: '',
 				},
-
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
 				powerList: this.$constData.powerList,
+				generalStatus: this.$constData.generalStatus,
 			}
 		},
 		methods: {
@@ -116,10 +90,10 @@
 				return dataTime
 			},
 			statusFliter(row, col, val) {
-				let statusList = this.statusList
-				for (let i = 0; i < statusList.length; i++) {
-					if (statusList[i].value == val) {
-						return statusList[i].name
+				let generalStatus = this.generalStatus
+				for (let i = 0; i < generalStatus.length; i++) {
+					if (generalStatus[i].value == val) {
+						return generalStatus[i].name
 					}
 				}
 			},
@@ -131,9 +105,9 @@
 					}
 				}
 			},
-			/*获取内容列表*/
+			/*获取专栏列表*/
 			getContents(cnt) {
-				this.$api.getContents(cnt, (res) => {
+				this.$api.getChannels(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {
@@ -152,8 +126,8 @@
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
-					type: this.typeList[0].value,
 					count: this.count,
+					type:'1',
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
@@ -164,100 +138,101 @@
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
-					offset: (this.page - 1) * this.count
-				}
-				if (this.searchData.type) {
-					cnt.type = this.searchData.type
+					offset: (this.page - 1) * this.count,
+					type:'1',
 				}
 				if (this.searchData.status) {
 					cnt.status = this.searchData.status
 				}
-				if (this.searchData.power) {
-					cnt.power = this.searchData.power
-				}
-				if (this.searchData.tags) {
-					cnt.tags = this.searchData.tags
-				}
 				this.getContents(cnt)
 			},
-			search(){
-				let cnt = {
-					module: this.$constData.module,
-					type: this.typeList[0].value,
-					count: this.count,
-					offset: (this.page - 1) * this.count,
-				}
-				if(this.keyword == ''){
-					this.getContents(cnt)
-					return
-				}
-				cnt.keyword = this.keyword
-				this.$api.searchContents(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.tableData = this.$util.tryParseJson(res.data.c)
-					} else {
-						this.tableData = []
-					}
-					if (this.tableData.length < this.count) {
-						this.pageOver = true
-					} else {
-						this.pageOver = false
-					}
-				})
-			},
-			/* 删除内容*/
-			delBtn(info) {
-				this.$confirm('此操作将永久删除该文件及其该内容下评论, 是否继续?', '提示', {
+			/* 禁用/启用专栏*/
+			closeBtn(info) {
+				this.$confirm('是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
-						moduleId: this.$constData.module,
-						id: info.id,
+						modeuleId: this.$constData.module,
+						channelId: info.id,
+						bool: true,
 					}
-					this.$api.delContentById(cnt, (res) => {
+					if (info.status == 1) {
+						cnt.bool = false
+					} else if (info.status == 0) {
+						cnt.bool = true
+					}
+					this.$api.banChannel(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
 							this.$message({
 								type: 'success',
-								message: '删除成功!'
+								message: '成功!'
 							});
 							let cnt = {
 								module: this.$constData.module,
-								type: this.typeList[0].value,
 								count: this.count,
+								type:'1',
 								offset: (this.page - 1) * this.count
 							}
 							this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
-								message: '删除失败!'
+								message: '操作失败!'
 							});
 						}
 					})
 				}).catch(() => {
 					this.$message({
 						type: 'info',
-						message: '已取消删除'
+						message: '已取消'
 					});
 				});
+			},
+			delBtn(info) {
+				this.$confirm('此操作将永久删除此文件，并且删除该专题下的所有内容！是否继续?', '警告', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'error'
+				}).then(async () => {
+					let cnt = {
+						modeuleId: this.$constData.module,
+						channelId: info.id,
+					}
+					this.$api.delChannel(cnt, (res) => {
+						if (res.data.rc == this.$util.RC.SUCCESS) {
+							this.$message({
+								type: 'success',
+								message: '成功!'
+							});
+							let cnt = {
+								module: this.$constData.module,
+								count: this.count,
+								type:'1',
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
+						} else {
+							this.$message({
+								type: 'error',
+								message: '操作失败!'
+							});
+						}
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消'
+					});
+				});
+
 			},
 			//查看 详情
 			infoBtn(info) {
 				this.$router.push({
-					path: '/contentInfo',
-					name: 'contentInfo',
-					params: {
-						info: info
-					}
-				})
-			},
-			//编辑修改
-			updateBtn(info) {
-				this.$router.push({
-					path: '/editContent',
-					name: 'editContent',
+					path: '/svipInfoList',
+					name: 'svipInfoList',
 					params: {
 						info: info
 					}
@@ -265,29 +240,39 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
-				this.searchData.type = 5
+				this.searchData.type = ''
 				this.searchData.status = ''
 				this.searchData.power = ''
 				this.searchData.tags = ''
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
-					type: this.typeList[0].value,
 					count: this.count,
+					type:'1',
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
 			},
-			createContent() {
-				this.$router.push('/addContent')
+			//编辑专栏页
+			infoBtn(info) {
+				this.$router.push({
+					path: '/svipInfoList',
+					name: 'svipInfoList',
+					params: {
+						info: info
+					}
+				})
+			},
+			addSvip() {
+				this.$router.push('/addColumn')
 			}
 		},
 		mounted() {
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,
-				type: this.typeList[0].value,
 				count: this.count,
+				type:'1',
 				offset: (this.page - 1) * this.count
 			}
 			this.getContents(cnt)

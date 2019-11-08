@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			专题
+			科普栏目
 		</el-row>
 		<el-row class="content-box">
 			<el-row>
@@ -18,7 +18,7 @@
 			<el-row>
 				<el-button type="primary" @click="searchBtn">查询</el-button>
 				<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
-				<el-button type="primary" @click="addSvip" style="float: right;">发布专题</el-button>
+				<el-button type="primary" @click="addSvip" style="float: right;">创建栏目</el-button>
 			</el-row>
 		</el-row>
 		<el-row class="table-box">
@@ -127,6 +127,7 @@
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
+					type:'0',
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
@@ -137,6 +138,7 @@
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
+					type:'0',
 					offset: (this.page - 1) * this.count
 				}
 				if (this.searchData.status) {
@@ -170,6 +172,7 @@
 							let cnt = {
 								module: this.$constData.module,
 								count: this.count,
+								type:'0',
 								offset: (this.page - 1) * this.count
 							}
 							this.getContents(cnt)
@@ -206,6 +209,7 @@
 							let cnt = {
 								module: this.$constData.module,
 								count: this.count,
+								type:'0',
 								offset: (this.page - 1) * this.count
 							}
 							this.getContents(cnt)
@@ -244,6 +248,7 @@
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
+					type:'0',
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
@@ -267,6 +272,7 @@
 			let cnt = {
 				module: this.$constData.module,
 				count: this.count,
+				type:'0',
 				offset: (this.page - 1) * this.count
 			}
 			this.getContents(cnt)

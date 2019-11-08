@@ -15,7 +15,7 @@ const addVideoContent = () => import('./views/addContent/addVideoContent')
 //评论
 const replyList = () => import('./views/reply/replyList')
 const replyInfo = () => import('./views/reply/replyInfo')
-//专题
+//栏目
 const svipList = () => import('./views/svip/svipList')
 const svipInfoList = () => import('./views/svip/svipInfoList')
 const addSvip = () => import('./views/svip/addSvip')
@@ -45,6 +45,10 @@ const insiderExamineList = () => import('./views/examine/insiderExamineList')
 //数据
 const interestTagList = () => import('./views/dataInfo/interestTagList')
 const enrollList = () => import('./views/dataInfo/enrollList')
+//专题
+const addColumn = () => import('./views/channel/addColumn')
+const columnInfo = () => import('./views/channel/columnInfo')
+const columnList = () => import('./views/channel/columnList')
 Vue.use(Router)
 
 export default new Router({
@@ -100,7 +104,7 @@ export default new Router({
 					name: 'videoContentList',
 					component: videoContentList
 				},
-				//专栏
+				//栏目
 				{
 					path: '/svipList',
 					name: 'svipList',
@@ -215,7 +219,20 @@ export default new Router({
 				},{
 					path: '/interestTagList',
 					name: 'interestTagList',
-					component: interestTagList
+					component: interestTagList,
+					//专题
+				},{
+					path: '/addColumn',
+					name: 'addColumn',
+					component: addColumn
+				},{
+					path: '/columnInfo',
+					name: 'columnInfo',
+					component: columnInfo
+				},{
+					path: '/columnList',
+					name: 'columnList',
+					component: columnList
 				}
 			]
 		},

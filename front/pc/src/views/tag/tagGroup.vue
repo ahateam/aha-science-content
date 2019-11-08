@@ -1,20 +1,13 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			创建标签分组
+			创建关键词
 		</el-row>
 		<el-row style="padding: 5px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
-				<span class="title-box"> 组名称：</span>
-				<el-input placeholder="请输入分组名称" v-model="tagGroupName" clearable></el-input>
-			</el-col>
-		</el-row>
-		<el-row>
-			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="20">
-				<span class="title-box"> 备注：</span>
-				<el-input placeholder="请输入备注" v-model="remark" clearable></el-input>
+				<span class="title-box"> 关键词：</span>
+				<el-input placeholder="请输入名称" v-model="keyword" clearable></el-input>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
@@ -29,26 +22,24 @@
 		name: "tagGroup",
 		data() {
 			return {
-				tagGroupName: '',
-				remark: '',
+				keyword: '',
 			}
 		},
 		
 		methods: {
 			subBtn() {
-				if(this.tagGroupName == ''){
+				if(this.keyword == ''){
 					this.$message({
-						message: '请输入分组名称',
+						message: '请输入名称',
 						type: 'error'
 					});
 					return
 				}
 				let cnt = {
-						moduleId: this.$constData.module,
-						group: this.tagGroupName,
-						remark: this.remark,
+						userId:JSON.parse(localStorage.getItem('loginUser')).id,
+						keyword:this.keyword
 					};
-				this.$api.createContentTagGroup(cnt, (res => {
+				this.$api.createKeyword(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.$message({
 							message: '添加成功',

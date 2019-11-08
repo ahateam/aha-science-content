@@ -37,31 +37,31 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8">
+			<el-col :span="8" v-if="this.upChannelId == ''">
 				<el-form label-width="80px">
-					<el-form-item label="标签分组:">
-						<el-select v-model="tagGroup" placeholder="请选择" style="margin-right: 10px;" @change="changeTagGroup">
-							<el-option v-for="item in tagGroupList" :key="item.groupName" :label="item.groupName" :value="item.groupName">
+					<el-form-item label="栏目:">
+						<el-select clearable v-model="vip" placeholder="请选择" style="margin-right: 10px;" @clear="clearData">
+							<el-option v-for="item in vipList" :key="item.id" :label="item.title" :value="item.id">
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
-					<el-form-item label="选择标签:">
-						<el-select v-model="homeTagName" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in homeTag" :key="item.name" :label="item.title" :value="item.name">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
+			<el-col :span="8" v-if="this.vip == ''">
 				<el-form label-width="80px">
 					<el-form-item label="专题:">
-						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;">
+						<el-select clearable v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" @clear="clearData">
 							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="13">
+				<el-form label-width="80px">
+					<el-form-item label="关键词:">
+						<el-select v-model="value" multiple filterable allow-create default-first-option placeholder="请选择文章标签-提示:可手动输入，可多选，可删除" style="width: 100%;">
+							<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -91,14 +91,25 @@
 		name: "addContent",
 		data() {
 			return {
+				options: [{
+					value: 'HTML',
+					label: 'HTML'
+				}, {
+					value: 'CSS',
+					label: 'CSS'
+				}, {
+					value: 'JavaScript',
+					label: 'JavaScript'
+				}],
+				value: [],
+
+
+				vipList: '',
+				vip: '',
 				imgSrc: '',
 				imgList: [],
 				address: '',
-				tagGroupList: '',
-				tagGroup: '',
-				homeTagName: '',
 				channelTag: '',
-				homeTag: '',
 				editor: {},
 				imgList: [],
 				tag: '',
@@ -112,7 +123,7 @@
 				}],
 				show: 0,
 				title: '',
-				type:5,
+				type: 5,
 				status: this.$constData.statusList[3].value,
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
@@ -122,7 +133,7 @@
 		},
 		methods: {
 			subBtn() {
-				if(this.title == ''){
+				if (this.title == '') {
 					this.$message({
 						message: '请填写标题',
 						type: 'warning'
@@ -155,15 +166,17 @@
 					show: this.show,
 					imgList: this.imgList
 				}
-				let cid = `{"homeCotent":["${this.homeTagName}"]}`
+				let tags = {
+					homeCotent:this.value
+				}
 				let cnt = {
 					module: this.$constData.module,
 					type: 5,
 					status: this.status,
 					power: 0,
 					upUserId: this.userId,
-					upChannelId: this.upChannelId,
-					tags: JSON.parse(cid),
+					upChannelId: this.upChannelId == '' ? this.vip : this.upChannelId,
+					tags: JSON.stringify(tags),
 					title: this.title,
 					data: JSON.stringify(data),
 				}
@@ -189,8 +202,9 @@
 			getChannels() {
 				let cnt = {
 					module: this.$constData.module,
+					type: '1',
 					status: 0,
-					count: 20,
+					count: 100,
 					offset: 0,
 				};
 				this.$api.getChannels(cnt, (res) => {
@@ -199,38 +213,31 @@
 					}
 				})
 			},
-			getTagGroup() {
+			//获取栏目
+			getVips() {
 				let cnt = {
-					moduleId: this.$constData.module,
-					count: 200,
+					module: this.$constData.module,
+					type: '0',
+					status: 0,
+					count: 100,
 					offset: 0,
 				};
-				this.$api.getContentTagGroup(cnt, (res) => {
+				this.$api.getChannels(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.tagGroupList = this.$util.tryParseJson(res.data.c)
+						this.vipList = this.$util.tryParseJson(res.data.c)
 					}
 				})
 			},
-			changeTagGroup() {
-				let cnt = {
-					moduleId: this.$constData.module,
-					group: this.tagGroup,
-					status: 1,
-					count: 200,
-					offset: 0,
-				};
-				this.$api.getContentTag(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.homeTag = this.$util.tryParseJson(res.data.c)
-					}
-				})
+			clearData() {
+				this.upChannelId = ''
+				this.vip = ''
 			}
 		},
 		mounted() {
-			this.getTagGroup()
+			this.getVips()
 			this.getChannels()
 			this.editor = new wangEditor('#editor')
-				this.editor.customConfig.zIndex = 1
+			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {
 				try {
@@ -256,7 +263,7 @@
 					}).catch(err => {
 						console.log(err)
 					})
-				
+
 				} catch (e) {
 					// 捕获超时异常
 					if (e.code === 'ConnectionTimeoutError') {

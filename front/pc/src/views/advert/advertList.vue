@@ -4,6 +4,11 @@
 			广告管理
 		</el-row>
 		<el-row class="content-box">
+			<el-col :span="18">
+				<span style="font-size: 16px;">广告类别：</span>
+				<el-button size="mini" round @click = "getAdvertsByType('all')">全部</el-button>
+				<el-button size="mini" round @click = "getAdvertsByType(item.id)" v-for="item in advertTypeList" :key="item.id">{{item.name}}</el-button>
+			</el-col>
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
@@ -16,14 +21,16 @@
 				</el-table-column>
 				<el-table-column prop="remark" label="备注">
 				</el-table-column>
-				<el-table-column prop="createTime" label="创建日期" :formatter="timeFliter">
+				<el-table-column prop="type" label="类别" :formatter="advertTypeListFliter">
 				</el-table-column>
 				<el-table-column prop="sortSize" label="排序大小">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">删除</el-button>
-						<el-button @click="updateBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">设置排序</el-button>
+						<el-button @click="updateStatusBtn(scope.row,'0')" type="text" size="small" v-if="scope.row.status == '1'">启用</el-button>
+						<el-button @click="updateStatusBtn(scope.row,'1')" type="text" size="small" v-if="scope.row.status == '0'">禁用</el-button>
+						<el-button @click="updateBtn(scope.row)" type="text" size="small">设置排序</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -47,6 +54,7 @@
 				count: 10,
 				page: 1,
 				pageOver: true,
+				advertTypeList: this.$constData.advertTypeList,
 			}
 		},
 		methods: {
@@ -57,7 +65,15 @@
 				})
 				return dataTime
 			},
-			/*获取评论列表*/
+			advertTypeListFliter(row, col, val) {
+				let typeList = this.advertTypeList
+				for (let i = 0; i < typeList.length; i++) {
+					if (typeList[i].id == val) {
+						return typeList[i].name
+					}
+				}
+			},
+			/*获取广告列表*/
 			getContents(cnt) {
 				this.$api.getAdverts(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -84,8 +100,8 @@
 				this.getContents(cnt)
 			},
 			delBtn(info) {
-				let msg =''
-				
+				let msg = ''
+
 				this.$confirm('此操作将永久删除此数据, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
@@ -93,7 +109,7 @@
 				}).then(async () => {
 					let cnt = {
 						moduleId: this.$constData.module,
-						id:info.id,
+						id: info.id,
 					};
 					this.$api.delAdvert(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -103,7 +119,7 @@
 							});
 							let cnt = {
 								moduleId: this.$constData.module,
-								authority:3,
+								authority: 3,
 								count: this.count,
 								offset: (this.page - 1) * this.count
 							}
@@ -122,61 +138,89 @@
 					});
 				});
 			},
-			updateBtn(info){
-					this.$prompt('请输入排序大小,数值越大越靠前', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-					}).then(({
-						value
-					}) => {
+			updateBtn(info) {
+				this.$prompt('请输入排序大小,数值越大越靠前', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}).then(({
+					value
+				}) => {
+					let cnt = {
+						moduleId: this.$constData.module,
+						id: info.id,
+						sortSize: value,
+					}
+					this.$api.updateAdvert(cnt, (res) => {
+						if (res.data.rc == this.$util.RC.SUCCESS) {
+							this.$message({
+								type: 'success',
+								message: '成功!'
+							});
+						} else {
+							this.$message({
+								type: 'error',
+								message: '操作失败!'
+							});
+						}
 						let cnt = {
 							moduleId: this.$constData.module,
-							id:info.id,
-							sortSize: value,
-						}
-						this.$api.updateAdvert(cnt, (res) => {
-							if (res.data.rc == this.$util.RC.SUCCESS) {
-								this.$message({
-									type: 'success',
-									message: '成功!'
-								});
-							} else {
-								this.$message({
-									type: 'error',
-									message: '操作失败!'
-								});
-							}
-							let cnt = {
-							moduleId: this.$constData.module,
-							authority:3,
+							authority: 3,
 							count: this.count,
 							offset: (this.page - 1) * this.count
-							}
-							this.getContents(cnt)
-						})
-					}).catch(() => {
-						this.$message({
-							type: 'info',
-							message: '取消输入'
-						});
+						}
+						this.getContents(cnt)
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消输入'
 					});
-				
+				});
+
 			},
-			//查看 详情
-			infoBtn(info) {
-				this.$router.push({
-					path: '/userInfo',
-					name: 'userInfo',
-					params: {
-						info: info
+			updateStatusBtn(info,val){
+				let cnt = {
+					moduleId: this.$constData.module,
+					id: info.id,
+					status:val,
+				}
+				this.$api.updateAdvert(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.$message({
+							type: 'success',
+							message: '成功!'
+						});
+					} else {
+						this.$message({
+							type: 'error',
+							message: '操作失败!'
+						});
 					}
+					let cnt = {
+						moduleId: this.$constData.module,
+						authority: 3,
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
 				})
+			},
+			getAdvertsByType(info) {
+				let cnt = {
+					moduleId: this.$constData.module,
+					count: this.count,
+					offset: (this.page - 1) * this.count,
+					type:info,
+				}
+				if(info == 'all'){
+					cnt.type = ''
+				}
+				this.getContents(cnt)
 			},
 		},
 		mounted() {
 			let cnt = {
 				moduleId: this.$constData.module,
-				authority:3,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

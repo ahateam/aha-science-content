@@ -3,6 +3,16 @@
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
+				<span class="title-box"> 广告类别：</span>
+				<el-select v-model="advertType" placeholder="请选择" style="margin-right: 10px;">
+					<el-option v-for="item in advertTypeList" :key="item.id" :label="item.name" :value="item.id">
+					</el-option>
+				</el-select>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
 				<span class="title-box"> 链接：</span>
 				<el-input placeholder="请输入" v-model="title" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
@@ -18,7 +28,6 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 排序权重：</span>
-				<!-- <el-input type="number" placeholder="请输入" autosize v-model="" style="display: inline-block;width: 400px"></el-input> -->
 				<el-input-number v-model="level" label="请输入"></el-input-number>
 			</el-col>
 		</el-row>
@@ -26,8 +35,26 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 广告banner图：</span>
-				<img width="500" :src="imgSrc" v-if="imgSrc">
+				<img width="100" :src="imgSrc" v-if="imgSrc">
 				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px" v-if="this.advertType == '1' ">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<h2> 你选择的广告类别:【科普栏目广告】，请你选择一个栏目：</h2>
+				<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;">
+					<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
+					</el-option>
+				</el-select>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px" v-if="this.advertType == '2' ">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="22">
+				<h2> 你选择的广告类别:【APP启动页广告】，请你选择是否启用当前广告：</h2>
+				<el-radio v-model="radio" label="0">设置当前广告为启动页广告</el-radio>
+				<el-radio v-model="radio" label="1">仅添加，以后设置</el-radio>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
@@ -48,15 +75,34 @@
 		name: "addAdvert",
 		data() {
 			return {
+				channelList:'',
+				upChannelId:'',
+				radio: '',
+				advertTypeList: this.$constData.advertTypeList,
+				advertType: '',
 				imgSrc: '',
 				imgList: [],
 				address: '',
 				title: '',
 				info: '',
-				level:'',
+				level: '',
 			}
 		},
 		methods: {
+			getChannels() {
+				let cnt = {
+					module: this.$constData.module,
+					status: 0,
+					type:'0',
+					count: 20,
+					offset: 0,
+				};
+				this.$api.getChannels(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.channelList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
 			getMechData1() {
 				this.mechGrantImg = event.target.files[0]
 				this.doUpload(this.mechGrantImg)
@@ -115,6 +161,27 @@
 					})
 					return
 				}
+				if (this.advertType == '') {
+					this.$message({
+						message: '请选择广告类别',
+						type: 'warning'
+					})
+					return
+				}
+				if (this.advertType == '1' && this.upChannelId == '') {
+					this.$message({
+						message: '因为你选择了栏目广告，请选择一个栏目',
+						type: 'warning'
+					})
+					return
+				}
+				if (this.advertType == '2' && this.radio == '') {
+					this.$message({
+						message: '因为你选择了APP启动页广告，请选择一个是否启用状态',
+						type: 'warning'
+					})
+					return
+				}
 				this.editorBtn()
 			},
 			editorBtn() {
@@ -125,15 +192,23 @@
 					imgSrc: this.imgSrc,
 					linkSrc: this.title,
 					remake: this.info,
-					sortSize:this.level,
+					sortSize: this.level,
+					type: this.advertType,
 				}
+				if(this.advertType == '1'){
+					cnt.channelId = this.upChannelId
+				}
+				if(this.advertType == '2'){
+					cnt.status = this.radio
+				}
+				console.log(cnt)
 				that.$api.createAdvert(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
 							message: '创建成功',
 							type: 'success'
 						});
-						that.$router.push('/contentList')
+						that.$router.push('/advertList')
 					} else {
 						this.$message({
 							message: res.data.c,
@@ -143,6 +218,9 @@
 					}
 				}))
 			},
+		},
+		mounted(){
+			this.getChannels()
 		}
 	}
 </script>

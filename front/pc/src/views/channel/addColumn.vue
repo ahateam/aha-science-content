@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row class="row-box1">
-			<h1 style="font-size: 18px;">创建新栏目</h1>
+			<h1 style="font-size: 18px;">创建新专题</h1>
 			<el-col :span="24" style="margin-bottom: 10px">
 				<el-col :span="4">
 					<div class="title-box">标题:</div>
@@ -71,7 +71,7 @@
 			</el-col>
 		</el-row> -->
 		<el-col :span="24" style="text-align: center">
-			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">创建栏目</el-button>
+			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">创建专题</el-button>
 		</el-col>
 	</div>
 </template>
@@ -155,7 +155,7 @@
 					status: this.status,
 					tags: JSON.stringify(vipTag),
 					data:JSON.stringify(data),
-					type:'0',
+					type:'1',
 				}
 				this.$api.createChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
@@ -163,7 +163,7 @@
 							message: '添加成功',
 							type: 'success'
 						});
-						that.$router.push('/svipList')
+						that.$router.push('/columnList')
 					} else {
 						this.$message({
 							message: res.data.c,

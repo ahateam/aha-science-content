@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row class="row-box1">
-			<h1 style="font-size: 18px;">创建新栏目</h1>
+			<img :src="imgSrc" width="80"  class="head_pic" />
 			<el-col :span="24" style="margin-bottom: 10px">
 				<el-col :span="4">
 					<div class="title-box">标题:</div>
@@ -20,23 +20,9 @@
 				</el-col>
 				<el-col :span="14">
 					<div class="text-box">
-						<el-input v-model="text" placeholder="简单介绍"></el-input>
+						<el-input v-model="info" placeholder="简介"></el-input>
 					</div>
 				</el-col>
-			</el-col>
-		</el-row>
-		<el-row>
-			<el-col :span="4">
-				<div class="title-box">状态:</div>
-			</el-col>
-			<el-col :span="18">
-				<el-form label-width="80px">
-					<el-form-item>
-						<el-select v-model="status" placeholder="请选择状态">
-							<el-option v-for="(item,index) in generalStatus" :key="index" :label="item.name" :value="item.value"></el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
 			</el-col>
 		</el-row>
 		<el-row>
@@ -44,10 +30,11 @@
 				<div class="title-box">专题图片:</div>
 			</el-col>
 			<el-col :span="18">
-				<img width="500" :src="imgSrc" v-if="imgSrc">
+				<img width="200" :src="imgSrc" v-if="imgSrc">
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
+
 		<!-- <el-row>
 			<el-col :span="4">
 				<div class="title-box">你可输入的标签:</div>
@@ -58,7 +45,15 @@
 		</el-row>
 		<el-row>
 			<el-col :span="4">
-				<div class="title-box">标签:</div>
+				<div class="title-box">当前标签:</div>
+			</el-col>
+			<el-col :span="18">
+				<el-tag type="info" v-for="tag in nowVipTagList" :key="tag.name">{{tag}}</el-tag>
+			</el-col>
+		</el-row>
+		<el-row>
+			<el-col :span="4">
+				<div class="title-box">修改后的标签:</div>
 			</el-col>
 			<el-col :span="18" class="text-box">
 				<el-tag :key="tag" v-for="tag in tagList" closable :disable-transitions="false" @close="handleClose(tag)">
@@ -71,21 +66,20 @@
 			</el-col>
 		</el-row> -->
 		<el-col :span="24" style="text-align: center">
-			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">创建栏目</el-button>
+			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">提交修改</el-button>
 		</el-col>
 	</div>
 </template>
 
 <script>
-		import ossAuth from '@/commen/oss/ossAuth.js'
-		let client = ossAuth.client
+	import ossAuth from '@/commen/oss/ossAuth.js'
+	let client = ossAuth.client
 	export default {
 		name: "addSvip",
-		
 		data() {
 			return {
-				imgList: [],
-				address: '',
+				info:'',
+				nowVipTagList: '',
 				vipTagList: '',
 				title: '',
 				imgSrc: '',
@@ -93,8 +87,9 @@
 				tagList: [],
 				inputVisible: false,
 				inputValue: '',
-				status: 0,
+				status: '',
 				generalStatus: this.$constData.generalStatus,
+				id: '',
 			}
 		},
 		methods: {
@@ -139,28 +134,22 @@
 					console.log(e)
 				}
 			},
-			///-----------
 			createChannel() {
 				let that = this
 				let data = {
-					info: this.text,
+					info: this.info,
 					img: this.imgSrc
 				}
-				let vipTag = {
-					channel: this.tagList
-				}
 				let cnt = {
+					id: this.id,
 					module: this.$constData.module,
 					title: this.title,
-					status: this.status,
-					tags: JSON.stringify(vipTag),
 					data:JSON.stringify(data),
-					type:'0',
 				}
-				this.$api.createChannel(cnt, (res => {
+				this.$api.editChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
-							message: '添加成功',
+							message: '修改成功',
 							type: 'success'
 						});
 						that.$router.push('/svipList')
@@ -193,6 +182,12 @@
 			},
 		},
 		mounted() {
+			let info = this.$route.params.info
+			this.title = info.title
+			this.nowVipTagList = JSON.parse(info.tags).channel
+			this.id = info.id
+			this.info = JSON.parse(info.data).info
+			this.imgSrc = JSON.parse(info.data).img
 		}
 	}
 </script>
