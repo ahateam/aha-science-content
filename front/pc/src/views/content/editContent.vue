@@ -1,13 +1,6 @@
 <template>
 	<div>
 		<el-row style="padding-left: 20px;font-size: 16px;">
-			<h2>基本信息：</h2>
-			<el-col :span="10">
-				所属标签：<span>{{tag}}</span>
-			</el-col>
-			<el-col :span="10">
-				所属专栏：<span>{{channelName}}</span>
-			</el-col>	
 		</el-row>
 		<el-row style="padding: 20px;margin-bottom: 20px;">
 			<el-col :span="20">
