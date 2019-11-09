@@ -132,6 +132,7 @@ public class ZskpOtherContent extends Controller{
 		if(tags !=null && tags.size()>0) {
 			exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
 		}
+		exp.append("ORDER BY create_time DESC ");
 		try (DruidPooledConnection conn = ds.getConnection()) {			
 			List<Content> list = contentRepository.getList(conn,exp, count, offset);
 			String temp = JSON.toJSONString(list);
@@ -183,8 +184,11 @@ public class ZskpOtherContent extends Controller{
 		try (DruidPooledConnection conn = ds.getConnection()) {	
 			List<ZskpUser> userList = userRepository.getList(conn, EXP.INS().key("module_id", module).and(EXP.INS().IN("id", list.toArray())),200,0);
 			for (int i = 0,index = userList.size(); i < index; i++) {
-				if(json.getJSONObject(i).getLong("upUserId").equals(userList.get(i).id)) {
-					json.getJSONObject(i).put("user",userList.get(i));								
+				for (int j = 0,index2 = userList.size(); j < index2; j++) {
+					if(json.getJSONObject(i).getLong("upUserId").equals(userList.get(j).id)) {
+						json.getJSONObject(i).put("user",userList.get(j));		
+						break;
+					}
 				}
 			}
 			return json;
@@ -663,6 +667,7 @@ public class ZskpOtherContent extends Controller{
 			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
 			@P(t = "目标用户id",r = false) Long toUserId, //
 			@P(t = "限定时间状态",r = false) Integer time, //
+			@P(t = "是否加载二级评论",r = false) Boolean isComment, //
 			Integer count, Integer offset//
 	) throws Exception {
 		if(moduleId == null) {
@@ -687,7 +692,7 @@ public class ZskpOtherContent extends Controller{
 			if(time != null) {
 				for(int i= 0 ;i<index ;i++) {
 					Long reolyTime = getTimeInMillis(time, json.getJSONObject(i).getString("createTime"));//时间转换为时间戳
-					if(reolyTime >getTimeInMillis(time)  && reolyTime < new Date().getTime()) {//查询创建时间为：大于一星期前，小于当前时间
+					if(reolyTime >getTimeInMillis(time)  && reolyTime < new Date().getTime()) {//查询创建时间为：大于一给定时间前，小于当前时间
 						map.put(json.getJSONObject(i).getLong("ownerId"),json.getJSONObject(i).getLong("ownerId"));						
 					}
 				}
@@ -697,7 +702,7 @@ public class ZskpOtherContent extends Controller{
 				}				
 			}
 			for(Long key:map.keySet()) {
-				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,status,orderDesc,toUserId,null,count,offset));
+				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,status,orderDesc,toUserId,null,isComment==null?true:false,count,offset));
 			}
 			return returnJson;
 		}
@@ -729,6 +734,7 @@ public class ZskpOtherContent extends Controller{
 			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
 			@P(t = "目标用户id",r = false) Long toUserId, //
 			@P(t = "当前用户id",r = false) Long userId, //
+			@P(t = "是否加载二级评论",r = false) Boolean isComment, //
 			Integer count, Integer offset//
 	) throws Exception {
 		if(moduleId == null) {
@@ -763,22 +769,25 @@ public class ZskpOtherContent extends Controller{
 				////查询是否点过赞
 				ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id", json.getJSONObject(i).getLong("upUserId")));
 				Content cont = contentRepository.get(conn, EXP.INS().key("id",json.getJSONObject(i).get("ownerId")));
-				//二级评论
-				TSQL commentTs = new TSQL();
-				commentTs.Term(OP.AND, "replyId",  relpyId).Term(OP.AND, "toUserId", toUserId).Term(OP.AND, "status", status);
-				if (orderDesc) {
-					commentTs.addSort(new FieldSort("createTime", SortOrder.DESC));
-				} else {
-					commentTs.addSort(new FieldSort("createTime", SortOrder.ASC));
-				}
-				SearchQuery CommentQuery = commentTs.build();
-				JSONObject comment = commentRepository.search(client, CommentQuery);//二级评论内容
 				JSONObject j = new JSONObject();
 				j = json.getJSONObject(i);
+				//二级评论
+				if(isComment == null || isComment ) {
+					TSQL commentTs = new TSQL();
+					commentTs.Term(OP.AND, "replyId",  relpyId).Term(OP.AND, "toUserId", toUserId).Term(OP.AND, "status", status);
+					if (orderDesc) {
+						commentTs.addSort(new FieldSort("createTime", SortOrder.DESC));
+					} else {
+						commentTs.addSort(new FieldSort("createTime", SortOrder.ASC));
+					}
+					SearchQuery CommentQuery = commentTs.build();
+					JSONObject comment = commentRepository.search(client, CommentQuery);//二级评论内容
+					j.put("comment", comment);
+					
+				}
 				j.put("user", user);
 				j.put("appraiseCount", appraiseCount);
 				j.put("content", cont);
-				j.put("comment", comment);
 				if(isAppraise(relpyId, userId)) {
 					j.put("isAppraise", true);
 				}else {

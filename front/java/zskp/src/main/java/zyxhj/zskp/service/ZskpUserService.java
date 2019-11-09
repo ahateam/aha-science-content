@@ -23,11 +23,9 @@ import zyxhj.utils.api.ServerException;
 import zyxhj.utils.data.DataSource;
 import zyxhj.utils.data.EXP;
 import zyxhj.zskp.domain.ApplyAuthority;
-import zyxhj.zskp.domain.InterestTag;
 import zyxhj.zskp.domain.UserFavorites;
 import zyxhj.zskp.domain.ZskpUser;
 import zyxhj.zskp.repository.ApplyAuthorityRepository;
-import zyxhj.zskp.repository.InterestTagRepository;
 import zyxhj.zskp.repository.UserFavoritesRepository;
 import zyxhj.zskp.repository.UserRepository;
 
@@ -35,7 +33,6 @@ public class ZskpUserService extends Controller{
 	private UserRepository userRepository;
 	private ApplyAuthorityRepository applyAuthorityRepository;
 	private UserFavoritesRepository favoritesRepository;
-	private InterestTagRepository interestTagRepository;
 	private ContentRepository contentRepository;
 	private DruidDataSource ds;
 	public ZskpUserService(String node) {
@@ -45,7 +42,6 @@ public class ZskpUserService extends Controller{
 			userRepository = Singleton.ins(UserRepository.class);
 			applyAuthorityRepository = Singleton.ins(ApplyAuthorityRepository.class);
 			favoritesRepository = Singleton.ins(UserFavoritesRepository.class);
-			interestTagRepository = Singleton.ins(InterestTagRepository.class);
 			contentRepository = Singleton.ins(ContentRepository.class);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -458,66 +454,7 @@ public class ZskpUserService extends Controller{
 			favoritesRepository.delete(conn, EXP.INS().key("id", id).andKey("module_id",moduleId));
 		}
 	}
-	/**
-	 * 创建用户兴趣标签
-	 */
-	@POSTAPI(//
-		path = "createInterestTag", 
-		des = "第一次创建用户兴趣标签",
-		ret = "" 
-	)
-	public void createInterestTag(
-		@P(t = "用户id") Long userId,
-		@P(t = "标签数组") JSONArray tagArray
-	) throws ServerException, SQLException {
-		try(DruidPooledConnection conn = ds.getConnection()){
-			InterestTag it = null;
-			List<InterestTag> list = new LinkedList<InterestTag>();
-			for(int i=0,index = tagArray.size();i<index;i++) {
-				it = new InterestTag();
-				it.id = IDUtils.getSimpleId();
-				it.userId  = userId;
-				it.keyword = tagArray.getString(i);
-				it.pageView = 0;
-				list.add(it);
-			}
-			interestTagRepository.insertList(conn, list);
-		}
-	}
-	/**
-	 * 删除用户兴趣标签
-	 */
-	@POSTAPI(//
-		path = "delInterestTag", 
-		des = "删除用户兴趣标签", 
-		ret = "" 
-	)
-	public int delInterestTag(
-		@P(t = "编号") Long id
-	) throws ServerException, SQLException {
-		try(DruidPooledConnection conn = ds.getConnection()){
-			return interestTagRepository.delete(conn, EXP.INS().key("id", id));
-		}
-	}
 	
-	/**
-	 * 查询用户兴趣标签
-	 */
-	@POSTAPI(//
-		path = "getInterestTags", 
-		des = "查询用户兴趣标签", 
-		ret = "" 
-	)
-	public List<InterestTag> getInterestTags(
-		@P(t = "用户id",r = false) Long userId,
-		int count,
-		int offset
-	) throws ServerException, SQLException {
-		try(DruidPooledConnection conn = ds.getConnection()){
-			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId), count, offset);
-			return list;
-		}
-	}
 	
 	/**
 	 * 查询用户关注信息
@@ -553,7 +490,6 @@ public class ZskpUserService extends Controller{
 			return json;
 		}
 	}
-	
 	/**
 	 * 查询用户关注信息
 	 */

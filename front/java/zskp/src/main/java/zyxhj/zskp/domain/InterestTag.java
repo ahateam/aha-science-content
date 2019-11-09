@@ -29,13 +29,4 @@ public class InterestTag {
 	 */
 	@RDSAnnField(column = RDSAnnField.LONG)
 	public Integer pageView;
-	
-	//注册用户添加3个兴趣标签
-	//推荐：查询用户兴趣标签的3个标签内容
-	//点击内容：
-	//没有：在用户兴趣标签里添加当前内容的关键词
-	//有：在用户兴趣标签里关键词浏览量加1
-	//第二次
-	//查询用户的兴趣标签里排序为前3的
-
 }

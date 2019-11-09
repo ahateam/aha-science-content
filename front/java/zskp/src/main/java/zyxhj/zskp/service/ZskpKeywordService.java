@@ -2,17 +2,15 @@ package zyxhj.zskp.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alipay.api.domain.Keyword;
 
 import zyxhj.cms.domian.Content;
-import zyxhj.cms.repository.ContentRepository;
 import zyxhj.cms.service.ContentService;
 import zyxhj.utils.IDUtils;
 import zyxhj.utils.Singleton;
@@ -20,6 +18,7 @@ import zyxhj.utils.api.Controller;
 import zyxhj.utils.api.ServerException;
 import zyxhj.utils.data.DataSource;
 import zyxhj.utils.data.EXP;
+import zyxhj.zskp.domain.InterestTag;
 import zyxhj.zskp.domain.ZskpKeyword;
 import zyxhj.zskp.repository.InterestTagRepository;
 import zyxhj.zskp.repository.ZskpKeywordRepository;
@@ -98,7 +97,7 @@ public class ZskpKeywordService extends Controller{
 		int count,
 		int offset) throws Exception {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			List<ZskpKeyword> list = keywordRepository.getList(conn, EXP.INS().key("userId", userId).append("order by sort_size desc"), 3, 0);
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), 3, 0);
 			int index = list.size();
 			if(list == null || index<=0) {
 				return otherContent.getContents(module, null, (byte)4, null, null, null, null, count, offset);
@@ -121,16 +120,104 @@ public class ZskpKeywordService extends Controller{
 		try(DruidPooledConnection conn = ds.getConnection()){
 			Content c = contentService.getConntent(id);
 			JSONArray ja = c.tags.getJSONArray("homeCotent");
-			List<ZskpKeyword> list = keywordRepository.getList(conn, EXP.INS().key("user_id",userId), 300, 0);
-			for(int j=0;j<ja.size();j++) {
-				for(int i =0,index = list.size();i<index;i++) {
-					 if(ja.getString(j).equals(list.get(i).keyword)) {
-						interestTagRepository.addKeyword(userId);
-					 }
-				 }
-				 createKeyword(userId, ja.getString(j));
-			 }
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS().key("user_id",userId), 300, 0);
+			int index = list.size();
+			if(list != null && index>0) {
+				for(int j=0;j<ja.size();j++) {
+					boolean temp = false;
+					for(int i =0;i<index;i++) {
+						if(ja.getString(j).equals(list.get(i).keyword)) {//如果已存在，加1
+							interestTagRepository.addInteresttagPageview(userId);
+							break;
+						}
+						temp = true;
+					}
+					if(temp) {
+						createInterestTag(userId,ja.getString(j));
+					}
+				}
+			}else {
+				createInterestTagByfirst(userId, ja);
+			}
 			return c;
 		}
-	}	
+	}
+	/**
+	 * 创建用户兴趣标签
+	 */
+	@POSTAPI(//
+		path = "createInterestTagByfirst", 
+		des = "第一次创建用户兴趣标签",
+		ret = "" 
+	)
+	public void createInterestTagByfirst(
+		@P(t = "用户id") Long userId,
+		@P(t = "标签数组") JSONArray tagArray
+	) throws ServerException, SQLException {
+		try(DruidPooledConnection conn = ds.getConnection()){
+			InterestTag it = null;
+			List<InterestTag> list = new LinkedList<InterestTag>();
+			for(int i=0,index = tagArray.size();i<index;i++) {
+				it = new InterestTag();
+				it.id = IDUtils.getSimpleId();
+				it.userId  = userId;
+				it.keyword = tagArray.getString(i);
+				it.pageView = 0;
+				list.add(it);
+			}
+			interestTagRepository.insertList(conn, list);
+		}
+	}
+	@POSTAPI(//
+			path = "createInterestTag", 
+			des = "第一次创建用户兴趣标签",
+			ret = "" 
+		)
+		public void createInterestTag(
+			@P(t = "用户id") Long userId,
+			@P(t = "标签数组") String tag
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				InterestTag it = new InterestTag();
+				it.id = IDUtils.getSimpleId();
+				it.userId  = userId;
+				it.keyword = tag;
+				it.pageView = 0;
+				interestTagRepository.insert(conn, it);
+			}
+		}
+	/**
+	 * 删除用户兴趣标签
+	 */
+	@POSTAPI(//
+		path = "delInterestTag", 
+		des = "删除用户兴趣标签", 
+		ret = "" 
+	)
+	public int delInterestTag(
+		@P(t = "编号") Long id
+	) throws ServerException, SQLException {
+		try(DruidPooledConnection conn = ds.getConnection()){
+			return interestTagRepository.delete(conn, EXP.INS().key("id", id));
+		}
+	}
+	
+	/**
+	 * 查询用户兴趣标签
+	 */
+	@POSTAPI(//
+		path = "getInterestTags", 
+		des = "查询用户兴趣标签", 
+		ret = "" 
+	)
+	public List<InterestTag> getInterestTags(
+		@P(t = "用户id",r = false) Long userId,
+		int count,
+		int offset
+	) throws ServerException, SQLException {
+		try(DruidPooledConnection conn = ds.getConnection()){
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId), count, offset);
+			return list;
+		}
+	}
 }
