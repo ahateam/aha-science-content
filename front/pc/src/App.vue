@@ -7,26 +7,20 @@
 
 
 <style lang="scss">
-  html{
+.el-submenu li{
+	    min-width:0 !important;
+}
+  html,  body {
     padding: 0 0;
     margin: 0 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     font-size: 62.5%;
-	overflow: hidden;
+    overflow: hidden
   }
-  body{
-    margin: 0 0;
-    padding: 0 0;
-    width: 100%;
-    height: 100%;
-  }
+
   #app{
     height: 100%;
   }
-  .main-box{
-    width: 100%;
-    min-height: 100%;
-    background: #fff;
-  }
+  
 </style>

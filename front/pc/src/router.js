@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import home from './views/home'
 import login from './views/login'
 
+
 //内容
 const contentList = () => import('./views/content/contentList')
 const videoContentList = () => import('./views/content/videoContentList')
@@ -241,7 +242,7 @@ export default new Router({
 			name: 'login',
 			component: login
 		}
-
+	
 
 	]
 })
