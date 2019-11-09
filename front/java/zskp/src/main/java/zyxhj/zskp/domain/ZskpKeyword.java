@@ -1,26 +1,27 @@
 package zyxhj.zskp.domain;
 
+import java.util.Date;
+
 import zyxhj.utils.data.rds.RDSAnnEntity;
 import zyxhj.utils.data.rds.RDSAnnField;
 import zyxhj.utils.data.rds.RDSAnnID;
-
 /**
- * 用户感兴趣标签
+ * 文章关键词
  */
-@RDSAnnEntity(alias = "tb_zskt_interestTag")
-public class InterestTag {
+@RDSAnnEntity(alias = "tb_zskt_Keyword")
+public class ZskpKeyword {
 	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
 	public Long id;
 	
 	/**
-	 * 用户id
+	 * 发布者用户id
 	 */
+	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
 	public Long userId;
-	
 	/**
-	 * 用户浏览关键词
+	 * 关键词
 	 */
 	@RDSAnnField(column = RDSAnnField.SHORT_TEXT)
 	public String keyword;
@@ -29,13 +30,10 @@ public class InterestTag {
 	 */
 	@RDSAnnField(column = RDSAnnField.LONG)
 	public Integer pageView;
+	/**
+	 * 创建时间
+	 */
+	@RDSAnnField(column = RDSAnnField.TIME)
+	public Date createTime;
 	
-	//注册用户添加3个兴趣标签
-	//推荐：查询用户兴趣标签的3个标签内容
-	//点击内容：
-	//没有：在用户兴趣标签里添加当前内容的关键词
-	//有：在用户兴趣标签里关键词浏览量加1
-	//第二次
-	//查询用户的兴趣标签里排序为前3的
-
 }

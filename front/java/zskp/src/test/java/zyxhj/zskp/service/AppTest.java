@@ -85,7 +85,7 @@ public class AppTest {
 	public void test2() {
 		try {
 			
-			JSONArray json = contentService.getReplyListByUser("1180", null, 402490032471742L, null, true, null, 7, 10, 0);
+			JSONObject json = contentService.getTourBase(1180L, 1571833537283000L, 10, 0);
 	        System.out.println(json);
 		} catch (Exception e) {
 			e.printStackTrace();

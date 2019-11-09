@@ -463,26 +463,25 @@ public class ZskpUserService extends Controller{
 	 */
 	@POSTAPI(//
 		path = "createInterestTag", 
-		des = "创建用户兴趣标签", 
+		des = "第一次创建用户兴趣标签",
 		ret = "" 
 	)
-	public InterestTag createInterestTag(
-		@P(t = "模块编号") String moduleId,
+	public void createInterestTag(
 		@P(t = "用户id") Long userId,
-		@P(t = "标签数组") String tagArray
+		@P(t = "标签数组") JSONArray tagArray
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			InterestTag it = new InterestTag();
-			it.tagsArray = tagArray;
-			InterestTag temp = interestTagRepository.get(conn, EXP.INS().key("user_id", userId).andKey("module_id",moduleId));
-			if(temp != null && temp.userId == userId) {//已经存在该用户的兴趣标签
-				interestTagRepository.update(conn, EXP.INS().key("user_id", userId).andKey("module_id",moduleId), it,true);
-				return temp;
-			}else {
-				it.userId = userId;
-				interestTagRepository.insert(conn, it);
-				return it;				
+			InterestTag it = null;
+			List<InterestTag> list = new LinkedList<InterestTag>();
+			for(int i=0,index = tagArray.size();i<index;i++) {
+				it = new InterestTag();
+				it.id = IDUtils.getSimpleId();
+				it.userId  = userId;
+				it.keyword = tagArray.getString(i);
+				it.pageView = 0;
+				list.add(it);
 			}
+			interestTagRepository.insertList(conn, list);
 		}
 	}
 	/**
@@ -494,11 +493,10 @@ public class ZskpUserService extends Controller{
 		ret = "" 
 	)
 	public int delInterestTag(
-		@P(t = "模块编号") String moduleId,
-		@P(t = "用户id") Long userId
+		@P(t = "编号") Long id
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			return interestTagRepository.delete(conn, EXP.INS().key("id", userId).andKey("module_id",moduleId));
+			return interestTagRepository.delete(conn, EXP.INS().key("id", id));
 		}
 	}
 	
@@ -510,21 +508,14 @@ public class ZskpUserService extends Controller{
 		des = "查询用户兴趣标签", 
 		ret = "" 
 	)
-	public JSONArray getInterestTags(
-		@P(t = "模块编号") String moduleId,
+	public List<InterestTag> getInterestTags(
 		@P(t = "用户id",r = false) Long userId,
 		int count,
 		int offset
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).key("user_id", userId).andKey("module_id",moduleId), count, offset);
-			String temp = JSON.toJSON(list).toString();
-			JSONArray json = JSONArray.parseArray(temp);
-			for(int i=0;i<list.size();i++) {
-				ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id", list.get(i).userId));
-				json.getJSONObject(i).put("user",user);
-			}
-			return json;
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId), count, offset);
+			return list;
 		}
 	}
 	

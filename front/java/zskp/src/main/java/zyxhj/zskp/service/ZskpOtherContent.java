@@ -137,9 +137,55 @@ public class ZskpOtherContent extends Controller{
 			String temp = JSON.toJSONString(list);
 			JSONArray json = JSONArray.parseArray(temp);
 			int index = json.size();
+			List<Long> ids = new LinkedList<Long>();
 			for (int i = 0; i < index; i++) {
-				ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", module).andKey("id", list.get(i).upUserId));
-				json.getJSONObject(i).put("user",user);
+				ids.add(list.get(i).upUserId);
+			}
+			return getUserInfo(module,ids,json);
+		}
+	}
+	@POSTAPI(
+			path = "searchContents", //
+			des = "搜索内容", //
+			ret = "所创建的对象"//
+		)
+		public JSONArray searchContents(
+			@P(t = "模块")String module,
+			@P(t = "类型",r = false)Byte type, 
+			@P(t = "状态编号",r = false)Byte status,
+			@P(t = "权力",r = false)Byte power,
+			@P(t = "上传用户编号",r = false)Long upUserId,
+			@P(t = "上传专栏编号",r = false)Long upChannelId,
+			@P(t = "标签",r = false)JSONObject tags, 
+			@P(t = "搜索内容")String keyword, 
+			int count, 
+			int offset
+		)
+		throws Exception {
+			EXP exp = EXP.INS(false).key("org_module", module).andKey("type", type).andKey("status", status).
+					andKey("power", power).andKey("up_user_id", upUserId).andKey("up_channel_id", upChannelId).and(EXP.LIKE("title", keyword));
+			if(tags !=null && tags.size()>0) {
+				exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
+			}
+			try (DruidPooledConnection conn = ds.getConnection()) {			
+				List<Content> list = contentRepository.getList(conn,exp, count, offset);
+				String temp = JSON.toJSONString(list);
+				JSONArray json = JSONArray.parseArray(temp);
+				int index = json.size();
+				List<Long> ids = new LinkedList<Long>();
+				for (int i = 0; i < index; i++) {
+					ids.add(list.get(i).upUserId);
+				}
+				return getUserInfo(module,ids,json);
+			}
+		}
+	public JSONArray getUserInfo(String module,List<Long> list,JSONArray json) throws SQLException, ServerException {
+		try (DruidPooledConnection conn = ds.getConnection()) {	
+			List<ZskpUser> userList = userRepository.getList(conn, EXP.INS().key("module_id", module).and(EXP.INS().IN("id", list.toArray())),200,0);
+			for (int i = 0,index = userList.size(); i < index; i++) {
+				if(json.getJSONObject(i).getLong("upUserId").equals(userList.get(i).id)) {
+					json.getJSONObject(i).put("user",userList.get(i));								
+				}
 			}
 			return json;
 		}
@@ -158,9 +204,16 @@ public class ZskpOtherContent extends Controller{
 		@P(t = "图片地址") String imgSrc,
 		@P(t = "详情链接") String linkSrc,
 		@P(t = "排序大小",r= false) int sortSize,
-		@P(t = "备注") String remake
+		@P(t = "备注") String remake,
+		@P(t = "类型",r= false) Byte type,
+		@P(t = "所属专栏",r= false) Long channelId,
+		@P(t = "状态",r= false) Byte status
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
+			if(type == AdvertInfo.TYPE_START && status == AdvertInfo.STATUS_OPEN) {
+				//如果类型为APP启动图且设置为启用状态，启动图只应许一只为启用
+				advertInfoRepository.updateAppStartAdvert(moduleId);
+			}
 			AdvertInfo t = new AdvertInfo();
 			t.moduleId = moduleId;
 			t.id = IDUtils.getSimpleId();
@@ -169,7 +222,13 @@ public class ZskpOtherContent extends Controller{
 			t.createTime = new Date();
 			t.remark = remake;
 			t.sortSize = sortSize;
-			t.status = AdvertInfo.STATUS_OPEN;
+			if(status == null) {
+				t.status = AdvertInfo.STATUS_OPEN;				
+			}else {
+				t.status = status;
+			}
+			t.type = type;
+			t.channelId = channelId;
 			advertInfoRepository.insert(conn, t);
 			return t;
 		}
@@ -185,17 +244,16 @@ public class ZskpOtherContent extends Controller{
 	)
 	public List<AdvertInfo> getAdverts(
 		@P(t = "模块编号") Long moduleId,
+		@P(t = "类型",r= false) Byte type,
+		@P(t = "所属专栏",r= false) Long channelId,
 		int count,
 		int offset
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			return advertInfoRepository.getList(conn, EXP.INS().key("module_id", moduleId).append("order by sort_size desc"), count, offset);
+			return advertInfoRepository.getList(conn, EXP.INS(false).key("module_id", moduleId).andKey("type", type).andKey("channel_id", channelId)
+					.andKey("status", AdvertInfo.STATUS_OPEN).append("order by sort_size desc"), count, offset);
 		}
 	}
-	
-	/**
-	 * 删除广告
-	 */
 	@POSTAPI(//
 		path = "delAdvert", 
 		des = "删除广告", 
@@ -209,10 +267,6 @@ public class ZskpOtherContent extends Controller{
 			return advertInfoRepository.delete(conn, EXP.INS().key("id", id).andKey("module_id", moduleId));
 		}
 	}
-	
-	/**
-	 * 修改广告
-	 */
 	@POSTAPI(//
 		path = "updateAdvert", 
 		des = "修改广告", 
@@ -225,14 +279,22 @@ public class ZskpOtherContent extends Controller{
 		@P(t = "详情链接",r = false) String linkSrc,
 		@P(t = "备注",r = false) String remake,
 		@P(t = "状态",r = false) Byte status,
-		@P(t = "排序大小",r = false) int sortSize
+		@P(t = "排序大小",r = false) int sortSize,
+		@P(t = "类型",r= false) Byte type,
+		@P(t = "所属专栏",r= false) Long channelId
 	) throws ServerException, SQLException {
+		if(type == AdvertInfo.TYPE_START && status == AdvertInfo.STATUS_OPEN) {
+			//如果类型为APP启动图且设置为启用状态，启动图只应许一只为启用
+			advertInfoRepository.updateAppStartAdvert(moduleId);
+		}
 		AdvertInfo t = new AdvertInfo();
 		t.imgSrc = imgSrc;
 		t.linkSrc = linkSrc;
 		t.remark = remake;
 		t.status = status;
 		t.sortSize = sortSize;
+		t.type = type;
+		t.channelId = channelId;
 		try(DruidPooledConnection conn = ds.getConnection()){
 			return advertInfoRepository.update(conn, EXP.INS().key("id", id).andKey("module_id", moduleId),t,true);
 		}
@@ -274,13 +336,23 @@ public class ZskpOtherContent extends Controller{
 		des = "查询科普基地详情", 
 		ret = "" 
 	)
-	public APIResponse getTourBase(
+	public JSONObject getTourBase(
 		@P(t = "模块编号") Long moduleId,
-		@P(t = "id") Long id
+		@P(t = "id") Long id,
+		int count,
+		int offset
 	) throws Exception {
 		try(DruidPooledConnection conn = ds.getConnection()){
 			PrimaryKey pk = new PrimaryKeyBuilder().add("moduleId", moduleId).add("id", id).build();
-			return APIResponse.getNewSuccessResp(tourBasesRepository.get(client, pk));
+			TourBases  bases =  tourBasesRepository.get(client, pk);
+			JSONObject json = new JSONObject();
+			JSONArray ja = new JSONArray();
+			ja.add(bases.id);
+			EXP exp = EXP.INS().key("org_module", moduleId.toString()).andKey("type", 8).and(EXP.JSON_CONTAINS_KEYS(ja, "data","place"));
+			System.out.println(contentRepository.getList(conn, exp, count, offset));
+			json.put("content",contentRepository.getList(conn, exp, count, offset));
+			json.put("TourBases", bases);
+			return json;
 		}
 	}
 	
@@ -791,7 +863,6 @@ public class ZskpOtherContent extends Controller{
 	
 	public String HttpClientGet(String address) throws Exception {
 		CloseableHttpClient client = HttpClients.createDefault();
-//		HttpGet httpGet = new HttpGet("http://api.map.baidu.com/geocoding/v3/?address="+address+"&output=json&ak=GSAuLZmi95ZvO9Sut4CDLYcmokTO5z2v");
 		HttpGet httpGet = new HttpGet("http://api.map.baidu.com/geocoding/v3/?address="+address+"&output=json&ak=WHqoGrrCvXVIjhiZDuGIyBBK76imLNtE");
 		CloseableHttpResponse Response = client.execute(httpGet);
 		HttpEntity entity = Response.getEntity();

@@ -48,9 +48,26 @@ public class AdvertInfo {
 	
 	@RDSAnnField(column = RDSAnnField.INTEGER)
 	public Integer sortSize;
+	/**
+	 * 类型
+	 */
+	@RDSAnnField(column = RDSAnnField.BYTE)
+	public Byte type;
+	/**
+	 * 所属 专题
+	 */
+	@RDSAnnField(column = RDSAnnField.ID)
+	public Long channelId;
 	
 	@AnnDicField(alias = "启用")
 	public static final Byte STATUS_OPEN = 0;
 	@AnnDicField(alias = "禁用")
 	public static final Byte STATUS_CLOSE = 1;
+	
+	@AnnDicField(alias = "主页广告")
+	public static final Byte TYPE_MAIN = 0;
+	@AnnDicField(alias = "专题广告")
+	public static final Byte TYPE_CHANNEL = 1;
+	@AnnDicField(alias = "启动页广告")
+	public static final Byte TYPE_START = 2;
 }

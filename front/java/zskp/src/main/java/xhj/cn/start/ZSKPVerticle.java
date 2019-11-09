@@ -10,8 +10,11 @@ import zyxhj.cms.service.ReplyService;
 import zyxhj.core.controller.TestController;
 import zyxhj.utils.Singleton;
 import zyxhj.utils.ZeroVerticle;
+import zyxhj.zskp.domain.ZskpKeyword;
 import zyxhj.zskp.service.SmsServer;
+import zyxhj.zskp.service.ZskpKeywordService;
 import zyxhj.zskp.service.ZskpOtherContent;
+import zyxhj.zskp.service.ZskpReplyService;
 import zyxhj.zskp.service.ZskpUserService;
 
 public class ZSKPVerticle extends ZeroVerticle {
@@ -45,6 +48,8 @@ public class ZSKPVerticle extends ZeroVerticle {
 		initCtrl(ctrlMap, Singleton.ins(ZskpOtherContent.class, "ZskpOtherContent"));
 		initCtrl(ctrlMap, Singleton.ins(ZskpUserService.class, "ZskpUserService"));
 		initCtrl(ctrlMap, Singleton.ins(SmsServer.class, "sms"));
+		initCtrl(ctrlMap, Singleton.ins(ZskpReplyService.class, "ZskpReply"));
+		initCtrl(ctrlMap, Singleton.ins(ZskpKeywordService.class, "ZskpKeyword"));
 	}
 
 }
