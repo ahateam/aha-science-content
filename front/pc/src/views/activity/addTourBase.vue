@@ -1,5 +1,9 @@
 <template>
 	<div>
+		<baidu-map class="bm-view" :ak="ak" :center="center" :zoom="14" @ready="handler" @click="clickEvent"
+		 :scroll-wheel-zoom="true">
+		</baidu-map>
+
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -34,7 +38,7 @@
 			<el-col :span="20">
 				<span class="title-box"> 基地封面图：</span>
 				<img height="100" :src="imgSrc" v-if="imgSrc">
-				<input @change="getMechData1($event)" type="file" class="upload"  />
+				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px">
@@ -66,7 +70,6 @@
 
 	</div>
 </template>
-
 <script>
 	import wangEditor from 'wangeditor'
 	import ossAuth from '@/commen/oss/ossAuth.js'
@@ -99,9 +102,48 @@
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 
 				contentType: this.$constData.typeList[3].value,
+
+				ak: 'SOOpwhK5pwWkiC6X0TWgQY5RHGdlQGgt',
+				center: {
+					lng: 0,
+					lat: 0
+				},
+				zoom: 3,
+
+				locData: {
+					longitude: '',
+					latitude: '',
+					address: ''
+				}
 			}
 		},
+
 		methods: {
+			clickEvent(e) {
+				map.clearOverlays()
+				let Icon_0 = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(64, 64), {
+					anchor: new BMap.Size(18, 32),
+					imageSize: new BMap.Size(36, 36)
+				})
+				var myMarker = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat), {
+					icon: Icon_0
+				})
+				map.addOverlay(myMarker)
+				//用所定位的经纬度查找所在地省市街道等信息
+				var point = new BMap.Point(e.point.lng, e.point.lat)
+				var gc = new BMap.Geocoder()
+				let _this = this
+				gc.getLocation(point, function(rs) {
+					var addComp = rs.addressComponents
+					//console.log(rs.address);//地址信息
+					_this.locData.address = rs.address
+
+				});
+				this.locData.longitude = e.point.lng
+				this.locData.latitude = e.point.lat
+				console.log(this.locData)
+			},
+
 			getMechData1() {
 				this.mechGrantImg = event.target.files[0]
 				this.doUpload(this.mechGrantImg)
@@ -232,7 +274,18 @@
 			onSelected(data) {
 				let temp = data.province.value + '' + data.city.value + '' + data.area.value;
 				this.address = temp;
-			}
+			},
+
+			handler({
+				BMap,
+				map
+			}) {
+				console.log(BMap, map)
+				this.center.lng = 116.404
+				this.center.lat = 39.915
+				this.zoom = 15
+				window.map = map
+			},
 		},
 		mounted() {
 			this.editor = new wangEditor('#editor')
@@ -291,5 +344,18 @@
 		border-color: #e4e7ed;
 		color: #c0c4cc;
 		cursor: not-allowed;
+	}
+
+	#container {
+		width: 300px;
+		height: 300px;
+	}
+
+	.bm-view {
+		margin: 0 auto;
+		padding: 10px 0;
+		width: 80%;
+		height: 300px;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, .2)
 	}
 </style>
