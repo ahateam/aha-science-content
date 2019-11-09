@@ -60,8 +60,8 @@
 			<el-col :span="13">
 				<el-form label-width="80px">
 					<el-form-item label="关键词:">
-						<el-select v-model="value" multiple filterable allow-create default-first-option placeholder="请选择文章标签-提示:可手动输入，可多选，可删除" style="width: 100%;">
-							<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+						<el-select v-model="value" multiple   default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
+							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -91,15 +91,9 @@
 		name: "addContent",
 		data() {
 			return {
-				options: [{
-					value: 'HTML',
-					label: 'HTML'
-				}, {
-					value: 'CSS',
-					label: 'CSS'
-				}, {
-					value: 'JavaScript',
-					label: 'JavaScript'
+				keywordList: [{
+					keyword: '',
+					id: ''
 				}],
 				value: [],
 
@@ -231,11 +225,24 @@
 			clearData() {
 				this.upChannelId = ''
 				this.vip = ''
+			},
+			getKeyword(){
+				let cnt = {
+					count:200,
+					offset:'0',
+				}
+				this.$api.getKeywords(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.keywordList = this.$util.tryParseJson(res.data.c)
+					}
+				})
 			}
+			
 		},
 		mounted() {
 			this.getVips()
 			this.getChannels()
+			this.getKeyword()
 			this.editor = new wangEditor('#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
