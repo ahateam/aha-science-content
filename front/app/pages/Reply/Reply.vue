@@ -6,7 +6,10 @@
 			 :id="'tab'+index" @click="changeTime(index)">{{item.val}}</view>
 		</scroll-view>
 		<view style="padding-top: 90upx;"></view>
-
+		<view class="statusBox">
+			<text class="autoStatus" :class="statusCurr == false?'statusCurr':''" @click="changeStatus(false)">评论</text>|
+			<text class="autoStatus" :class="statusCurr == true?'statusCurr':''" @click="changeStatus(true)">回复</text>
+		</view>
 		<view v-if='replyList.length >0'>
 			<view class="list">
 				<view class="item" :style="index == 0?'margin-top:0':''" v-for="(item,index) in replyList" :key="index" @click="navToInfo(item[0].content)">
@@ -47,7 +50,7 @@
 		},
 		data() {
 			return {
-				oneLoading:true,
+				oneLoading: true,
 				pageOver: false,
 				pageStatus: 'loading',
 				page: 1,
@@ -61,9 +64,26 @@
 				scrollLeft: 0,
 				tabCurrentIndex: 0,
 
+				statusCurr: false,
 			}
 		},
 		methods: {
+			changeStatus(e) {
+				this.statusCurr = e
+				this.tagsList[this.tabCurrentIndex].status = e
+				this.replyList = []
+				let cnt = {
+					upUserId: uni.getStorageSync('userId'), // Long <选填> 提交者编号
+					status: 0, // Byte <选填> 审核状态，不填表示全部，0未审核，1已通过
+					orderDesc: true, // Boolean 是否降序（较新的排前面）
+					count: this.count, // Integer 
+					offset: this.offset, // Integer 
+					time: this.$constData.timeData[this.tabCurrentIndex].key,
+					isComment: this.statusCurr, // Boolean <选填> 是否加载二级评论
+				}
+				this.getReplyListOnshow(cnt, this.tabCurrentIndex)
+			},
+
 			navToReplay(id, contentId) {
 				uni.navigateTo({
 					url: `/pages/Reply/replyView/replyView?id=${id}&contentId=${contentId}`
@@ -75,6 +95,7 @@
 				if (this.pageStatus == 'loading') {
 					return
 				}
+				this.statusCurr = this.tagsList[index].status
 
 				this.tabCurrentIndex = index
 				this.page = this.tagsList[index].page
@@ -100,6 +121,7 @@
 					orderDesc: true, // Boolean 是否降序（较新的排前面）
 					count: this.count, // Integer 
 					offset: this.offset, // Integer 
+					isComment: this.statusCurr, // Boolean <选填> 是否加载二级评论
 				}
 				if (index != 3) {
 					cnt.time = this.$constData.timeData[index].key
@@ -185,18 +207,22 @@
 			getTagList() {
 				this.tagsList = [{
 						key: this.$constData.timeData[0].key,
-						val: '七天'
+						val: '七天',
+						status: false
 					},
 					{
 						key: this.$constData.timeData[1].key,
-						val: '一个月'
+						val: '一个月',
+						status: false
 					},
 					{
 						key: this.$constData.timeData[2].key,
-						val: '三个月'
+						val: '三个月',
+						status: false
 					},
 					{
-						val: '全部'
+						val: '全部',
+						status: false
 					}
 				]
 				for (let i = 0; i < this.tagsList.length; i++) {
@@ -209,7 +235,8 @@
 					orderDesc: true, // Boolean 是否降序（较新的排前面）
 					count: this.count, // Integer 
 					offset: this.offset, // Integer 
-					time: this.$constData.timeData[this.tabCurrentIndex].key
+					time: this.$constData.timeData[this.tabCurrentIndex].key,
+					isComment: this.statusCurr, // Boolean <选填> 是否加载二级评论
 				}
 				this.getReplyListOnshow(cnt, index)
 			}
@@ -220,10 +247,10 @@
 		},
 
 		onShow() {
-			if(this.oneLoading){
+			if (this.oneLoading) {
 				return
 			}
-			
+
 			if (uni.getStorageSync('userId') == '' || uni.getStorageSync('userId') == '1234567890') {
 				this.pageStatus = 'nomore'
 				this.replyList = []
@@ -240,7 +267,8 @@
 				orderDesc: true, // Boolean 是否降序（较新的排前面）
 				count: this.count, // Integer 
 				offset: this.offset, // Integer 
-				time: this.$constData.timeData[this.tabCurrentIndex].key
+				time: this.$constData.timeData[this.tabCurrentIndex].key,
+				isComment: this.statusCurr, // Boolean <选填> 是否加载二级评论
 			}
 			this.getReplyListOnshow(cnt, index)
 		},
@@ -264,11 +292,12 @@
 				orderDesc: true, // Boolean 是否降序（较新的排前面）
 				count: this.count, // Integer 
 				offset: this.offset, // Integer 
-				time: this.$constData.timeData[this.tabCurrentIndex].key
+				time: this.$constData.timeData[this.tabCurrentIndex].key,
+				isComment: this.statusCurr, // Boolean <选填> 是否加载二级评论
 			}
 			this.getReplyListByUser(cnt, index)
 		},
-		
+
 		//加载更多
 		onReachBottom() {
 			if (this.pageOver) {
@@ -283,7 +312,8 @@
 				orderDesc: true, // Boolean 是否降序（较新的排前面）
 				count: this.count, // Integer 
 				offset: (this.page - 1) * this.count, // Integer 
-				time: this.$constData.timeData[index].key
+				time: this.$constData.timeData[index].key,
+				isComment: this.statusCurr, // Boolean <选填> 是否加载二级评论
 			}
 			this.getReplyListByUser(cnt, index)
 		}
@@ -419,4 +449,20 @@
 	}
 
 	.autoBox {}
+
+	.autoStatus {
+		padding: 0 10upx;
+		transition: all .3s;
+	}
+
+	.statusBox {
+		text-align: right;
+		font-size: $list-title;
+		color: $list-info-color;
+		padding: 10upx $box-margin-left;
+	}
+
+	.statusCurr {
+		color: $color-main;
+	}
 </style>

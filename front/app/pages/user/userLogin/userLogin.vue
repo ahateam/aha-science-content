@@ -88,7 +88,6 @@
 						uni.setStorageSync('userId', userInfo.id)
 						uni.setStorageSync('userName', userInfo.name)
 						uni.setStorageSync('phone', userInfo.phone)
-						uni.setStorageSync('status', userInfo.status)
 						uni.setStorageSync('authority', userInfo.authority)
 
 						if (userInfo.openId) {
@@ -220,7 +219,6 @@
 						uni.setStorageSync('userId', userInfo.id)
 						uni.setStorageSync('userName', userInfo.name)
 						uni.setStorageSync('phone', userInfo.phone)
-						uni.setStorageSync('status', userInfo.status)
 						uni.setStorageSync('authority', userInfo.authority)
 
 						if (userInfo.openId) {

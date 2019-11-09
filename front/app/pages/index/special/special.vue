@@ -2,18 +2,16 @@
 	<view>
 		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="title"></navBar>
 		<view class="topBox">
-			<swiper class="bannerBox">
-				<swiper-item v-for="(item,index) in adList" :key="index" @click="linkSrc(item)">
-					<image :src="item.imgSrc" mode="aspectFill"></image>
-				</swiper-item>
-			</swiper>
+			<view class="bannerBox">
+				<image :src="channelInfo.data.img" mode="aspectFill"></image>
+			</view>
 			<!-- <view class="block"></view> -->
 			<view class="infoBox">
 				{{channelInfo.data.info}}
 			</view>
 		</view>
-		<view >
-			<view class="contentBox" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
+		<view class="contentBox">
+			<view class="contentList" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 
 				<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
 					<view v-if="item.show == constData.contentShow[0].key">
@@ -62,10 +60,10 @@
 				id: 0,
 				constData: this.$constData,
 
+				imgSrc: '',
+
 				channelInfo: {},
 				contents: [],
-
-				adList: [],
 
 				count: 10,
 				offset: 0,
@@ -93,15 +91,6 @@
 				id: this.id
 			}
 			this.getChannlById(cnt1)
-
-			let cnt2 = {
-				moduleId: this.$constData.module, // Long 模块编号
-				type: this.$constData.adData[1].key, // Byte <选填> 类型
-				channelId: this.id, // Long <选填> 所属专栏
-				count: 10, // int 
-				offset: 0, // int 
-			}
-			this.getAdverts(cnt2)
 		},
 		methods: {
 			linkSrc(item) {
@@ -124,17 +113,6 @@
 						icon: 'none'
 					})
 				}
-			},
-
-			getAdverts(cnt) {
-				this.$api.getAdverts(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.adList = this.$util.tryParseJson(res.data.c)
-						console.log(this.adList)
-					} else {
-						console.log('Error')
-					}
-				})
 			},
 
 			// 获取专题
@@ -223,9 +201,6 @@
 		},
 		onPullDownRefresh() {
 			this.page = 1
-			this.pageStatus = 'loading'
-			this.adList = []
-			this.contents = []
 			let cnt = {
 				module: this.$constData.module, // String 所属模块
 				status: parseInt(this.$constData.contentStatus[4].key),
@@ -235,29 +210,17 @@
 				power: this.$constData.contentPaid[0].key
 			}
 			this.getContents(cnt)
-			
+
 			let cnt1 = {
 				id: this.id
 			}
+			this.contents = []
 			this.getChannlById(cnt1)
-			
-			let cnt2 = {
-				moduleId: this.$constData.module, // Long 模块编号
-				type: this.$constData.adData[1].key, // Byte <选填> 类型
-				channelId: this.id, // Long <选填> 所属专栏
-				count: 10, // int 
-				offset: 0, // int 
-			}
-			this.getAdverts(cnt2)
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	.contentBox{
-		padding: $box-margin-top $box-margin-left;
-	}
-	
 	.topBox {
 		width: 100vw;
 		height: 45vw;
@@ -288,10 +251,16 @@
 	.bannerBox {
 		width: 100%;
 		height: 100%;
+	}
 
-		swiper-item {
-			width: 100%;
-			height: 100%;
-		}
+	.contentBox {
+		border: 8upx solid rgba($color: #a8ff78, $alpha: 0.5);
+		border-radius: 10upx;
+		margin: 10upx 10upx;
+	}
+	
+	.contentList{
+		padding: $box-margin-top 10upx;
+		box-sizing: border-box;
 	}
 </style>

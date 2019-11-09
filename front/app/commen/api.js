@@ -9,9 +9,13 @@ console.log('开始调用ctrl');
 
 /********************************** 内容接口 **********************************/
 // 获取标签<创建内容，保存为正常（已发布）>
-
 api.getContentTag = function(cnt, callback) {
 	util.call(baseUrl + '/contentTag/getContentTag', cnt, callback)
+}
+
+//获取推荐内容 
+api.getKeywordContent = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpKeyword/getKeywordContent', cnt, callback)
 }
 
 //根据标签获取 内容列表
@@ -21,7 +25,7 @@ api.getContents = function(cnt, callback) {
 
 //根据id获取内容
 api.getContentById = function(cnt, callback) {
-	util.call(baseUrl + '/content/getConntent', cnt, callback)
+	util.call(baseUrl + '/ZskpKeyword/getConntent', cnt, callback)
 }
 
 //查询用户关注 
@@ -134,7 +138,7 @@ api.getCommentByContentId = function(cnt, callback) {
 
 //评论 
 api.createReply = function(cnt, callback) {
-	util.call(baseUrl + '/reply/createReply', cnt, callback)
+	util.call(baseUrl + '/ZskpReply/createReply', cnt, callback)
 }
 
 //id获取评论 
@@ -223,7 +227,7 @@ api.getReplyList = function(cnt, callback) {
 
 //二级评论 
 api.createComment = function(cnt, callback) {
-	util.call(baseUrl + '/reply/createComment', cnt, callback)
+	util.call(baseUrl + '/ZskpReply/createComment', cnt, callback)
 }
 
 /* 获取版本 */

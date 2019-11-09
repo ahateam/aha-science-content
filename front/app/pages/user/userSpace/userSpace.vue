@@ -16,7 +16,8 @@
 
 		<view class="titleBox">动态列表</view>
 
-		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1" style="background-color: #FFFFFF;">
+		<view class="contentBox" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tabCurrentIndex == 1"
+		 style="background-color: #FFFFFF;">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
 				<view v-if="item.show == constData.contentShow[0].key">
 					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
@@ -365,5 +366,9 @@
 		margin-top: 15upx;
 		padding: 0 0 0 $box-margin-left;
 		background-color: #FFFFFF;
+	}
+
+	.contentBox {
+		padding: $box-margin-top $box-margin-left;
 	}
 </style>

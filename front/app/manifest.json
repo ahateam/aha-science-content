@@ -1,9 +1,9 @@
 {
     "name" : "掌上科普",
-    "appid" : "__UNI__C812E8E",
+    "appid" : "__UNI__DAAB002",
     "description" : "",
-    "versionName" : "1.0.3",
-    "versionCode" : 103,
+    "versionName" : "1.0.5",
+    "versionCode" : 105,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -85,9 +85,9 @@
             },
             "splashscreen" : {
                 "android" : {
-                    "hdpi" : "C:/Users/Admin/Desktop/bilibili启动图.png",
-                    "xhdpi" : "C:/Users/Admin/Desktop/bilibili启动图.png",
-                    "xxhdpi" : "C:/Users/Admin/Desktop/bilibili启动图.png"
+                    "hdpi" : "C:/Users/Admin/Desktop/启动图.9.png",
+                    "xhdpi" : "C:/Users/Admin/Desktop/启动图.9.png",
+                    "xxhdpi" : "C:/Users/Admin/Desktop/启动图.9.png"
                 }
             },
             "icons" : {

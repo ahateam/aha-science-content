@@ -1,14 +1,14 @@
 <template>
 	<view style="padding-bottom: 120upx;">
 		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="activityTitle"></navBar>
-		<view class="imgBox" @click="navToPlace">
+		<view class="imgBox">
 			<image :src="imgSrc" mode="aspectFill"></image>
 			<view class="titleBox" v-if="placeInit">
 				{{placeTitle}}
 			</view>
 		</view>
-		<view class="placeInfo" v-if="placeInit">
-			*点击图片查看相关基地详情哦*
+		<view class="placeInfo" v-if="placeInit" @click="navToPlace">
+			👉 <text class="navText">相关基地入口</text> 👈
 		</view>
 		<!-- <view class="placeInfo">
 			<rich-text :nodes="placeInfo"></rich-text>
@@ -116,7 +116,7 @@
 			//跳转基地
 			navToPlace() {
 				if (this.placeInit) {
-					uni.navigateTo({
+					uni.redirectTo({
 						url: `/pages/index/tourBases/tourBases?id=${this.placeId}`
 					})
 				}
@@ -171,7 +171,7 @@
 				this.$api.getTourBase(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						console.log('基地详情------------------------↓')
-						let info = this.$util.tryParseJson(res.data.c)
+						let info = this.$util.tryParseJson(res.data.c).TourBases
 						console.log(info)
 						let data = this.$util.tryParseJson(info.data)
 						this.placeInfo = data.info
@@ -211,6 +211,8 @@
 								let cnt1 = {
 									moduleId: this.$constData.module, // Long 模块编号
 									id: this.placeId, // Long id
+									count:10,
+									offset:0
 								}
 								this.getTourBase(cnt1)
 							} else {
@@ -293,9 +295,10 @@
 	// }
 
 	.placeInfo {
-		padding: 0 $box-margin-left;
-		font-size: $list-info;
-		color: #AAAAAA;
+		padding: 10upx $box-margin-left;
+		font-size: $list-title;
+		font-weight: bold;
+		text-align: center;
 	}
 
 	.autoTitle {
@@ -355,5 +358,10 @@
 
 	.cntShop {
 		background: linear-gradient(to right, rgba($color: #AAAAAA, $alpha: 0.4), rgba($color: #AAAAAA, $alpha: 0.3));
+	}
+	
+	.navText{
+		color: #007AFF;
+		text-decoration: underline;
 	}
 </style>

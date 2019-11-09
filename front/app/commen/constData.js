@@ -3,8 +3,24 @@ const constData = {}
 /** 首页常量*/
 constData.module = 1180
 
+/* 广告常量 */
+constData.adData = [
+	{
+		key:0,
+		val:'主页广告'
+	},
+	{
+		key:1,
+		val:'专题广告'
+	},
+	{
+		key:2,
+		val:'启动页广告'
+	}
+]
+
 /* 版本常量 */
- constData.version = 103
+ constData.version = 105
  
 /* 时间常量 */
 constData.timeData = [

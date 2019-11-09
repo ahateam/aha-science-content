@@ -6,9 +6,9 @@
 		<view class="titleBox">
 			{{title}}
 		</view>
-		<!-- <view class="textBox">
+		<view class="textBox">
 			{{text}}
-		</view> -->
+		</view>
 	</view>
 </template>
 
@@ -26,23 +26,23 @@
 <style lang="scss" scoped>
 	.body {
 		position: relative;
+		width: 100%;
+		height: 150upx;
+		margin: 20upx 0;
+		padding: 0 $box-margin-left;
 		box-sizing: border-box;
-		padding: 20upx 0;
-		box-sizing: border-box;
-		margin-left: 26.25upx;
-		text-align: center;
 	}
 
 	.imgBox {
-		width: 180upx;
-		height: 180upx;
-		margin: 0 auto;
-		
+		position: absolute;
+		width: 150upx;
+		height: 150upx;
+		overflow: hidden;
+
 		image {
-			width: 100%;
-			height: 100%;
+			width: 150upx;
+			height: 150upx;
 			border-radius: 10upx;
-			overflow: hidden;
 		}
 	}
 
@@ -53,19 +53,18 @@
 		-webkit-line-clamp: 1;
 		overflow: hidden;
 		box-sizing: border-box;
-		width: 215upx;
-		text-align: center;
-		margin-top: 20upx;
+		margin: 20upx;
+		margin-left: 170upx;
 	}
 
 	.textBox {
 		margin-top: 20rpx;
 		font-size: $list-info;
 		color: $list-info-color;
-		padding-left: 110upx;
+		padding-left: 170upx;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
+		-webkit-line-clamp: 2;
 		overflow: hidden;
 		box-sizing: border-box;
 	}

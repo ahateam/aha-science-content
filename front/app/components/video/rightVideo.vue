@@ -1,6 +1,6 @@
 <template>
 	<view class="body">
-		<view class="title">{{title}}</view>
+		<view class="title"><text class="liveTag" v-if="type == constData.contentType[3].key">直播中</text>{{title}}</view>
 		<view class="img">
 			<image :src="imgSrc" mode="scaleToFill"></image>
 			<view class="videoBtn" v-if="type == constData.contentType[1].key">
@@ -34,10 +34,8 @@
 
 	.body {
 		position: relative;
-		padding: $box-margin-top $box-margin-left;
-		width: 750upx;
-		box-sizing: border-box;
-		min-height: calc(140upx + 48upx);
+		width: 100%;
+		min-height:140upx;
 	}
 
 	.title {
@@ -48,14 +46,14 @@
 		box-sizing: border-box;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2; //需要显示时文本行数
+		-webkit-line-clamp: 1; //需要显示时文本行数
 		overflow: hidden;
 	}
 
 	.img {
 		position: absolute;
-		top: $box-margin-top;
-		right: $box-margin-left;
+		top:0;
+		right: 0;
 		width: 220upx;
 		height: 140upx;
 
@@ -111,5 +109,14 @@
 		.iconfont{
 			font-size: $list-info;
 		}
+	}
+	
+	.liveTag{
+		border: 1px solid $color-main;
+		color: $color-main;
+		border-radius: 10upx;
+		font-size: $list-info;
+		padding: 0 10upx;
+		margin-right: 10upx;
 	}
 </style>

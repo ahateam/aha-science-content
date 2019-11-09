@@ -1,6 +1,12 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/ADview/ADview",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页",
@@ -21,7 +27,7 @@
 		{
 			"path": "pages/Reply/Reply",
 			"style": {
-				"navigationBarTitleText": "回复",
+				"navigationBarTitleText": "评论",
 				"enablePullDownRefresh": true,
 				"onReachBottomDistance": 10
 			}
@@ -101,7 +107,8 @@
 		}, {
 			"path": "pages/follow/channel/channel",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/user/shopping/shopping",
@@ -140,6 +147,14 @@
 			"path": "pages/Reply/replyView/replyView",
 			"style": {}
 		}
+
+		, {
+			"path": "pages/index/special/special",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		}
 	],
 	"tabBar": {
 		"color": "#C0C4CC",
@@ -154,15 +169,15 @@
 			},
 			{
 				"pagePath": "pages/follow/follow",
-				"iconPath": "static/tab-Vip.png",
-				"selectedIconPath": "static/tab-Vip-current.png",
+				"iconPath": "static/tab-flow.png",
+				"selectedIconPath": "static/tab-flow-curr.png",
 				"text": "关注"
 			},
 			{
 				"pagePath": "pages/Reply/Reply",
-				"iconPath": "static/tab-Vip.png",
-				"selectedIconPath": "static/tab-Vip-current.png",
-				"text": "回复"
+				"iconPath": "static/tab-comment.png",
+				"selectedIconPath": "static/tab-comment-curr.png",
+				"text": "评论"
 			},
 			{
 				"pagePath": "pages/user/user",

@@ -28,9 +28,7 @@
 	}
 
 	.body {
-		padding: $box-margin-top $box-margin-left;
-		width: 750upx;
-		box-sizing: border-box;
+		width: 100%;
 	}
 
 	.title {

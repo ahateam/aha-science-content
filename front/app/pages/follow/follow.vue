@@ -16,7 +16,7 @@
 					</view>
 				</scroll-view>
 
-				<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
+				<view class="contentBox" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
 					<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key">
 						<view v-if="item.show == constData.contentShow[0].key">
 							<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
@@ -488,5 +488,9 @@
 	.noLoading {
 		padding: $box-margin-top $box-margin-left;
 		font-size: $list-title;
+	}
+	
+	.contentBox{
+		padding: $box-margin-top $box-margin-left;
 	}
 </style>

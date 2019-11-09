@@ -213,14 +213,6 @@
 					return
 				}
 
-				if (status == this.$constData.userStatus[1].key) {
-					uni.showToast({
-						title: '已被管理员禁言',
-						icon: 'none'
-					})
-					return
-				}
-
 				let cnt = {
 					replyId: this.repalyId, // Long 回复评论id
 					upUserId: uni.getStorageSync('userId'), // Long 提交者编号
@@ -245,7 +237,7 @@
 						this.commentContent = ''
 					} else {
 						uni.showToast({
-							title: '网络错误',
+							title: res.data.rm,
 							icon: 'none'
 						})
 					}
@@ -327,9 +319,9 @@
 					}
 				})
 			},
-			
+
 			//更新讚數
-			delZan(index){
+			delZan(index) {
 				this.comment[index].appraiseCount -= 1
 				this.comment[index].isAppraise = false
 			},
@@ -347,14 +339,6 @@
 				if (userId == '' || userId == '1234567890') {
 					uni.showToast({
 						title: '登录后可评论',
-						icon: 'none'
-					})
-					return
-				}
-
-				if (status == this.$constData.userStatus[1].key) {
-					uni.showToast({
-						title: '已被管理员禁言',
 						icon: 'none'
 					})
 					return
@@ -396,9 +380,9 @@
 						this.commentContent = ''
 					} else {
 						uni.showToast({
-							title: "评论失败",
-							duration: 1000
-						});
+							title: res.data.rm,
+							icon: 'none'
+						})
 					}
 				})
 			},
@@ -664,9 +648,13 @@
 
 			/* 获取id对应内容 */
 			getContentById() {
+				let userId = uni.getStorageSync('userId')
 				let cnt = {
-					id: this.contentId, // String 内容编号
-				};
+					id: this.contentId, // Long 内容编号
+				}
+				if (userId != '' && userId != '1234567890') {
+					cnt.userId = userId
+				}
 				this.$api.getContentById(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let detailData = this.$util.tryParseJson(res.data.c)

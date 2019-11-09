@@ -7,43 +7,95 @@
 				{{placeTitle}}
 			</view>
 		</view>
+
 		<view class="placeInfo">
 			<rich-text :nodes="placeInfo"></rich-text>
 		</view>
 
+		<view class="autoBox">
+			<view style="font-weight: bold;">
+				开放时间：
+			</view>
+			<view style="padding: 10upx 0;text-indent:2em">
+				{{time}}
+			</view>
+		</view>
+
+		<view class="autoBox">
+			<view style="font-weight: bold;">
+				基地地址：
+			</view>
+			<view style="padding: 10upx 0;text-indent:2em">
+				{{address}}
+			</view>
+		</view>
+
+		<view class="autoBox">
+			<view style="font-weight: bold;">
+				相关活动：
+			</view>
+		</view>
+		<view v-for="(item,index) in actList" :key="index" @click="navToAct(item)">
+			<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="newTime(item.createTime)"
+			 :type="item.type"></right-video>
+		</view>
+		<uni-load-more :status="pageStatus"></uni-load-more>
+
 		<view class="fixBox">
-			<button class="signUpBtn" @click="shopBtn">购	票</button>
+			<button class="signUpBtn" @click="shopBtn">购 票</button>
 		</view>
 	</view>
 </template>
 
 <script>
 	import navBar from '@/components/zhouWei-navBar/index.vue'
+	import rightVideo from '@/components/video/rightVideo.vue'
+	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
 
 	export default {
 		components: {
-			navBar
+			navBar,
+			rightVideo,
+			uniLoadMore
 		},
 		data() {
 			return {
 				placeTitle: '', //基地标题
 				placeInfo: '', //基地简介
+				address: '', //基地地址
+				
+				time: '',
 
 				id: '',
 				imgSrc: '',
 
 				shopSrc: '', //购票地址
+
+				actList: [], //活动列表
+				
+				count:10,
+				offset:0,
+				pageOver:false,
+				pageStatus:'loading'
 			}
 		},
 		onLoad(res) {
 			this.id = res.id
 			let cnt = {
+				count: 10,
+				offset: 0,
 				moduleId: this.$constData.module, // Long 模块编号
 				id: this.id, // Long id
 			}
 			this.getTourBase(cnt)
 		},
 		methods: {
+			navToAct(item) {
+				uni.redirectTo({
+					url: `/pages/index/activity/activity?contentId=${item.id}`
+				})
+			},
+
 			//购票
 			shopBtn() {
 				if (this.shopSrc) {
@@ -64,24 +116,53 @@
 					})
 				}
 			},
-			
+
 			//获取基地详情
 			getTourBase(cnt) {
 				this.$api.getTourBase(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						console.log('基地详情------------------------↓')
-						let info = this.$util.tryParseJson(res.data.c)
+						let info = this.$util.tryParseJson(res.data.c).TourBases
 						console.log(info)
 						let data = this.$util.tryParseJson(info.data)
 						this.placeInfo = data.info
 						this.placeTitle = info.name
 						this.imgSrc = data.img[0]
 						this.shopSrc = info.buyTicketsLink
+						this.time = data.workTime
+						this.address = info.address
+
+						let actList = this.$util.tryParseJson(res.data.c).content
+						console.log(actList)
+						this.tryParseData(actList)
 					} else {
 						console.log('error')
 					}
 				})
-			}
+			},
+
+			tryParseData(list) {
+				if(list.length < this.count){
+					this.pageOver = true
+					this.pageStatus = 'nomore'
+				}else{
+					this.pageOver = false
+					this.pageStatus = 'more'
+				}
+				for (let i = 0; i < list.length; i++) {
+					list[i].imgList = this.$util.tryParseJson(list[i].data).imgList
+				}
+				this.actList = this.actList.concat(list)
+				
+			},
+
+			newTime(time) {
+				let newDate = new Date(time)
+				let y = newDate.getFullYear()
+				let m = newDate.getMonth() * 1 + 1
+				let d = newDate.getDate()
+				return `${y}-${m}-${d}`
+			},
 		}
 	}
 </script>
@@ -116,7 +197,7 @@
 		font-size: $list-title;
 		text-indent: 2em;
 	}
-	
+
 	.fixBox {
 		position: fixed;
 		bottom: 0upx;
@@ -124,18 +205,20 @@
 		padding: 10upx 0;
 		background-color: rgba($color: #FFFFFF, $alpha: 1);
 	}
-	
+
 	.signUpBtn {
-		padding-left: 14px;
-		padding-right: 14px;
 		box-sizing: border-box;
-		line-height: 100rpx;
+		line-height: 80rpx;
 		background: linear-gradient(to right, rgba(251, 114, 153, 0.7), rgba(251, 114, 153, 0.6));
 		color: #FFFFFF;
 		font-size: 30rpx;
-		width: 300rpx;
-		height: 100rpx;
 		border-radius: 2.5rem;
 		text-align: center;
+		width: 6em;
+	}
+
+	.autoBox {
+		font-size: $list-title;
+		padding: 24upx 30upx;
 	}
 </style>
