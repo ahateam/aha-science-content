@@ -53,31 +53,32 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8">
+			
+			<el-col :span="8" v-if="this.upChannelId == ''">
 				<el-form label-width="80px">
-					<el-form-item label="标签分组:">
-						<el-select v-model="tagGroup" placeholder="请选择" style="margin-right: 10px;" @change="changeTagGroup">
-							<el-option v-for="item in tagGroupList" :key="item.groupName" :label="item.groupName" :value="item.groupName">
+					<el-form-item label="栏目:">
+						<el-select clearable v-model="vip" placeholder="请选择" style="margin-right: 10px;" @clear="clearData">
+							<el-option v-for="item in vipList" :key="item.id" :label="item.title" :value="item.id">
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8">
+			<el-col :span="8" v-if="this.vip == ''">
 				<el-form label-width="80px">
-					<el-form-item label="选择标签">
-						<el-select v-model="homeTagName" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in homeTag" :key="item.name" :label="item.title" :value="item.name">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
-					<el-form-item label="选择专题">
-						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;">
+					<el-form-item label="专题:">
+						<el-select clearable v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" @clear="clearData">
 							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="13">
+				<el-form label-width="80px">
+					<el-form-item label="关键词:">
+						<el-select v-model="value" multiple   default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
+							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -103,10 +104,13 @@
 		name: "addVideoContent",
 		data() {
 			return {
-				tagGroup: '',
-				tagGroupList: '',
-				homeTagName: '',
-				homeTag: '',
+				keywordList:[{
+					keyword: '',
+					id: ''
+				}],
+				value:'',
+				vip:'',
+				vipList:'',
 				channelList: [{
 					title: '',
 					id: 0,
@@ -205,15 +209,17 @@
 					show: this.show,
 					imgSrc: this.imgSrc
 				}
-				let cid = `{"homeCotent":["${this.homeTagName}"]}`
+				let tags = {
+					homeCotent:this.value
+				}
 				let cnt = {
 					module: this.$constData.module,
 					type: 3,
 					status: this.status,
 					power: 0,
 					upUserId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
-					upChannelId: this.upChannelId,
-					tags: JSON.parse(cid),
+					upChannelId:  this.upChannelId == '' ? this.vip : this.upChannelId,
+					tags: JSON.stringify(tags),
 					title: this.title,
 					data: dataUrl,
 				}
@@ -226,7 +232,7 @@
 							message: '添加成功',
 							type: 'success'
 						});
-						that.$router.push('/contentList')
+						that.$router.push('/videoContentList')
 					} else {
 						this.$message({
 							message: res.data.c,
@@ -239,7 +245,7 @@
 				let cnt = {
 					module: this.$constData.module,
 					status: 0,
-					//tags: tags, 
+					type: '1',
 					count: 20,
 					offset: 0,
 				};
@@ -249,36 +255,41 @@
 					}
 				})
 			},
-			getTagGroup() {
+			//获取栏目
+			getVips() {
 				let cnt = {
-					moduleId: this.$constData.module,
-					count: 200,
+					module: this.$constData.module,
+					type: '0',
+					status: 0,
+					count: 100,
 					offset: 0,
 				};
-				this.$api.getContentTagGroup(cnt, (res) => {
+				this.$api.getChannels(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.tagGroupList = this.$util.tryParseJson(res.data.c)
+						this.vipList = this.$util.tryParseJson(res.data.c)
 					}
 				})
 			},
-			changeTagGroup() {
+			clearData() {
+				this.upChannelId = ''
+				this.vip = ''
+			},
+			getKeyword(){
 				let cnt = {
-					moduleId: this.$constData.module,
-					group: this.tagGroup,
-					status: 1,
-					count: 200,
-					offset: 0,
-				};
-				this.$api.getContentTag(cnt, (res) => {
+					count:200,
+					offset:'0',
+				}
+				this.$api.getKeywords(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.homeTag = this.$util.tryParseJson(res.data.c)
+						this.keywordList = this.$util.tryParseJson(res.data.c)
 					}
 				})
 			}
 		},
 		mounted() {
-			this.getTagGroup()
+			this.getVips()
 			this.getChannels()
+			this.getKeyword()
 			let info = this.$route.params.info
 			if (info != undefined) {
 				this.upChannelId = info.id

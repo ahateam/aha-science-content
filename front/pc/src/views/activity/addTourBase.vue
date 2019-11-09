@@ -34,7 +34,7 @@
 			<el-col :span="20">
 				<span class="title-box"> 基地封面图：</span>
 				<img height="100" :src="imgSrc" v-if="imgSrc">
-				<input @change="getMechData1($event)" type="file" class="upload"  />
+				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px">
@@ -63,10 +63,9 @@
 			<el-button type="primary" @click="createBtn" style="margin-bottom: 100px;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
-
+		<div class="baidumap" id="allmap"></div>
 	</div>
 </template>
-
 <script>
 	import wangEditor from 'wangeditor'
 	import ossAuth from '@/commen/oss/ossAuth.js'
@@ -232,47 +231,36 @@
 			onSelected(data) {
 				let temp = data.province.value + '' + data.city.value + '' + data.area.value;
 				this.address = temp;
+			},
+			baiduMap() {
+				var map = new BMap.Map('allmap') // 创建地图实例
+
+				var point = new BMap.Point(116.331398, 39.897445) // 创建点坐标
+				map.centerAndZoom(point, 15) // 初始化地图，设置中心点坐标和地图级别
+				map.enableScrollWheelZoom(true) //开启鼠标滚轮缩放
+
+				map.addControl(new BMap.NavigationControl())
+				map.addControl(new BMap.ScaleControl())
+				map.addControl(new BMap.OverviewMapControl())
+				map.addControl(new BMap.MapTypeControl())
+				//map.setMapStyle({ style: 'midnight' }) //地图风格
+
+				var marker = new window.BMap.Marker(point) // 创建标注
+				map.addOverlay(marker) // 将标注添加到地图中
+
+				//提示信息
+				var infoWindow = new BMap.InfoWindow('这是提示信息')
+				// 鼠标移上标注点要发生的事
+				marker.addEventListener('mouseover', function() {
+					this.openInfoWindow(infoWindow)
+				})
+
+				// 鼠标移开标注点要发生的事
+				marker.addEventListener('mouseout', function() {
+					//this.closeInfoWindow(infoWindow)
+				})
 			}
 		},
-		mounted() {
-			this.editor = new wangEditor('#editor')
-			this.editor.customConfig.zIndex = 1
-			let _this = this
-			this.editor.customConfig.customUploadImg = function(files, insert) {
-				try {
-					let date = new Date()
-					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
-						encodeURIComponent(files[0].name)
-					client.multipartUpload(tmpName, files[0], {
-						meta: {
-							year: 2017,
-							people: 'test'
-						}
-					}).then(res => {
-						//取出存好的url
-						let address = res.res.requestUrls[0]
-						console.log(address)
-						let _index = address.indexOf('?')
-						if (_index == -1) {
-							_this.imgSrc = address
-						} else {
-							_this.imgSrc = address.substring(0, _index)
-						}
-						insert(_this.imgSrc)
-					}).catch(err => {
-						console.log(err)
-					})
-
-				} catch (e) {
-					// 捕获超时异常
-					if (e.code === 'ConnectionTimeoutError') {
-						console.log("Woops,超时啦!");
-					}
-					console.log(e)
-				}
-			}
-			this.editor.create();
-		}
 	}
 </script>
 

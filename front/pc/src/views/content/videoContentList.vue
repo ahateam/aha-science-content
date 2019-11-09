@@ -3,26 +3,26 @@
 		<el-row class="title-box">
 			视频管理
 		</el-row>
-		<el-row class="content-box">
-			<el-row>
-				<el-col :span="8">
-					<el-form label-width="80px">
-						<el-form-item label="选择类型:">
-							<el-select v-model="searchData.type" placeholder="请选择类型">
-								<el-option v-for="(item,index) in typeList" :key="index" :label="item.name" :value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col >
-					<el-button type="primary" @click="searchBtn">查询</el-button>
+		<el-row style="padding: 10px;">
+			<el-col :span="18">
+				<span style="font-size: 16px;">查询栏目：</span>
+				<el-button size="mini" round v-for="item in vipList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
+			</el-col>
+			<el-col :span="6">
+				 <el-input placeholder="请输入内容" v-model="keyword">
+				    <el-button  slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				  </el-input>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 10px;">
+			<el-col :span="18">
+				<span style="font-size: 16px;">查询专题：</span>
+				<el-button size="mini" round v-for="item in channelList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
+			</el-col>
+			<el-col :span="6">
 					<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
 					<el-button type="primary" @click="createContent" style="float: right;">发布视频</el-button>
-				</el-col>
-			</el-row>
-
+			</el-col> 
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
@@ -36,7 +36,7 @@
 					<template slot-scope="scope">
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button>
 						<!-- <el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button> -->
-						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -56,6 +56,9 @@
 		name: "videoContentList",
 		data() {
 			return {
+				vipList:'',
+				channelList:'',
+				keyword:'',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -132,28 +135,6 @@
 				}
 				this.getContents(cnt)
 			},
-			/* 查询数据*/
-			searchBtn() {
-				this.page = 1
-				let cnt = {
-					module: this.$constData.module,
-					count: this.count,
-					offset: (this.page - 1) * this.count
-				}
-				if (this.searchData.type) {
-					cnt.type = this.searchData.type
-				}
-				if (this.searchData.status) {
-					cnt.status = this.searchData.status
-				}
-				if (this.searchData.power) {
-					cnt.power = this.searchData.power
-				}
-				if (this.searchData.tags) {
-					cnt.tags = this.searchData.tags
-				}
-				this.getContents(cnt)
-			},
 			/* 删除内容*/
 			delBtn(info) {
 				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -207,24 +188,83 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
-				this.searchData.type = 3
-				this.searchData.status = ''
-				this.searchData.power = ''
-				this.searchData.tags = ''
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
-					type:this.typeList[1].value,
 					count: this.count,
+					type:this.typeList[1].value,
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
 			},
 			createContent(){
 				this.$router.push('/addVideoContent')
-			}
+			},
+			getSvip(){
+				let cnt = {
+					module: this.$constData.module,
+					type:'0',
+					count: 200,
+					offset: '0'
+				}
+				this.$api.getChannels(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.vipList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+			getChannel(){
+				let cnt = {
+					module: this.$constData.module,
+					type:'1',
+					count: 200,
+					offset: '0'
+				}
+				this.$api.getChannels(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.channelList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+			getContentsByCheck(id){
+				let cnt = {
+					module: this.$constData.module,
+					type:this.typeList[1].value,
+					upChannelId:id,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				this.getContents(cnt)
+			},
+			search(){
+				let cnt = {
+					module: this.$constData.module,
+					type:this.typeList[1].value,
+					count: this.count,
+					offset: (this.page - 1) * this.count,
+				}
+				if(this.keyword == ''){
+					this.getContents(cnt)
+					return
+				}
+				cnt.keyword = this.keyword
+				this.$api.searchContents(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableData = this.$util.tryParseJson(res.data.c)
+					} else {
+						this.tableData = []
+					}
+					if (this.tableData.length < this.count) {
+						this.pageOver = true
+					} else {
+						this.pageOver = false
+					}
+				})
+			},
 		},
 		mounted() {
+			this.getSvip()
+			this.getChannel()
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,
