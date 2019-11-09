@@ -19,7 +19,7 @@ public class InterestTagRepository extends RDSRepository<InterestTag>{
 			e.printStackTrace();
 		}
 	}
-	public void addKeyword(Long id) throws SQLException, ServerException {
+	public void addInteresttagPageview(Long id) throws SQLException, ServerException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
 			String sql = "UPDATE `tb_zskt_interesttag` set `page_view` = `page_view` +1 WHERE  `user_id`  = "+id;
 			this.executeUpdateSQL(conn, sql, null);			
