@@ -134,7 +134,7 @@
 	$light_gray: #eee;
 
 	.login-container {
-		min-height: 100%;
+		min-height: 100vh;
 		width: 100%;
 		background-color: $bg;
 		overflow: hidden;

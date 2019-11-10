@@ -44,11 +44,11 @@
 		<view class="contentBox" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" :hidden="tagName == '科普栏目'||tagName == '专题页面'">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
 				<view v-if="item.show == constData.contentShow[0].key">
-					<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
+					<trans-video :item="item"></trans-video>
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[1].key">
-					<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
+					<right-video :item="item" :upName="item.user.name" :time="item.time"></right-video>
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
@@ -61,8 +61,7 @@
 			</view>
 
 			<view v-else-if="item.type == -1">
-				<right-video :title="item.title" :upName="item.address" :imgSrc="item.imgList[0].src" :time="item.margin+'km'"
-				 :type="item.type"></right-video>
+				<right-video :item="item" :upName="item.address" :time="item.margin+'km'"></right-video>
 			</view>
 		</view>
 		<uni-load-more :status="pageStatus"></uni-load-more>
@@ -729,7 +728,7 @@
 				this.channelList = []
 				this.getChannels(cnt)
 			} else if (this.tagName == '推荐') {
-				
+
 				this.contents = []
 				let userId = uni.getStorageSync('userId')
 				console.log(userId)

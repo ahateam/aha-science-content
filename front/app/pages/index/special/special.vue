@@ -15,11 +15,11 @@
 
 				<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
 					<view v-if="item.show == constData.contentShow[0].key">
-						<trans-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></trans-video>
+						<trans-video :item="item"></trans-video>
 					</view>
 
 					<view v-else-if="item.show == constData.contentShow[1].key">
-						<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="item.time" :type="item.type"></right-video>
+						<right-video :item="item" :upName="item.user.name" :time="item.time"></right-video>
 					</view>
 
 					<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">

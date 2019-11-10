@@ -1,9 +1,5 @@
 <template>
 	<div>
-		<baidu-map class="bm-view" :ak="ak" :center="center" :zoom="14" @ready="handler" @click="clickEvent"
-		 :scroll-wheel-zoom="true">
-		</baidu-map>
-
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -12,13 +8,16 @@
 			</el-col>
 		</el-row>
 
-
+		<baidu-map class="bm-view" :ak="ak" :center="center" :zoom="14" @ready="handler" @click="clickEvent"
+		 :scroll-wheel-zoom="true">
+			<bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true"></bm-geolocation>
+		</baidu-map>
 
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 基地地点：</span>
-				<v-distpicker @selected="onSelected" style="display: inline-block;"></v-distpicker>
+				<v-distpicker :province="province" :city="city" :area="area" @selected="onSelected" style="display: inline-block;"></v-distpicker>
 				<el-input placeholder="详细地址:如道路街道,小区" v-model="detail_address" style="width: 300px;margin-left: 5px;"></el-input>
 			</el-col>
 		</el-row>
@@ -114,17 +113,21 @@
 					longitude: '',
 					latitude: '',
 					address: ''
-				}
+				},
+				province: '',
+				city: '',
+				area: ''
 			}
 		},
 
 		methods: {
 			clickEvent(e) {
 				map.clearOverlays()
-				let Icon_0 = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(64, 64), {
-					anchor: new BMap.Size(18, 32),
-					imageSize: new BMap.Size(36, 36)
-				})
+				let Icon_0 = new BMap.Icon("http://weapp-xhj.oss-cn-hangzhou.aliyuncs.com/zskp/image/20191110/positioin.png", new BMap
+					.Size(64, 64), {
+						anchor: new BMap.Size(18, 32),
+						imageSize: new BMap.Size(30, 30)
+					})
 				var myMarker = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat), {
 					icon: Icon_0
 				})
@@ -137,8 +140,17 @@
 					var addComp = rs.addressComponents
 					//console.log(rs.address);//地址信息
 					_this.locData.address = rs.address
-
-				});
+					_this.province = rs.addressComponents.province
+					_this.city = rs.addressComponents.city
+					_this.area = rs.addressComponents.district
+					_this.detail_address = rs.addressComponents.street + rs.addressComponents.streetNumber
+					if (_this.province != _this.city) {
+						_this.address = _this.province + _this.city + _this.area
+					} else {
+						_this.address = _this.province + _this.area
+					}
+					console.log(rs)
+				})
 				this.locData.longitude = e.point.lng
 				this.locData.latitude = e.point.lat
 				console.log(this.locData)
@@ -272,8 +284,9 @@
 				}))
 			},
 			onSelected(data) {
-				let temp = data.province.value + '' + data.city.value + '' + data.area.value;
-				this.address = temp;
+				this.province = data.province.value
+				this.city = data.city.value
+				this.area = data.area.value
 			},
 
 			handler({

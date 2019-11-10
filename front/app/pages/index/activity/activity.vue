@@ -17,7 +17,7 @@
 
 		<view class="autoTitle">
 			活动介绍： <view class="liveBtn" @click="navLive">
-				<text class="iconfont kk-zhibobofangshexiangjitianxianxianxing"></text>
+				<text class="iconfont kk-zhibobofangshexiangjitianxianxianxing"></text> <text class="liveTag" v-if="time1 < nowTime&&time2 >nowTime">直播中</text>
 			</view>
 			<view class="autoInfo" style="padding-left: 0;padding-right: 0;" v-html="activityInfo">
 			</view>
@@ -78,6 +78,11 @@
 				liveSrc: '', //直播地址
 
 				shopStatus: true,
+
+				nowTime: this.getNowTime(),
+
+				time1: 1573267695,
+				time2: 1575082095,
 			}
 		},
 		onLoad(res) {
@@ -90,6 +95,11 @@
 			this.getEnrolls()
 		},
 		methods: {
+			getNowTime() {
+				let time = Math.round(new Date() * 1)
+				return time
+			},
+
 			//获取报名
 			getEnrolls() {
 				let cnt = {
@@ -198,6 +208,8 @@
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						if (res.data.c) {
 							let info = this.$util.tryParseJson(res.data.c)
+							this.time1 = info.liveStartTime
+							this.time2 = info.liveEndTime
 							console.log(info)
 							let data = this.$util.tryParseJson(info.data)
 							this.address = data.address
@@ -211,8 +223,8 @@
 								let cnt1 = {
 									moduleId: this.$constData.module, // Long 模块编号
 									id: this.placeId, // Long id
-									count:10,
-									offset:0
+									count: 10,
+									offset: 0
 								}
 								this.getTourBase(cnt1)
 							} else {
@@ -348,9 +360,11 @@
 		// background-color: $color-main;
 		border-radius: 100%;
 		text-align: center;
-		width: 60upx;
+		display: flex;
+		align-items: center;
 
-		text {
+		// width: 60upx;
+		.iconfont {
 			padding: 0 40upx;
 			font-size: 40upx;
 		}
@@ -359,9 +373,19 @@
 	.cntShop {
 		background: linear-gradient(to right, rgba($color: #AAAAAA, $alpha: 0.4), rgba($color: #AAAAAA, $alpha: 0.3));
 	}
-	
-	.navText{
+
+	.navText {
 		color: #007AFF;
 		text-decoration: underline;
+	}
+
+	.liveTag {
+		border: 1px solid $color-main;
+		color: $color-main;
+		border-radius: 10upx;
+		font-size: $list-info;
+		padding: 0 10upx;
+		margin-right: 10upx;
+		font-weight: normal;
 	}
 </style>
