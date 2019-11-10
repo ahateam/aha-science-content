@@ -75,7 +75,7 @@
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
-			<el-button type="primary" @click="subBtn" style="margin: 0 auto;display: block;padding: 15px 50px">提交
+			<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
 
