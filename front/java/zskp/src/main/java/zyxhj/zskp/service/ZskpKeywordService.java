@@ -116,8 +116,14 @@ public class ZskpKeywordService extends Controller{
 		des = "获取内容详情,添加用户兴趣标签", 
 		ret = "" 
 	)
-	public Content getConntent(Long id,Long userId) throws ServerException, SQLException {
+	public Content getConntent(
+			Long id,
+			@P(t = "用户id",r = false)Long userId
+		) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
+			if(userId == null) {
+				return contentService.getConntent(id);
+			}
 			Content c = contentService.getConntent(id);
 			JSONArray ja = c.tags.getJSONArray("homeCotent");
 			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS().key("user_id",userId), 300, 0);
@@ -170,7 +176,7 @@ public class ZskpKeywordService extends Controller{
 	}
 	@POSTAPI(//
 			path = "createInterestTag", 
-			des = "第一次创建用户兴趣标签",
+			des = "创建用户兴趣标签",
 			ret = "" 
 		)
 		public void createInterestTag(
