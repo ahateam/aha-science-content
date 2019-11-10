@@ -12,7 +12,7 @@
 			<p>关键词：<el-tag v-for="item in tags" type="info" style="margin-right: 5px;">{{item}}</el-tag></p>
 			<p>类型：{{type}}</p>
 			<p>当前状态：{{status}}</p>
-			<p>栏目/专题：{{upChannelId}}</p>
+			<p>栏目/专题：<el-button @click="infoChannel" v-if="orShow">查看所属栏目/专题</el-button><span>{{upChannelId}}</span></p>
 			<p>创建者id：{{upUserId}}</p>
 			<p>创建者用户名：{{user}}</p>
 			<p>修改时间：{{updateTime}}</p>
@@ -50,6 +50,7 @@
 		name: "contetnInfo",
 		data() {
 			return {
+				orShow:true,
 				id: '',
 				pageView: '',
 				status: '',
@@ -113,6 +114,14 @@ channel:'',
 						this.channel = this.$util.tryParseJson(res.data.c)
 					}
 				})
+			},
+			infoChannel(){
+				this.orShow = false
+				if(this.contentInfo.upChannelId == ''){
+					this.upChannelId = '本内容没有设置栏目或专题'
+					return;
+				}
+				this.upChannelId =this.channelFliter(this.contentInfo.upChannelId)
 			}
 		},
 		mounted() {
@@ -128,7 +137,6 @@ channel:'',
 			this.pageView = this.contentInfo.pageView
 			this.status = this.statusFliter(this.contentInfo.status)
 			this.type = this.typeFliter(this.contentInfo.type)
-			this.upChannelId =this.channelFliter(this.contentInfo.upChannelId)
 			this.upUserId = this.contentInfo.upUserId
 			this.user = this.contentInfo.user.name
 			this.updateTime = this.timeFliter(this.contentInfo.updateTime)

@@ -8,7 +8,7 @@
 				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-		
+
 		<el-row>
 			<el-col :span="8">
 				<el-form label-width="80px">
@@ -32,9 +32,9 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="标签分组:">
-						<el-select v-model="tagGroup" placeholder="请选择" style="margin-right: 10px;" @change="changeTagGroup">
-							<el-option v-for="item in tagGroupList" :key="item.groupName" :label="item.groupName" :value="item.groupName">
+					<el-form-item label="栏目:">
+						<el-select clearable v-model="vip" placeholder="请选择" style="margin-right: 10px;"@change="changevip" @clear="clearData">
+							<el-option v-for="item in vipList" :key="item.id" :label="item.title" :value="item.id">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -42,19 +42,19 @@
 			</el-col>
 			<el-col :span="8">
 				<el-form label-width="80px">
-					<el-form-item label="选择标签">
-						<el-select v-model="homeTagName" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in homeTag" :key="item.name" :label="item.title" :value="item.name">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col>
-			<el-col :span="8">
-				<el-form label-width="80px">
-					<el-form-item label="专栏">
-						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;">
+					<el-form-item label="专题">
+						<el-select v-model="upChannelId" placeholder="请选择" style="margin-right: 10px;" @clear="clearData" @change="changeChannel">
 							<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="13">
+				<el-form label-width="80px">
+					<el-form-item label="关键词:">
+						<el-select v-model="value" multiple default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
+							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -69,7 +69,7 @@
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
-			<el-button type="primary" @click="subBtn" style="margin: 0 auto;display: block;padding: 15px 50px">提交修改
+			<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交修改
 			</el-button>
 		</el-row>
 
@@ -82,15 +82,20 @@
 		name: "addContent",
 		data() {
 			return {
-				channelName:'',
-				tag:'',
+				keywordList: [{
+					keyword: '',
+					id: ''
+				}],
+				value: [],
+
+
+				vipList: '',
+				vip: '',
+				channelName: '',
+				tag: '',
 				cotentHtml: '',
-				tagGroupList: '',
-				tagGroup: '',
 				id: '',
-				homeTagName: '',
 				channelTag: '',
-				homeTag: '',
 				editor: {},
 				imgList: [],
 				tag: '',
@@ -105,7 +110,7 @@
 				show: 0,
 				title: '',
 				status: '',
-				userId: 401770184378345,
+				userId:this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
 				showList: this.$constData.showList,
 			}
@@ -113,7 +118,7 @@
 		methods: {
 			channelListFilter(val) {
 				let channelList = this.channelList
-				console.log("q"+channelList[0].id)
+				console.log("q" + channelList[0].id)
 				for (let i = 0; i < channelList.length; i++) {
 					console.log("44")
 					if (channelList[i].id == val) {
@@ -148,16 +153,21 @@
 					show: this.show,
 					imgList: this.imgList
 				}
-				let cid = `{"homeCotent":["${this.homeTagName}"]}`
+				let tags = {
+					homeCotent: this.value
+				}
+				if (that.upChannelId != '') {
+					cnt.upChannelId = parseInt(that.upChannelId)
+				}
 				let cnt = {
 					id: this.id,
 					module: this.$constData.module,
 					type: this.contentType,
 					status: this.status,
 					power: this.power,
+					upChannelId: this.upChannelId == '' ? this.vip : this.upChannelId,
 					upUserId: this.userId,
-					upChannelId: this.upChannelId,
-					tags: JSON.parse(cid),
+					tags: JSON.stringify(tags),
 					title: this.title,
 					data: JSON.stringify(data),
 				}
@@ -185,6 +195,7 @@
 					module: this.$constData.module,
 					status: 0,
 					count: 20,
+					type: '1',
 					offset: 0,
 				};
 				this.$api.getChannels(cnt, (res) => {
@@ -195,37 +206,47 @@
 					this.channelName = this.channelListFilter(info.upChannelId)
 				})
 			},
-			getTagGroup() {
+			getVips() {
 				let cnt = {
-					moduleId: this.$constData.module,
-					count: 200,
+					module: this.$constData.module,
+					type: '0',
+					status: 0,
+					count: 100,
 					offset: 0,
 				};
-				this.$api.getContentTagGroup(cnt, (res) => {
+				this.$api.getChannels(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.tagGroupList = this.$util.tryParseJson(res.data.c)
+						this.vipList = this.$util.tryParseJson(res.data.c)
 					}
 				})
 			},
-			changeTagGroup() {
+			clearData() {
+				this.upChannelId = ''
+				this.vip = ''
+			},
+			changeChannel(){
+				this.vip=''
+			},
+			changevip(){
+				this.upChannelId=''
+			},
+			getKeyword() {
 				let cnt = {
-					moduleId: this.$constData.module,
-					group: this.tagGroup,
-					status: 1,
 					count: 200,
-					offset: 0,
-				};
-				this.$api.getContentTag(cnt, (res) => {
+					offset: '0',
+				}
+				this.$api.getKeywords(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.homeTag = this.$util.tryParseJson(res.data.c)
+						this.keywordList = this.$util.tryParseJson(res.data.c)
 					}
 				})
 			}
 		},
 		mounted() {
 			let info = this.$route.params.info
-			this.getTagGroup()
 			this.getChannels(info)
+			this.getVips()
+			this.getKeyword()
 			console.log(info)
 			this.id = info.id
 			this.title = info.title
@@ -238,8 +259,9 @@
 			this.editor.create()
 			this.cotentHtml = JSON.parse(info.data).editor[0].value
 			this.editor.txt.html(this.cotentHtml)
-			this.tag =  info.tags.homeCotent[0]
-			
+			this.value = info.tags.homeCotent
+			// this.upChannelId = info.upChannelId
+			this.vip = info.upChannelId
 		}
 	}
 </script>

@@ -7,12 +7,12 @@
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column label="头像">
+				<!-- <el-table-column label="头像">
 					<template scope="scope">
 						<img :src="scope.row.user.head" width="40" height="40" class="head_pic" />
 					</template>
-				</el-table-column>
-				<el-table-column prop="user.name" label="用户名" width="200">
+				</el-table-column> -->
+				<el-table-column prop="keyword" label="用户名" width="200">
 				</el-table-column>
 				<el-table-column prop="tagsArray" label="兴趣标签">
 				</el-table-column>
@@ -50,6 +50,7 @@
 			/*获取评论列表*/
 			getContents(cnt) {
 				this.$api.getInterestTags(cnt, (res) => {
+					console.log(res)
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {
@@ -86,7 +87,6 @@
 		},
 		mounted() {
 			let cnt = {
-				moduleId: this.$constData.module,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

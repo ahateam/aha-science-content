@@ -142,7 +142,7 @@ api.getAdverts = function (cnt, callback) {
 }
 //查询用户兴趣标签
 api.getInterestTags = function (cnt, callback) {
-    util.call(baseUrl + '/ZskpUserService/getInterestTags', cnt, callback)
+    util.call(baseUrl + '/ZskpKeyword/getInterestTags', cnt, callback)
 }
 //查询报名
 api.getEnrolls = function (cnt, callback) {

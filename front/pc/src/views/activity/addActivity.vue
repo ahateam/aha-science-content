@@ -8,7 +8,7 @@
 			</el-col>
 		</el-row>
 
-	
+
 
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
@@ -39,13 +39,17 @@
 			</el-col>
 		</el-row>
 
-		<el-row >
+		<el-row>
 			<el-col :span="2" style="min-height: 20px"></el-col>
-			<el-col :span="8">
+			<el-col :span="10">
 				<span class="title-box"> 活动封面图：</span>
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
-			
+			<el-col :span="10">
+				<span class="title-box"> 直播时间：</span>(可暂时不设置)
+				<el-date-picker v-model="liveTime" value-format="timestamp" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+				</el-date-picker>
+			</el-col>
 		</el-row>
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
@@ -58,7 +62,8 @@
 		</el-row>
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
-			<el-button type="primary" @click="createBtn" style="width: 50vw;padding: 15px 50px;font-size: 20px;">提 交
+			<el-button type="primary" @click="createBtn" style="width: 50vw;padding: 15px 50px;font-size: 20px;margin-bottom: 50px;">提
+				交
 			</el-button>
 		</el-row>
 		<el-col :span="10" v-if="imgSrc">
@@ -78,6 +83,7 @@
 		name: "addContent",
 		data() {
 			return {
+				liveTime:'',
 				zhibo: '',
 				homeTagName: '',
 				homeTag: '',
@@ -219,6 +225,10 @@
 					title: this.title,
 					data: JSON.stringify(data),
 				}
+				if(this.liveTime != ''){
+					cnt.liveStartTime = this.liveTime[0];
+					cnt.liveEndTime = this.liveTime[1];
+				}
 				that.$api.addContent(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
@@ -280,7 +290,7 @@
 					}).catch(err => {
 						console.log(err)
 					})
-				
+
 				} catch (e) {
 					// 捕获超时异常
 					if (e.code === 'ConnectionTimeoutError') {
