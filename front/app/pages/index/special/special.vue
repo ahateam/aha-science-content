@@ -10,7 +10,7 @@
 				{{channelInfo.data.info}}
 			</view>
 		</view>
-		<view class="contentBox">
+		<view class="contentBox" :style="'border-color:'+borderColor">
 			<view class="contentList" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 
 				<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
@@ -71,6 +71,8 @@
 
 				pageStatus: 'loading',
 				pageOver: false,
+
+				borderColor: '',
 			}
 		},
 		onLoad(res) {
@@ -120,6 +122,7 @@
 				this.$api.getChannlById(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let obj = this.$util.tryParseJson(res.data.c)
+						this.borderColor = obj.boxBackgroundColor
 						console.log(obj)
 						obj.data = this.$util.tryParseJson(obj.data)
 						this.channelInfo = obj
@@ -161,7 +164,8 @@
 						this.tryDataList(list)
 
 					} else {
-						console.log('error')
+						this.pageStatus = 'nomore'
+						this.pageOver = true
 					}
 				})
 			},
@@ -254,12 +258,12 @@
 	}
 
 	.contentBox {
-		border: 8upx solid rgba($color: #a8ff78, $alpha: 0.5);
+		border: 8upx solid;
 		border-radius: 10upx;
 		margin: 10upx 10upx;
 	}
-	
-	.contentList{
+
+	.contentList {
 		padding: $box-margin-top 10upx;
 		box-sizing: border-box;
 	}

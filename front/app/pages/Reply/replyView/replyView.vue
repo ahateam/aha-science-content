@@ -99,14 +99,6 @@
 					return
 				}
 
-				if (status == this.$constData.userStatus[1].key) {
-					uni.showToast({
-						title: '已被管理员禁言',
-						icon: 'none'
-					})
-					return
-				}
-
 				let cnt = {
 					replyId: this.id, // Long 回复评论id
 					upUserId: uni.getStorageSync('userId'), // Long 提交者编号
@@ -140,7 +132,7 @@
 						this.commentContent = ''
 					} else {
 						uni.showToast({
-							title: '网络错误',
+							title: res.data.rm,
 							icon: 'none'
 						})
 					}

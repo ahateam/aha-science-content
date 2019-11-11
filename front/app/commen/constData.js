@@ -20,7 +20,7 @@ constData.adData = [
 ]
 
 /* 版本常量 */
- constData.version = 105
+ constData.version = 106
  
 /* 时间常量 */
 constData.timeData = [
