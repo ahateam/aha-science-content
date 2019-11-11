@@ -80,7 +80,7 @@ public class ZskpReplyService  extends Controller{
 			@P(t = "目标用户昵称",r = false) String toUserName //
 	) throws ServerException, SQLException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId),"status");
+			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
 			if ("1".equals(user.id.toString())) {
 				return APIResponse.getNewFailureResp(new RC("fail", "你已被禁言"));
 			}
@@ -90,8 +90,8 @@ public class ZskpReplyService  extends Controller{
 	/*判断用户是否能评论*/
 	public String getUserCloseReply(Long ownerId, Long upUserId) throws ServerException, SQLException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			Content c = contentRepository.get(conn, EXP.INS().key("id", ownerId), "status");	
-			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId),"status");
+			Content c = contentRepository.get(conn, EXP.INS().key("id", ownerId));	
+			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
 			if("5".equals(c.status.toString())) {
 				return "该内容下已被设置为不可评论";
 			}else if ("1".equals(user.id.toString())) {
