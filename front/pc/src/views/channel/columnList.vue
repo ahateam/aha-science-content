@@ -256,8 +256,8 @@
 			//编辑专栏页
 			infoBtn(info) {
 				this.$router.push({
-					path: '/svipInfoList',
-					name: 'svipInfoList',
+					path: '/columnInfo',
+					name: 'columnInfo',
 					params: {
 						info: info
 					}

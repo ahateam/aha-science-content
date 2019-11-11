@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row class="row-box1">
-			<img :src="imgSrc" width="80"  class="head_pic" />
+			<img :src="imgSrc" width="80" class="head_pic" />
 			<el-col :span="24" style="margin-bottom: 10px">
 				<el-col :span="4">
 					<div class="title-box">标题:</div>
@@ -34,7 +34,14 @@
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
-
+		<el-row>
+			<el-col :span="4">
+				<div class="title-box">边框色:</div>
+			</el-col>
+			<el-col style="position: relative;z-index: 99;line-height: 40px;" :span="18">
+				<colorPicker v-model="colors" />
+			</el-col>
+		</el-row>
 		<!-- <el-row>
 			<el-col :span="4">
 				<div class="title-box">你可输入的标签:</div>
@@ -78,7 +85,8 @@
 		name: "addSvip",
 		data() {
 			return {
-				info:'',
+				colors:'',
+				info: '',
 				nowVipTagList: '',
 				vipTagList: '',
 				title: '',
@@ -125,7 +133,7 @@
 					}).catch(err => {
 						console.log(err)
 					})
-			
+
 				} catch (e) {
 					// 捕获超时异常
 					if (e.code === 'ConnectionTimeoutError') {
@@ -144,7 +152,8 @@
 					id: this.id,
 					module: this.$constData.module,
 					title: this.title,
-					data:JSON.stringify(data),
+					data: JSON.stringify(data),
+					boxBackgroundColor: this.colors,
 				}
 				this.$api.editChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
@@ -152,7 +161,7 @@
 							message: '修改成功',
 							type: 'success'
 						});
-						that.$router.push('/svipList')
+						that.$router.push('/columnList')
 					} else {
 						this.$message({
 							message: res.data.c,
@@ -188,6 +197,7 @@
 			this.id = info.id
 			this.info = JSON.parse(info.data).info
 			this.imgSrc = JSON.parse(info.data).img
+			this.colors = info.boxBackgroundColor
 		}
 	}
 </script>
