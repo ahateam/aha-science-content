@@ -13,6 +13,8 @@ import Distpicker from 'v-distpicker'
 
 import BaiduMap from 'vue-baidu-map'
 
+import vcolorpicker from 'vcolorpicker'
+Vue.use(vcolorpicker)
 
 
 Vue.use(ElementUI)
@@ -20,6 +22,7 @@ Vue.use(BaiduMap, {
 	// ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
 	ak: 'YOUR_APP_KEY'
 })
+
 Vue.config.productionTip = false
 Vue.prototype.$constData = constData
 Vue.prototype.$util = util
