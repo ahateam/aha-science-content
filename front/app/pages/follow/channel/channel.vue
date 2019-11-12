@@ -183,7 +183,8 @@
 						this.tryDataList(list)
 
 					} else {
-						console.log('error')
+						this.pageStatus = 'nomore'
+						this.pageOver = true
 					}
 				})
 			},

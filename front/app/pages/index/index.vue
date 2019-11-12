@@ -31,7 +31,7 @@
 		</uni-swiper-dot>
 
 		<!-- 专题列表 -->
-		<view class="channleView" v-if="tagName == '科普栏目'||tagName == '专题页面'">
+		<view class="channleView" v-if="tagName == '科普栏目'||tagName == '专题页面'" :style="tagName == '专题页面'?'display:block':''">
 			<view v-for="(item,index) in channelList" :key="index" @click="navChannle(item)" v-if="item.type == 0">
 				<channel :title="item.title" :imgSrc="item.img" :text="item.info"></channel>
 			</view>
