@@ -83,32 +83,72 @@
 				}
 				this.getContents(cnt)
 			},
-			delBtn(info) {
-				let msg =''
-				if(info.state == 0){//zc
-					msg = '封禁'
-				}else{
-					msg = '解封'
-				}
-				this.$confirm('此操作将'+msg+'用户的评论功能, 是否继续?', '提示', {
+			openBtn(info) {
+				console.log(info.status)
+				this.$confirm('此操作将解封用户的评论功能, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
 						moduleId: this.$constData.module,
+						bool:false,
 						id:info.id,
-						bool:true
 					};
-					if(info.state == 0){//封禁
-						cnt.bool = false
-					}
+					console.log(cnt)
 					this.$api.closeUser(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
 							this.$message({
 								type: 'success',
 								message: '操作成功!'
 							});
+							let recnt = {
+								moduleId: this.$constData.module,
+								authority:2,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(recnt)
+						} else {
+							this.$message({
+								type: 'error',
+								message: '操作失败!'
+							});
+						}
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消'
+					});
+				});
+			},
+			closeBtn(info) {
+				console.log(info.status)
+				this.$confirm('此操作将封禁用户的评论功能, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(async () => {
+					let cnt = {
+						moduleId: this.$constData.module,
+						bool:true,
+						id:info.id,
+					};
+					console.log(cnt)
+					this.$api.closeUser(cnt, (res) => {
+						if (res.data.rc == this.$util.RC.SUCCESS) {
+							this.$message({
+								type: 'success',
+								message: '操作成功!'
+							});
+							let recnt = {
+								moduleId: this.$constData.module,
+								authority:2,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(recnt)
 						} else {
 							this.$message({
 								type: 'error',
