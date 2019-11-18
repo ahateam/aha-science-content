@@ -142,7 +142,7 @@
 					module: this.$constData.module,
 					type: this.typeList[0].value,
 					upChannelId: this.channelId,
-					tags:this.tag,
+					tags: this.tag,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -325,20 +325,20 @@
 				this.getContents(cnt)
 			},
 			//关键词查询
-			getTags(info){
-				this.page =1
+			getTags(info) {
+				this.page = 1
 				let tag = {
-					homeCotent:[info]
+					homeCotent: [info]
 				}
 				this.tag = tag
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
-					tags:tag,
+					tags: tag,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
-				if(tag.homeCotent == ''){
+				if (tag.homeCotent == '') {
 					cnt.tags = ''
 				}
 				this.getContents(cnt)

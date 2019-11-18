@@ -14,6 +14,7 @@
     "core-js": "^2.6.5",
     "element-ui": "^2.7.2",
     "v-distpicker": "^1.2.2",
+    "vcolorpicker": "^0.1.8",
     "vue": "^2.6.6",
     "vue-baidu-map": "^0.21.22",
     "vue-router": "^3.0.1",

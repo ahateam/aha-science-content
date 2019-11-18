@@ -14,6 +14,7 @@ import Distpicker from 'v-distpicker'
 import BaiduMap from 'vue-baidu-map'
 
 import vcolorpicker from 'vcolorpicker'
+
 Vue.use(vcolorpicker)
 
 
