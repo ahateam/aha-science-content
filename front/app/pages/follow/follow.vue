@@ -120,6 +120,7 @@
 			}
 		},
 		onShow() {
+			this.$commen.getNewReplay()
 			if (this.pase) {
 				return
 			}

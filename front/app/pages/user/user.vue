@@ -67,7 +67,9 @@
 		onLoad() {
 
 		},
+		
 		onShow() {
+			this.$commen.getNewReplay()
 			let userId = uni.getStorageSync('userId')
 			if (userId != '' && userId != '1234567890') {
 				this.userName = uni.getStorageSync('userName')

@@ -130,7 +130,9 @@
 				searchTitle: '搜索(用户、资讯)',
 			}
 		},
-
+		onShow() {
+			this.$commen.getNewReplay()
+		},
 		onLoad() {
 			let cnt = {
 				moduleId: this.constData.module, // String 隶属

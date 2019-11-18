@@ -20,10 +20,10 @@
 					<view class="autoBox" v-for="(info,index1) in item" :key="index1">
 						<view class="commentBox">
 							"{{info.text}}"
+							<text class="new-tip" v-if="info.ext == 0&&statusCurr == true"></text>
 						</view>
 
-						<view class="replayBox" 　v-if="info.comment.list.length > 0" @click="navToReplay(info.sequenceId,info.content.id)"
-						 @click.stop>
+						<view class="replayBox" 　v-if="info.comment.list.length > 0" @click.stop="navToReplay(info.sequenceId,info.content.id,index,index1)">
 							<view class="topMargin" v-for="(list,index2) in info.comment.list" :key="index2" v-if="index2 < 2">
 								<text class="nameBox">{{list.upUserName}}</text>: <text class="textBox">{{list.text}}</text>
 								<view class="moreText" v-if="index2 == 1&&info.comment.list.length > 2">查看更多</view>
@@ -84,7 +84,8 @@
 				this.getReplyListOnshow(cnt, this.tabCurrentIndex)
 			},
 
-			navToReplay(id, contentId) {
+			navToReplay(id, contentId, index, index1) {
+				this.replyList[index][index1].ext = '1'
 				uni.navigateTo({
 					url: `/pages/Reply/replyView/replyView?id=${id}&contentId=${contentId}`
 				})
@@ -247,6 +248,8 @@
 		},
 
 		onShow() {
+			this.$commen.getNewReplay()
+
 			if (this.oneLoading) {
 				return
 			}
@@ -414,6 +417,8 @@
 	}
 
 	.commentBox {
+		display: flex;
+		align-items: center;
 		margin: 15upx 0;
 		padding: 0 10upx;
 		font-size: $list-title;
@@ -464,5 +469,13 @@
 
 	.statusCurr {
 		color: $color-main;
+	}
+
+	.new-tip {
+		width: 15upx;
+		height: 15upx;
+		border-radius: 50%;
+		background-color: #FF0000;
+		margin-left: 10upx;
 	}
 </style>

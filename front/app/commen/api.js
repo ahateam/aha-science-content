@@ -230,6 +230,11 @@ api.createComment = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpReply/createComment', cnt, callback)
 }
 
+// 查询是否有未读消息 
+api.getIsRead = function(cnt, callback) {
+	util.call(baseUrl + '/ZskpReply/getIsRead', cnt, callback)
+}
+
 /* 获取版本 */
 api.getVersion = function(cnt, callback) {
 	util.call(baseUrl + '/ZskpOtherContent/getVersion', cnt, callback)

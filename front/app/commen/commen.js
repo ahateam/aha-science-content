@@ -1,3 +1,5 @@
+import api from './api.js'
+
 const commen = {}
 
 
@@ -49,6 +51,31 @@ commen.getSplit = function(res) {
 			duration: 2000,
 			icon: 'none'
 		});
+	}
+}
+
+commen.getNewReplay = () => {
+	let id = uni.getStorageSync('userId')
+	if (id) {
+		let cnt = {
+			userId: id
+		}
+		api.getIsRead(cnt, (res) => {
+			if (res.data.rc == 'succ') {
+				let index = JSON.parse(res.data.c)
+				if (index == 0) {
+					uni.hideTabBarRedDot({
+						index: 2
+					})
+				} else {
+					uni.showTabBarRedDot({
+						index: 2
+					})
+				}
+			} else {
+				console.log('获取未读消息失败')
+			}
+		})
 	}
 }
 
