@@ -350,10 +350,10 @@
 					upUserId: userId, // Long 用户编号
 					text: this.commentContent, // String 评论内容
 					// data: [], // String 其他数据
-					atUserId: 12321321321, // Long <选填> @对象编号
-					atUserName: '233', // String <选填> @对象名称
-					title: 'title', // String <选填> 标题
-					ext: '123', // String <选填> 扩展
+					// atUserId: 12321321321, // Long <选填> @对象编号
+					// atUserName: '233', // String <选填> @对象名称
+					// title: 'title', // String <选填> 标题
+					// ext: '123', // String <选填> 扩展
 				};
 				this.$api.createReply(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {

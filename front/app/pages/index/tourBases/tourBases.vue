@@ -35,9 +35,8 @@
 				相关活动：
 			</view>
 		</view>
-		<view v-for="(item,index) in actList" :key="index" @click="navToAct(item)">
-			<right-video :title="item.title" :upName="item.user.name" :imgSrc="item.imgList[0].src" :time="newTime(item.createTime)"
-			 :type="item.type"></right-video>
+		<view class="active-list" v-for="(item,index) in actList" :key="index" @click="navToAct(item)">
+			<right-video :item="item" :upName="item.user.name" :time="getNowTime(item.createTime)"></right-video>
 		</view>
 		<uni-load-more :status="pageStatus"></uni-load-more>
 
@@ -63,7 +62,7 @@
 				placeTitle: '', //基地标题
 				placeInfo: '', //基地简介
 				address: '', //基地地址
-				
+
 				time: '',
 
 				id: '',
@@ -72,11 +71,11 @@
 				shopSrc: '', //购票地址
 
 				actList: [], //活动列表
-				
-				count:10,
-				offset:0,
-				pageOver:false,
-				pageStatus:'loading'
+
+				count: 10,
+				offset: 0,
+				pageOver: false,
+				pageStatus: 'loading'
 			}
 		},
 		onLoad(res) {
@@ -90,6 +89,14 @@
 			this.getTourBase(cnt)
 		},
 		methods: {
+			getNowTime(time) {
+				let newTime = new Date(time)
+				let y = newTime.getFullYear()
+				let m = newTime.getMonth() * 1 + 1
+				let d = newTime.getDate()
+				return `${y}-${m}-${d}`
+			},
+
 			navToAct(item) {
 				uni.redirectTo({
 					url: `/pages/index/activity/activity?contentId=${item.id}`
@@ -142,10 +149,10 @@
 			},
 
 			tryParseData(list) {
-				if(list.length < this.count){
+				if (list.length < this.count) {
 					this.pageOver = true
 					this.pageStatus = 'nomore'
-				}else{
+				} else {
 					this.pageOver = false
 					this.pageStatus = 'more'
 				}
@@ -153,7 +160,7 @@
 					list[i].imgList = this.$util.tryParseJson(list[i].data).imgList
 				}
 				this.actList = this.actList.concat(list)
-				
+
 			},
 
 			newTime(time) {
@@ -220,5 +227,9 @@
 	.autoBox {
 		font-size: $list-title;
 		padding: 24upx 30upx;
+	}
+
+	.active-list {
+		padding: $box-margin-top $box-margin-left;
 	}
 </style>
