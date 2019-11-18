@@ -6,25 +6,32 @@
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询栏目：</span>
+				<el-button size="mini" round @click="getContentsBtn">全部</el-button>
 				<el-button size="mini" round v-for="item in vipList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
-				 <el-input placeholder="请输入内容" v-model="keyword">
-				    <el-button  slot="append" icon="el-icon-search" @click="search">搜索</el-button>
-				  </el-input>
+				<el-input placeholder="请输入内容" v-model="keyword">
+					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				</el-input>
 			</el-col>
 		</el-row>
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询专题：</span>
+				<el-button size="mini" round @click="getContentsBtn">全部</el-button>
 				<el-button size="mini" round v-for="item in channelList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
 				<el-button plain @click="getContentsBtn">默认列表</el-button>
-					<el-button type="primary" plain @click="createContent" style="float: right;">发布图文</el-button>
-			</el-col> 
+				<el-button type="primary" plain @click="createContent" style="float: right;">发布图文</el-button>
+			</el-col>
 		</el-row>
-
+		<el-row style="padding: 10px;">
+			<el-col :span="18">
+				<span style="font-size: 16px;">查询关键词：</span>
+				<el-button size="mini" round v-for="item in keywordList" :key="item.id" @click="getTags(item.keyword)">{{item.keyword}}</el-button>
+			</el-col>
+		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
@@ -42,7 +49,7 @@
 				</el-table-column>
 			</el-table>
 		</el-row>
-		<el-row style="height: 80px;">
+		<el-row style="height: 80px;margin-bottom: 80px;">
 			<el-col :span="24">
 				当前页数：{{page}}
 				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(page-1)">上一页</el-button>
@@ -57,11 +64,14 @@
 		name: "contentList",
 		data() {
 			return {
-				vipList:'',
-				channelList:'',
-				keyword:'',
+				tag: [],
+				channelId: '',
+				vipList: '',
+				channelList: '',
+				keyword: '',
+				keywordList: '',
 				tableData: [],
-				count: 10,
+				count: 8,
 				page: 1,
 				pageOver: true,
 				searchData: {
@@ -114,7 +124,6 @@
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
-						console.log(this.tableData)
 					} else {
 						this.tableData = []
 					}
@@ -132,6 +141,8 @@
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
+					upChannelId: this.channelId,
+					tags:this.tag,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -159,14 +170,14 @@
 				}
 				this.getContents(cnt)
 			},
-			search(){
+			search() {
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count,
 				}
-				if(this.keyword == ''){
+				if (this.keyword == '') {
 					this.getContents(cnt)
 					return
 				}
@@ -244,6 +255,8 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
+				this.channelId = ''
+				this.tag = []
 				this.searchData.type = 5
 				this.searchData.status = ''
 				this.searchData.power = ''
@@ -260,10 +273,10 @@
 			createContent() {
 				this.$router.push('/addContent')
 			},
-			getSvip(){
+			getSvip() {
 				let cnt = {
 					module: this.$constData.module,
-					type:'0',
+					type: '0',
 					count: 200,
 					offset: '0'
 				}
@@ -273,10 +286,10 @@
 					}
 				})
 			},
-			getChannel(){
+			getChannel() {
 				let cnt = {
 					module: this.$constData.module,
-					type:'1',
+					type: '1',
 					count: 200,
 					offset: '0'
 				}
@@ -286,13 +299,47 @@
 					}
 				})
 			},
-			getContentsByCheck(id){
+			//获取关键词
+			getKeywords() {
+				let cnt = {
+					count: 200,
+					offset: '0'
+				}
+				this.$api.getKeywords(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.keywordList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+			//查询专题
+			getContentsByCheck(id) {
+				this.page = 1
+				this.channelId = id
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
-					upChannelId:id,
+					upChannelId: id,
 					count: this.count,
 					offset: (this.page - 1) * this.count
+				}
+				this.getContents(cnt)
+			},
+			//关键词查询
+			getTags(info){
+				this.page =1
+				let tag = {
+					homeCotent:[info]
+				}
+				this.tag = tag
+				let cnt = {
+					module: this.$constData.module,
+					type: this.typeList[0].value,
+					tags:tag,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				if(tag.homeCotent == ''){
+					cnt.tags = ''
 				}
 				this.getContents(cnt)
 			}
@@ -300,6 +347,7 @@
 		mounted() {
 			this.getSvip()
 			this.getChannel()
+			this.getKeywords()
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,

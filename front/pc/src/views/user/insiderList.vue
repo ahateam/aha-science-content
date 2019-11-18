@@ -20,8 +20,8 @@
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 0">封禁</el-button>
-						<el-button @click="delBtn(scope.row)" type="text" size="small" v-if="scope.row.status != 0">解封</el-button>
+						<el-button @click="openBtn(scope.row)" type="text" size="small" v-if="scope.row.status == 1">解封</el-button>
+						<el-button @click="closeBtn(scope.row)" type="text" size="small" v-if="scope.row.status != 1" style="color: #990055;">封禁</el-button>
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">详情</el-button>
 					</template>
 				</el-table-column>
@@ -85,10 +85,10 @@
 			},
 			delBtn(info) {
 				let msg =''
-				if(info.state == 0){
-					msg = '解封'
-				}else{
+				if(info.state == 0){//zc
 					msg = '封禁'
+				}else{
+					msg = '解封'
 				}
 				this.$confirm('此操作将'+msg+'用户的评论功能, 是否继续?', '提示', {
 					confirmButtonText: '确定',
@@ -98,10 +98,10 @@
 					let cnt = {
 						moduleId: this.$constData.module,
 						id:info.id,
-						bool:false
+						bool:true
 					};
-					if(info.state == 1){//封禁
-						cnt.bool = true
+					if(info.state == 0){//封禁
+						cnt.bool = false
 					}
 					this.$api.closeUser(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {

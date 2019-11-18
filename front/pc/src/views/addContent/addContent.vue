@@ -60,7 +60,7 @@
 			<el-col :span="13">
 				<el-form label-width="80px">
 					<el-form-item label="关键词:">
-						<el-select v-model="value" multiple   default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
+						<el-select v-model="value" multiple default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
 							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
 						</el-select>
@@ -78,7 +78,7 @@
 			<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
-
+		
 	</div>
 </template>
 
@@ -161,7 +161,7 @@
 					imgList: this.imgList
 				}
 				let tags = {
-					homeCotent:this.value
+					homeCotent: this.value
 				}
 				let cnt = {
 					module: this.$constData.module,
@@ -226,10 +226,10 @@
 				this.upChannelId = ''
 				this.vip = ''
 			},
-			getKeyword(){
+			getKeyword() {
 				let cnt = {
-					count:200,
-					offset:'0',
+					count: 200,
+					offset: '0',
 				}
 				this.$api.getKeywords(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -237,7 +237,7 @@
 					}
 				})
 			}
-			
+
 		},
 		mounted() {
 			this.getVips()
