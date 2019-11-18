@@ -6,8 +6,9 @@
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询栏目：</span>
-				<el-button size="mini" round @click="getContentsBtn">全部</el-button>
-				<el-button size="mini" round v-for="item in vipList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
+				<el-button :type="vipCurr == -1?'primary':'text'" size="mini" round @click="getContentsBtn">全部</el-button>
+				<el-button :type="vipCurr == index?'primary':'text'" size="mini" round v-for="(item,index) in vipList" :key="index"
+				 @click="getContentsByCheck(item.id,0,index)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
 				<el-input placeholder="请输入内容" v-model="keyword">
@@ -15,23 +16,28 @@
 				</el-input>
 			</el-col>
 		</el-row>
+
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询专题：</span>
-				<el-button size="mini" round @click="getContentsBtn">全部</el-button>
-				<el-button size="mini" round v-for="item in channelList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
+				<el-button :type="channelCurr == -1?'primary':'text'" size="mini" round @click="getContentsBtn">全部</el-button>
+				<el-button :type="channelCurr == index?'primary':'text'" size="mini" round v-for="(item,index) in channelList" :key="index"
+				 @click="getContentsByCheck(item.id,1,index)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
 				<el-button plain @click="getContentsBtn">默认列表</el-button>
 				<el-button type="primary" plain @click="createContent" style="float: right;">发布图文</el-button>
 			</el-col>
 		</el-row>
+
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询关键词：</span>
-				<el-button size="mini" round v-for="item in keywordList" :key="item.id" @click="getTags(item.keyword)">{{item.keyword}}</el-button>
+				<el-button :type="keyWordCurr == index?'primary':'text'" size="mini" round v-for="(item,index) in keywordList" :key="index"
+				 @click="getTags(item.keyword,index)">{{item.keyword}}</el-button>
 			</el-col>
 		</el-row>
+
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
@@ -49,6 +55,7 @@
 				</el-table-column>
 			</el-table>
 		</el-row>
+
 		<el-row style="height: 80px;margin-bottom: 80px;">
 			<el-col :span="24">
 				当前页数：{{page}}
@@ -65,11 +72,19 @@
 		data() {
 			return {
 				tag: [],
+
 				channelId: '',
-				vipList: '',
-				channelList: '',
+
+				vipList: [],
+				vipCurr: -1,
+
+				channelList: [],
+				channelCurr: -1,
+
 				keyword: '',
-				keywordList: '',
+				keywordList: [],
+				keyWordCurr: -1,
+
 				tableData: [],
 				count: 8,
 				page: 1,
@@ -141,10 +156,14 @@
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
-					upChannelId: this.channelId,
-					tags: this.tag,
 					count: this.count,
 					offset: (this.page - 1) * this.count
+				}
+				if (this.tag) {
+					cnt.tags = this.tag
+				}
+				if (this.channelId) {
+					cnt.upChannelId = this.channelId
 				}
 				this.getContents(cnt)
 			},
@@ -171,6 +190,12 @@
 				this.getContents(cnt)
 			},
 			search() {
+				this.tag = ''
+				this.channelId = ''
+				this.vipCurr = -1
+				this.channelCurr = -1
+				this.keyWordCurr = -1
+
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
@@ -255,6 +280,9 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
+				this.vipCurr = -1
+				this.channelCurr = -1
+				this.keyWordCurr = -1
 				this.channelId = ''
 				this.tag = []
 				this.searchData.type = 5
@@ -312,9 +340,20 @@
 				})
 			},
 			//查询专题
-			getContentsByCheck(id) {
+			getContentsByCheck(id, e, index) {
 				this.page = 1
 				this.channelId = id
+				this.tag = ''
+
+				if (e == 0) {
+					this.vipCurr = index
+					this.channelCurr = -1
+				} else {
+					this.channelCurr = index
+					this.vipCurr = -1
+				}
+				this.keyWordCurr = -1
+
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
@@ -325,7 +364,12 @@
 				this.getContents(cnt)
 			},
 			//关键词查询
-			getTags(info) {
+			getTags(info, index) {
+				this.keyWordCurr = index
+				this.vipCurr = -1
+				this.channelCurr = -1
+				this.channelId = ''
+
 				this.page = 1
 				let tag = {
 					homeCotent: [info]

@@ -3,27 +3,40 @@
 		<el-row class="title-box">
 			视频管理
 		</el-row>
+
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询栏目：</span>
-				<el-button size="mini" round v-for="item in vipList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
+				<el-button :type="vipCurr == index?'primary':'text'" size="mini" round v-for="(item,index) in vipList" :key="item.id"
+				 @click="getContentsByCheck(item.id,0,index)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
-				 <el-input placeholder="请输入内容" v-model="keyword">
-				    <el-button  slot="append" icon="el-icon-search" @click="search">搜索</el-button>
-				  </el-input>
+				<el-input placeholder="请输入内容" v-model="keyword">
+					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				</el-input>
 			</el-col>
 		</el-row>
+
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
 				<span style="font-size: 16px;">查询专题：</span>
-				<el-button size="mini" round v-for="item in channelList" :key="item.id" @click="getContentsByCheck(item.id)">{{item.title}}</el-button>
+				<el-button :type="channelCurr == index?'primary':'text'" size="mini" round v-for="(item,index) in channelList" :key="item.id"
+				 @click="getContentsByCheck(item.id,1,index)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
-					<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
-					<el-button type="primary" @click="createContent" style="float: right;">发布视频</el-button>
-			</el-col> 
+				<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
+				<el-button type="primary" @click="createContent" style="float: right;">发布视频</el-button>
+			</el-col>
 		</el-row>
+
+		<el-row style="padding: 10px;">
+			<el-col :span="18">
+				<span style="font-size: 16px;">查询关键词：</span>
+				<el-button :type="keyWordCurr == index?'primary':'text'" size="mini" round v-for="(item,index) in keywordList" :key="index"
+				 @click="getTags(item.keyword,index)">{{item.keyword}}</el-button>
+			</el-col>
+		</el-row>
+
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
@@ -56,9 +69,16 @@
 		name: "videoContentList",
 		data() {
 			return {
-				vipList:'',
-				channelList:'',
-				keyword:'',
+				vipList: [],
+				vipCurr: -1,
+
+				channelList: [],
+				channelCurr: -1,
+				channelId: '',
+
+				keyword: '',
+				keywordList: [],
+				keyWordCurr: -1,
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -73,6 +93,7 @@
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
 				powerList: this.$constData.powerList,
+
 			}
 		},
 		methods: {
@@ -129,10 +150,17 @@
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
-					type:this.typeList[1].value,
+					type: this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
+				if (this.tag) {
+					cnt.tags = this.tag
+				}
+				if (this.channelId) {
+					cnt.upChannelId = this.channelId
+				}
+
 				this.getContents(cnt)
 			},
 			/* 删除内容*/
@@ -143,7 +171,7 @@
 					type: 'warning'
 				}).then(async () => {
 					let cnt = {
-						moduleId:this.$constData.module,
+						moduleId: this.$constData.module,
 						id: info.id,
 					}
 					this.$api.delContentById(cnt, (res) => {
@@ -188,22 +216,28 @@
 			},
 			//获取默认列表
 			getContentsBtn() {
+				this.vipCurr = -1
+				this.channelCurr = -1
+				this.keyWordCurr = -1
+				this.tag = ''
+				this.channelId = ''
+
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
-					type:this.typeList[1].value,
+					type: this.typeList[1].value,
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
 			},
-			createContent(){
+			createContent() {
 				this.$router.push('/addVideoContent')
 			},
-			getSvip(){
+			getSvip() {
 				let cnt = {
 					module: this.$constData.module,
-					type:'0',
+					type: '0',
 					count: 200,
 					offset: '0'
 				}
@@ -213,10 +247,10 @@
 					}
 				})
 			},
-			getChannel(){
+			getChannel() {
 				let cnt = {
 					module: this.$constData.module,
-					type:'1',
+					type: '1',
 					count: 200,
 					offset: '0'
 				}
@@ -226,24 +260,42 @@
 					}
 				})
 			},
-			getContentsByCheck(id){
+			getContentsByCheck(id, e, index) {
+				this.channelId = id
+
+				if (e == 0) {
+					this.vipCurr = index
+					this.channelCurr = -1
+				} else {
+					this.channelCurr = index
+					this.vipCurr = -1
+				}
+				this.keyWordCurr = -1
+
 				let cnt = {
 					module: this.$constData.module,
-					type:this.typeList[1].value,
-					upChannelId:id,
+					type: this.typeList[1].value,
+					upChannelId: id,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)
 			},
-			search(){
+			search() {
+				this.vipCurr = -1
+				this.channelCurr = -1
+				this.keyWordCurr = -1
+				this.tag = ''
+				this.channelId = ''
+
+
 				let cnt = {
 					module: this.$constData.module,
-					type:this.typeList[1].value,
+					type: this.typeList[1].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count,
 				}
-				if(this.keyword == ''){
+				if (this.keyword == '') {
 					this.getContents(cnt)
 					return
 				}
@@ -261,6 +313,42 @@
 					}
 				})
 			},
+
+			getKeywords() {
+				let cnt = {
+					count: 200,
+					offset: '0'
+				}
+				this.$api.getKeywords(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.keywordList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+
+			//关键词查询
+			getTags(info, index) {
+				this.keyWordCurr = index
+				this.vipCurr = -1
+				this.channelCurr = -1
+
+				this.page = 1
+				let tag = {
+					homeCotent: [info]
+				}
+				this.tag = tag
+				let cnt = {
+					module: this.$constData.module,
+					type: this.typeList[1].value,
+					tags: tag,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				if (tag.homeCotent == '') {
+					cnt.tags = ''
+				}
+				this.getContents(cnt)
+			}
 		},
 		mounted() {
 			this.getSvip()
@@ -269,10 +357,11 @@
 			let cnt = {
 				module: this.$constData.module,
 				count: this.count,
-				type:this.typeList[1].value,
+				type: this.typeList[1].value,
 				offset: (this.page - 1) * this.count
 			}
 			this.getContents(cnt)
+			this.getKeywords()
 		}
 	}
 </script>
