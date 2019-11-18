@@ -2,7 +2,7 @@
 const menu = [{
 
 		title: '内容管理',
-		icon: 'course_shouye',
+		icon: 'course_guanli1',
 		child: [{
 				path: '/ContentList',
 				title: '图文管理',
@@ -19,7 +19,7 @@ const menu = [{
 	},
 	{
 		title: '科普栏目管理',
-		icon: 'course_shouye',
+		icon: 'course_xueyuanpeizhi',
 		child: [{
 			path: '/svipList',
 			title: '栏目页面列表',
@@ -27,7 +27,7 @@ const menu = [{
 	},
 	{
 		title: '专题管理',
-		icon: 'course_shouye',
+		icon: 'course__zhuanzhengongzuoliang',
 		child: [{
 			path: '/columnList',
 			title: '专题列表',
@@ -35,7 +35,7 @@ const menu = [{
 	},
 	{
 		title: '活动管理',
-		icon: 'course_shouye',
+		icon: 'course_tongzhi',
 		child: [{
 				path: '/activityList',
 				title: '活动管理'
@@ -56,7 +56,7 @@ const menu = [{
 	},
 	{
 		title: '关键词管理',
-		icon: 'course_shouye',
+		icon: 'course_908caidan_anpai',
 		child: [{
 			path: '/homeTag',
 			title: '关键词列表'
@@ -67,7 +67,7 @@ const menu = [{
 	},
 	{
 		title: '广告管理',
-		icon: 'course_shouye',
+		icon: 'course_tongzhi1',
 		child: [{
 			path: '/advertList',
 			title: '广告列表'
@@ -78,7 +78,7 @@ const menu = [{
 	},
 	{
 		title: '用户管理',
-		icon: 'course_shouye',
+		icon: 'course_user',
 		child: [{
 			path: '/adminList',
 			title: '管理员管理'
@@ -92,14 +92,14 @@ const menu = [{
 	},
 	{
 		title: '审核管理',
-		icon: 'course_shouye',
+		icon: 'course_jilu',
 		child: [{
 			path: '/insiderExamineList',
 			title: '内部人员审核'
 		}]
 	}, {
 		title: '数据统计',
-		icon: 'course_shouye',
+		icon: 'course_tongji',
 		child: [{
 				path: '/interestTagList',
 				title: '用户兴趣标签'

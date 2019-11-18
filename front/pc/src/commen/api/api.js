@@ -27,6 +27,10 @@ api.editContent = function (cnt, callback) {
 api.getChannels = function (cnt, callback) {
     util.call(baseUrl + '/channel/getChannels', cnt, callback)
 }
+// 获取id对应专栏 
+api.getChannlById = function (cnt, callback) {
+    util.call(baseUrl + '/channel/getChannlById', cnt, callback)
+}
 //添加内容
 api.addContent = function (cnt, callback) {
     util.call(baseUrl + '/content/addContent', cnt, callback)

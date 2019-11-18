@@ -33,7 +33,7 @@
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="栏目:">
-						<el-select clearable v-model="vip" placeholder="请选择" style="margin-right: 10px;"@change="changevip" @clear="clearData">
+						<el-select clearable v-model="vip" placeholder="请选择" style="margin-right: 10px;" @change="changevip" @clear="clearData">
 							<el-option v-for="item in vipList" :key="item.id" :label="item.title" :value="item.id">
 							</el-option>
 						</el-select>
@@ -110,7 +110,7 @@
 				show: 0,
 				title: '',
 				status: '',
-				userId:this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
 				showList: this.$constData.showList,
 			}
@@ -224,11 +224,11 @@
 				this.upChannelId = ''
 				this.vip = ''
 			},
-			changeChannel(){
-				this.vip=''
+			changeChannel() {
+				this.vip = ''
 			},
-			changevip(){
-				this.upChannelId=''
+			changevip() {
+				this.upChannelId = ''
 			},
 			getKeyword() {
 				let cnt = {
@@ -238,6 +238,24 @@
 				this.$api.getKeywords(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.keywordList = this.$util.tryParseJson(res.data.c)
+					}
+				})
+			},
+
+			getChannelById(id) {
+				let cnt = {
+					id: id, // Long 专栏id
+				}
+				this.$api.getChannlById(cnt,(res)=>{
+					if(res.data.rc == this.$util.RC.SUCCESS){
+						let type = this.$util.tryParseJson(res.data.c).type
+						if(type == this.$constData.channelType[0].value){
+							this.vip = id
+						}else{
+							this.upChannelId = id
+						}
+					}else{
+						console.log('error')
 					}
 				})
 			}
@@ -260,8 +278,8 @@
 			this.cotentHtml = JSON.parse(info.data).editor[0].value
 			this.editor.txt.html(this.cotentHtml)
 			this.value = info.tags.homeCotent
-			// this.upChannelId = info.upChannelId
-			this.vip = info.upChannelId
+
+			this.getChannelById(info.upChannelId)
 		}
 	}
 </script>

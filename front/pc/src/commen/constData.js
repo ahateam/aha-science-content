@@ -3,7 +3,19 @@
 const constData = {}
 
 constData.module = 1180,
+
 	constData.chnnelTagmodule = 11705
+
+/* 栏目类型 */
+constData.channelType = [{
+		name: '栏目',
+		value: 0
+	},
+	{
+		name: '专题',
+		value: 1
+	}
+]
 
 /**contentList*/
 constData.statusList = [{
@@ -52,20 +64,19 @@ constData.typeList = [{
 	{
 		name: '活动',
 		value: 8
-	},{
+	}, {
 		name: '纯文本',
 		value: '0'
 	}
 ]
 
 constData.typeListTemp = [{
-		name: '图文',
-		value: 5
-	},{
-		name: '纯文本',
-		value: '0'
-	}
-]
+	name: '图文',
+	value: 5
+}, {
+	name: '纯文本',
+	value: '0'
+}]
 
 constData.showList = [{
 		name: '三图',
