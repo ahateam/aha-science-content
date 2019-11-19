@@ -1,6 +1,9 @@
 package zyxhj.zskp.repository;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
@@ -19,10 +22,12 @@ public class InterestTagRepository extends RDSRepository<InterestTag>{
 			e.printStackTrace();
 		}
 	}
-	public void addInteresttagPageview(Long id) throws SQLException, ServerException {
+	public void addInteresttagPageview(Long id,String keyword) throws SQLException, ServerException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			String sql = "UPDATE `tb_zskt_interesttag` set `page_view` = `page_view` +1 WHERE  `user_id`  = "+id;
-			this.executeUpdateSQL(conn, sql, null);			
+//			String sql = "UPDATE `tb_zskt_ interesttag` set `page_view` = `page_view` +1 WHERE  `user_id` = "+id;
+			this.update(conn, StringUtils.join("set page_view = page_view +1 "),
+					null, "user_id = ? and keyword = ?", Arrays.asList(id,keyword));
+//			this.executeUpdateSQL(conn, sql, null);			
 		}
 	}
 }

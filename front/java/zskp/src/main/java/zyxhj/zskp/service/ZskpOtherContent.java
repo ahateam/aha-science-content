@@ -48,6 +48,7 @@ import zyxhj.cms.repository.AppraiseRepository;
 import zyxhj.cms.repository.CommentRepository;
 import zyxhj.cms.repository.ContentRepository;
 import zyxhj.cms.repository.ReplyRepository;
+import zyxhj.cms.service.ReplyService;
 import zyxhj.core.domain.Reply;
 import zyxhj.utils.IDUtils;
 import zyxhj.utils.Singleton;
@@ -71,6 +72,7 @@ import zyxhj.zskp.domain.ZskpUser;
 import zyxhj.zskp.repository.AdvertInfoRepository;
 import zyxhj.zskp.repository.ApplyAuthorityRepository;
 import zyxhj.zskp.repository.EnrollRepository;
+import zyxhj.zskp.repository.IsreadRepository;
 import zyxhj.zskp.repository.TourBasesRepository;
 import zyxhj.zskp.repository.UserRepository;
 
@@ -85,6 +87,8 @@ public class ZskpOtherContent extends Controller{
 	private ReplyRepository replyRepository;
 	private AppraiseRepository appraiseRepository;
 	private CommentRepository commentRepository;
+	private IsreadRepository isreadRepository;
+	private ReplyService replyService;
 	private DruidDataSource ds;
 	private SyncClient client;
 	public ZskpOtherContent(String node) {
@@ -101,6 +105,8 @@ public class ZskpOtherContent extends Controller{
 			replyRepository = Singleton.ins(ReplyRepository.class);
 			appraiseRepository = Singleton.ins(AppraiseRepository.class);
 			commentRepository = Singleton.ins(CommentRepository.class);
+			isreadRepository = Singleton.ins(IsreadRepository.class);
+			replyService = Singleton.ins(ReplyService.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -135,12 +141,18 @@ public class ZskpOtherContent extends Controller{
 		exp.append("ORDER BY create_time DESC ");
 		try (DruidPooledConnection conn = ds.getConnection()) {			
 			List<Content> list = contentRepository.getList(conn,exp, count, offset);
+			if(list == null && list.size()<=0) {
+				return null;
+			}
 			String temp = JSON.toJSONString(list);
 			JSONArray json = JSONArray.parseArray(temp);
 			int index = json.size();
 			List<Long> ids = new LinkedList<Long>();
 			for (int i = 0; i < index; i++) {
 				ids.add(list.get(i).upUserId);
+			}
+			if(ids == null && ids.size()<=0) {
+				return null;
 			}
 			return getUserInfo(module,ids,json);
 		}
@@ -181,12 +193,20 @@ public class ZskpOtherContent extends Controller{
 			}
 		}
 	public JSONArray getUserInfo(String module,List<Long> list,JSONArray json) throws SQLException, ServerException {
-		try (DruidPooledConnection conn = ds.getConnection()) {	
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			if(list.size()<=0) {
+				return null;
+			}
+			ZskpUser zskpUser = null;
 			List<ZskpUser> userList = userRepository.getList(conn, EXP.INS().key("module_id", module).and(EXP.INS().IN("id", list.toArray())),200,0);
-			for (int i = 0,index = userList.size(); i < index; i++) {
+			for (int i = 0,index = json.size(); i < index; i++) {
 				for (int j = 0,index2 = userList.size(); j < index2; j++) {
 					if(json.getJSONObject(i).getLong("upUserId").equals(userList.get(j).id)) {
-						json.getJSONObject(i).put("user",userList.get(j));		
+						zskpUser = new ZskpUser();
+						zskpUser.name = userList.get(j).name;
+						zskpUser.head = userList.get(j).head;
+						zskpUser.ext = userList.get(j).ext;
+						json.getJSONObject(i).put("user",zskpUser);		
 						break;
 					}
 				}
@@ -702,8 +722,10 @@ public class ZskpOtherContent extends Controller{
 				}				
 			}
 			for(Long key:map.keySet()) {
-				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,status,orderDesc,toUserId,null,isComment==null?true:false,count,offset));
+				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,status,orderDesc,toUserId,null,isComment==null?false:isComment,count,offset));
 			}
+			if(upUserId != null)
+				isreadRepository.delete(conn, EXP.INS().key("user_id", upUserId));
 			return returnJson;
 		}
 	}
@@ -820,7 +842,8 @@ public class ZskpOtherContent extends Controller{
 			String _id = TSUtils.get_id(ownerId);
 			PrimaryKey pk = new PrimaryKeyBuilder().add("_id", _id).add("ownerId", ownerId).add("sequenceId", replyId).build();
 			Reply reply =  replyRepository.get(client, pk);
-			
+			//修改评论
+			replyService.editReply(reply.ownerId, reply.sequenceId, reply.title, reply.text, reply.createTime, reply.status, reply.upUserId, reply.atUserId, reply.atUserName, "1");
 			TSQL replyAppraise = new TSQL();//获取一级评论点赞数
 			replyAppraise.Term(OP.AND, "ownerId", replyId);
 			replyAppraise.setGetTotalCount(true);
@@ -866,6 +889,7 @@ public class ZskpOtherContent extends Controller{
 			json.put("appraiseCount", replyAppraiseCount);
 			json.put("replyUser", user);
 			json.put("comment", commentJson);
+			isreadRepository.delete(conn, EXP.INS().key("user_id", userId));
 			return json;
 		}
 	}

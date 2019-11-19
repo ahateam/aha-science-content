@@ -12,6 +12,7 @@ import zyxhj.cms.domian.Content;
 import zyxhj.cms.repository.ContentRepository;
 import zyxhj.cms.service.ReplyService;
 import zyxhj.core.domain.Comment;
+import zyxhj.core.domain.Reply;
 import zyxhj.utils.Singleton;
 import zyxhj.utils.api.APIResponse;
 import zyxhj.utils.api.Controller;
@@ -19,7 +20,9 @@ import zyxhj.utils.api.RC;
 import zyxhj.utils.api.ServerException;
 import zyxhj.utils.data.DataSource;
 import zyxhj.utils.data.EXP;
+import zyxhj.zskp.domain.Isread;
 import zyxhj.zskp.domain.ZskpUser;
+import zyxhj.zskp.repository.IsreadRepository;
 import zyxhj.zskp.repository.UserRepository;
 
 public class ZskpReplyService  extends Controller{
@@ -29,6 +32,7 @@ public class ZskpReplyService  extends Controller{
 
 	private UserRepository userRepository;
 	private ContentRepository contentRepository;
+	private IsreadRepository isreadRepository;
 
 	private ReplyService replyService;
 	public ZskpReplyService(String node) {
@@ -38,6 +42,7 @@ public class ZskpReplyService  extends Controller{
 			userRepository = Singleton.ins(UserRepository.class);
 			contentRepository = Singleton.ins(ContentRepository.class);
 			replyService = Singleton.ins(ReplyService.class);
+			isreadRepository = Singleton.ins(IsreadRepository.class);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -57,12 +62,19 @@ public class ZskpReplyService  extends Controller{
 			@P(t = "扩展") String ext//
 	) throws ServerException, SQLException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			String msg = getUserCloseReply(ownerId, upUserId);
-			if("正常".equals(msg)) {
-				return replyService.createReply(ownerId, upUserId, atUserId, atUserName, title, text, ext);				
-			}else {
-				return APIResponse.getNewFailureResp(new RC("fail", msg));
+			Content c = contentRepository.get(conn, EXP.INS().key("id", ownerId));	
+			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
+			if("5".equals(c.status.toString())) {
+				return APIResponse.getNewFailureResp(new RC("fail","该内容下已被设置为不可评论"));
+			}else if ("1".equals(user.id.toString())) {
+				return APIResponse.getNewFailureResp(new RC("fail","你已被禁言"));
 			}
+			Reply re =  replyService.createReply(ownerId, upUserId, atUserId, atUserName, title, text, ext);
+			Isread t = new Isread();
+			t.userId = upUserId;
+			t.replyId = re.sequenceId;
+			isreadRepository.insert(conn, t);
+			return APIResponse.getNewSuccessResp(re);
 		}
 	}
 	@POSTAPI(//
@@ -87,17 +99,16 @@ public class ZskpReplyService  extends Controller{
 			return replyService.createComment(replyId, upUserId, upUserHead, upUserName, text, toUserId, toUserName);
 		}
 	}
-	/*判断用户是否能评论*/
-	public String getUserCloseReply(Long ownerId, Long upUserId) throws ServerException, SQLException {
+	@POSTAPI(//
+			path = "getIsRead", //
+			des = "查询是否有未读消息", //
+			ret = "Comment实例" //
+	)
+	public int getIsRead(//
+			@P(t = "用户id") Long userId //
+	) throws ServerException, SQLException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			Content c = contentRepository.get(conn, EXP.INS().key("id", ownerId));	
-			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
-			if("5".equals(c.status.toString())) {
-				return "该内容下已被设置为不可评论";
-			}else if ("1".equals(user.id.toString())) {
-				return "你已被禁言";
-			}
-			return "正常";
+			return isreadRepository.getList(conn, EXP.INS().key("user_id",userId), 99,0).size();
 		}
 	}
 }

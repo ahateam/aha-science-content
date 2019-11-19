@@ -301,11 +301,12 @@ public class ZskpUserService extends Controller{
 	public ZskpUser closeUser(
 		@P(t = "模块编号") String moduleId,
 		@P(t = "用户id") Long id,
-		@P(t = "是否") boolean bool
+		@P(t = "是否true：feng")Boolean  bool
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
 			ZskpUser user = new ZskpUser();
-			if(!bool) {
+			if(bool) {
+				System.out.println("zhe shi true");
 				user.status = ZskpUser.STATUS_CLOSE;				
 			}else {
 				user.status = ZskpUser.STATUS_NORMAL;	

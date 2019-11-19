@@ -97,19 +97,25 @@ public class ZskpKeywordService extends Controller{
 		int count,
 		int offset) throws Exception {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), 3, 0);
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), count, offset);
 			int index = list.size();
-			if(list == null || index<=0) {
+			if(userId ==null) {
 				return otherContent.getContents(module, null, (byte)4, null, null, null, null, count, offset);
 			}
 			JSONArray json = new JSONArray();
-			for(int i = 0;i<list.size();i++) {
+			JSONArray ja = new JSONArray();
+			for(int i = 0;i<index;i++) {
 				json.add(list.get(i).keyword);
 			}
 			JSONObject tag = new JSONObject();
 			tag.put("homeCotent", json);
-			return otherContent.getContents(module, null, (byte)4, null, null, null, tag, count, offset);
+			ja = otherContent.getContents(module, null, (byte)4, null, null, null, tag, count, offset);
+			return ja;
 		}
+	}
+	public List<Content> getContentsByPageView(int count,
+			int offset) throws ServerException, SQLException{
+		return contentService.getContentsByPageView("1180",count,offset);
 	}
 	@POSTAPI(//
 		path = "getConntent", 
@@ -121,57 +127,24 @@ public class ZskpKeywordService extends Controller{
 			@P(t = "用户id",r = false)Long userId
 		) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			if(userId == null) {
-				return contentService.getConntent(id);
-			}
 			Content c = contentService.getConntent(id);
+			if(userId == null || c == null) {
+				return c;
+			}
 			JSONArray ja = c.tags.getJSONArray("homeCotent");
 			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS().key("user_id",userId), 300, 0);
-			int index = list.size();
-			if(list != null && index>0) {
-				for(int j=0;j<ja.size();j++) {
-					boolean temp = false;
-					for(int i =0;i<index;i++) {
-						if(ja.getString(j).equals(list.get(i).keyword)) {//如果已存在，加1
-							interestTagRepository.addInteresttagPageview(userId);
-							break;
-						}
-						temp = true;
-					}
-					if(temp) {
-						createInterestTag(userId,ja.getString(j));
-					}
+			List<String> tagList = new LinkedList<String>();
+			for(int i=0,index = list.size();i<index;i++) {
+				tagList.add(list.get(i).keyword);
+			}
+			for(int i=0,index = ja.size();i<index;i++) {
+				if(tagList.contains(ja.getString(i))) {//判断关键词是否存在与用户兴趣表中
+					interestTagRepository.addInteresttagPageview(userId,ja.getString(i));//有就浏览量加一
+				}else {
+					createInterestTag(userId,ja.getString(i));//没有就创建
 				}
-			}else {
-				createInterestTagByfirst(userId, ja);
 			}
 			return c;
-		}
-	}
-	/**
-	 * 创建用户兴趣标签
-	 */
-	@POSTAPI(//
-		path = "createInterestTagByfirst", 
-		des = "第一次创建用户兴趣标签",
-		ret = "" 
-	)
-	public void createInterestTagByfirst(
-		@P(t = "用户id") Long userId,
-		@P(t = "标签数组") JSONArray tagArray
-	) throws ServerException, SQLException {
-		try(DruidPooledConnection conn = ds.getConnection()){
-			InterestTag it = null;
-			List<InterestTag> list = new LinkedList<InterestTag>();
-			for(int i=0,index = tagArray.size();i<index;i++) {
-				it = new InterestTag();
-				it.id = IDUtils.getSimpleId();
-				it.userId  = userId;
-				it.keyword = tagArray.getString(i);
-				it.pageView = 0;
-				list.add(it);
-			}
-			interestTagRepository.insertList(conn, list);
 		}
 	}
 	@POSTAPI(//
