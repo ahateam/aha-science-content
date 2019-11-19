@@ -1,16 +1,14 @@
 package xhj.cn.start;
 
 import io.vertx.core.Vertx;
-import zyxhj.cms.service.AppraiseService;
 import zyxhj.cms.service.ChannelService;
 import zyxhj.cms.service.ChannelTagService;
 import zyxhj.cms.service.ContentService;
 import zyxhj.cms.service.ContentTagService;
 import zyxhj.cms.service.ReplyService;
-import zyxhj.core.controller.TestController;
 import zyxhj.utils.Singleton;
 import zyxhj.utils.ZeroVerticle;
-import zyxhj.zskp.domain.ZskpKeyword;
+import zyxhj.zskp.service.AppraiseService;
 import zyxhj.zskp.service.SmsServer;
 import zyxhj.zskp.service.ZskpKeywordService;
 import zyxhj.zskp.service.ZskpOtherContent;

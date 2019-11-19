@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -29,27 +28,10 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alicloud.openservices.tablestore.SyncClient;
-import com.alicloud.openservices.tablestore.model.ColumnType;
-import com.alicloud.openservices.tablestore.model.ColumnValue;
-import com.alicloud.openservices.tablestore.model.Direction;
-import com.alicloud.openservices.tablestore.model.PrimaryKey;
-import com.alicloud.openservices.tablestore.model.PrimaryKeyValue;
-import com.alicloud.openservices.tablestore.model.search.SearchQuery;
-import com.alicloud.openservices.tablestore.model.search.query.Query;
-import com.alicloud.openservices.tablestore.model.search.query.RangeQuery;
-import com.alicloud.openservices.tablestore.model.search.sort.FieldSort;
-import com.alicloud.openservices.tablestore.model.search.sort.GeoDistanceSort;
-import com.alicloud.openservices.tablestore.model.search.sort.SortOrder;
-import com.sun.xml.bind.v2.runtime.Coordinator;
+import com.google.gson.JsonArray;
 
 import zyxhj.cms.domian.Content;
-import zyxhj.cms.repository.AppraiseRepository;
-import zyxhj.cms.repository.CommentRepository;
 import zyxhj.cms.repository.ContentRepository;
-import zyxhj.cms.repository.ReplyRepository;
-import zyxhj.cms.service.ReplyService;
-import zyxhj.core.domain.Reply;
 import zyxhj.utils.IDUtils;
 import zyxhj.utils.Singleton;
 import zyxhj.utils.api.APIResponse;
@@ -57,22 +39,20 @@ import zyxhj.utils.api.Controller;
 import zyxhj.utils.api.ServerException;
 import zyxhj.utils.data.DataSource;
 import zyxhj.utils.data.EXP;
-import zyxhj.utils.data.TEXP;
-import zyxhj.utils.data.ts.PrimaryKeyBuilder;
-import zyxhj.utils.data.ts.TSQL;
-import zyxhj.utils.data.ts.TSRepository;
-import zyxhj.utils.data.ts.TSQL.OP;
-import zyxhj.utils.data.ts.TSUtils;
 import zyxhj.zskp.domain.AdvertInfo;
 import zyxhj.zskp.domain.ApplyAuthority;
+import zyxhj.zskp.domain.Appraise;
 import zyxhj.zskp.domain.Enroll;
+import zyxhj.zskp.domain.Reply;
 import zyxhj.zskp.domain.TourBases;
-import zyxhj.zskp.domain.Versions;
 import zyxhj.zskp.domain.ZskpUser;
 import zyxhj.zskp.repository.AdvertInfoRepository;
 import zyxhj.zskp.repository.ApplyAuthorityRepository;
+import zyxhj.zskp.repository.AppraiseRepository;
+import zyxhj.zskp.repository.CommentRepository;
 import zyxhj.zskp.repository.EnrollRepository;
 import zyxhj.zskp.repository.IsreadRepository;
+import zyxhj.zskp.repository.ReplyRepository;
 import zyxhj.zskp.repository.TourBasesRepository;
 import zyxhj.zskp.repository.UserRepository;
 
@@ -85,17 +65,14 @@ public class ZskpOtherContent extends Controller{
 	private UserRepository userRepository; 
 	private ContentRepository contentRepository;
 	private ReplyRepository replyRepository;
-	private AppraiseRepository appraiseRepository;
 	private CommentRepository commentRepository;
 	private IsreadRepository isreadRepository;
-	private ReplyService replyService;
+	private AppraiseRepository appraiseRepository;
 	private DruidDataSource ds;
-	private SyncClient client;
 	public ZskpOtherContent(String node) {
 		super(node);
 		try {
 			ds = DataSource.getDruidDataSource("rdsDefault.prop");
-			client = DataSource.getTableStoreSyncClient("tsDefault.prop");
 			advertInfoRepository = Singleton.ins(AdvertInfoRepository.class);
 			tourBasesRepository = Singleton.ins(TourBasesRepository.class);
 			enrollRepository = Singleton.ins(EnrollRepository.class);
@@ -103,10 +80,9 @@ public class ZskpOtherContent extends Controller{
 			userRepository = Singleton.ins(UserRepository.class);
 			contentRepository = Singleton.ins(ContentRepository.class);
 			replyRepository = Singleton.ins(ReplyRepository.class);
-			appraiseRepository = Singleton.ins(AppraiseRepository.class);
 			commentRepository = Singleton.ins(CommentRepository.class);
 			isreadRepository = Singleton.ins(IsreadRepository.class);
-			replyService = Singleton.ins(ReplyService.class);
+			appraiseRepository = Singleton.ins(AppraiseRepository.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -323,140 +299,153 @@ public class ZskpOtherContent extends Controller{
 			return advertInfoRepository.update(conn, EXP.INS().key("id", id).andKey("module_id", moduleId),t,true);
 		}
 	}
-	
-	/**
-	 * 查询科普基地景点
-	 * @throws Exception 
-	 */
 	@POSTAPI(//
-		path = "getTourBases", 
-		des = "查询科普基地景点", 
-		ret = "" 
-	)
-	public JSONObject getTourBases(
-		@P(t = "模块编号") String moduleId,
-		@P(t = "用户定位经纬度") String userCoordinate,
-		@P(t = "地理范围", r= false) String size,
-		int count,
-		int offset
-	) throws Exception   {		
-		TSQL ts = new TSQL();
-		ts.Term(OP.AND, "moduleId",moduleId);
-		if(size !=null) {
-			ts.GeoDistance(OP.AND, "coordinate",userCoordinate,Integer.parseInt(size));
-		}
-		ts.addSort(new GeoDistanceSort("coordinate", Arrays.asList(userCoordinate)));//地理位置排序
-		ts.setLimit(count);
-		ts.setOffset(offset);
-		SearchQuery query = ts.build();
-		return tourBasesRepository.search(client, query);
-	}
-	
-	/**
-	 * 查询科普基地详情
-	 */
-	@POSTAPI(//
-		path = "getTourBase", 
-		des = "查询科普基地详情", 
-		ret = "" 
-	)
-	public JSONObject getTourBase(
-		@P(t = "模块编号") Long moduleId,
-		@P(t = "id") Long id,
-		int count,
-		int offset
-	) throws Exception {
-		try(DruidPooledConnection conn = ds.getConnection()){
-			PrimaryKey pk = new PrimaryKeyBuilder().add("moduleId", moduleId).add("id", id).build();
-			TourBases  bases =  tourBasesRepository.get(client, pk);
-			JSONObject json = new JSONObject();
-			JSONArray ja = new JSONArray();
-			ja.add(bases.id);
-			EXP exp = EXP.INS().key("org_module", moduleId.toString()).andKey("type", 8).and(EXP.JSON_CONTAINS_KEYS(ja, "data","place"));
-			System.out.println(contentRepository.getList(conn, exp, count, offset));
-			json.put("content",contentRepository.getList(conn, exp, count, offset));
-			json.put("TourBases", bases);
-			return json;
-		}
-	}
-	
-	@POSTAPI(//
-		path = "updateTourBase", 
-		des = "修改科普基地详情", 
-		ret = "" 
-	)
-	public APIResponse updateTourBase(
-		@P(t = "模块编号") Long moduleId,
-		@P(t = "id") Long id,
-		@P(t = "名称") String name,
-		@P(t = "地址") String address,
-		@P(t = "数据") String data,
-		@P(t = "购票链接") String buyTicketsLink
-	) throws Exception {
-		TourBases t = new TourBases();
-		t.moduleId = moduleId;
-		t.id = id;
-		t.name = name;
-		t.address = address;
-		t.data = data;
-		t.createTime = new Date();
-		t.coordinate = HttpClientGet(address);;
-		t.buyTicketsLink = buyTicketsLink;
-		tourBasesRepository.update(client, t, true);
-		return APIResponse.getNewSuccessResp();
-	}
-	/**
-	 * 创建科普基地景点
-	 */
-	@POSTAPI(//
-		path = "createTourBase", 
-		des = "创建科普基地景点", 
-		ret = "" 
-	)
-	public void createTourBase(
-		@P(t = "模块编号") Long moduleId,
-		@P(t = "名称") String name,
-		@P(t = "地址") String address,
-		@P(t = "数据") String data,
-		@P(t = "购票链接") String buyTicketsLink
-	) throws Exception {
-			TourBases t = new TourBases();
-			t.moduleId = moduleId;
-			t.id = IDUtils.getSimpleId();
-			t.name = name;
-			t.address = address;
-			t.coordinate = HttpClientGet(address);
-			t.data = data;
-			t.createTime = new Date();
-			t.buyTicketsLink = buyTicketsLink;
-			tourBasesRepository.insert(client, t,true);
-	}
-	/**
-	 * 删除科普基地景点
-	 */
-	
-	@POSTAPI(//
-		path = "delupdateTourBase", 
-		des = "删除科普基地景点", 
-		ret = "" 
-	)
-	public void delupdateTourBase(
-		@P(t = "模块编号") Long moduleId,
-		@P(t = "id") String id
-	) throws Exception {
-		try(DruidPooledConnection conn = ds.getConnection()){
-			List<Content> list = contentRepository.getList(conn, EXP.INS().key("org_module", moduleId).andKey("type", 8), 400, 0);
-			List<Long> ids = new LinkedList<Long>();
-			for(Content c:list) {//基地下面的活动也请一起删除
-				JSONObject json =JSONObject.parseObject(c.data);
-				if(id.equals(json.getString("place"))) {
-					ids.add(c.id);
-				}
+			path = "getTourBases", 
+			des = "查询科普基地景点", 
+			ret = "" 
+		)
+		public List<TourBases> getTourBases(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "用户定位经纬度") String userCoordinate,
+			@P(t = "地理范围", r= false) String size,
+			int count,
+			int offset
+		) throws Exception   {		
+			try(DruidPooledConnection conn = ds.getConnection()) {
+				EXP exp = EXP.INS().key("module_id", moduleId);
+				List<TourBases> list = tourBasesRepository.getList(conn, exp, count, offset);
+				return list;
 			}
-			contentRepository.delete(conn, EXP.INS().key("org_module", moduleId).and(EXP.INS().IN("id", ids.toArray())));
 		}
-		PrimaryKey pk = new PrimaryKeyBuilder().add("moduleId", moduleId).add("id", Long.parseLong(id)).build();
-		tourBasesRepository.delete(client, pk);
+	
+	@POSTAPI(//
+			path = "getTourBase", 
+			des = "查询科普基地详情", 
+			ret = "" 
+		)
+		public JSONObject getTourBase(
+			@P(t = "模块编号") Long moduleId,
+			@P(t = "id") Long id,
+			int count,
+			int offset
+		) throws Exception {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				TourBases bases = tourBasesRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id", id));
+				JSONObject json = new JSONObject();
+				JSONArray ja = new JSONArray();
+				ja.add(bases.id);
+				EXP exp = EXP.INS().key("org_module", moduleId.toString()).andKey("type", 8).and(EXP.JSON_CONTAINS_KEYS(ja, "data","place"));
+				System.out.println(contentRepository.getList(conn, exp, count, offset));
+				json.put("content",contentRepository.getList(conn, exp, count, offset));
+				json.put("TourBases", bases);
+				return json;
+			}
+		}
+	@POSTAPI(//
+			path = "updateTourBase", 
+			des = "修改科普基地详情", 
+			ret = "" 
+		)
+		public APIResponse updateTourBase(
+			@P(t = "模块编号") Long moduleId,
+			@P(t = "id") Long id,
+			@P(t = "名称") String name,
+			@P(t = "地址") String address,
+			@P(t = "数据") String data,
+			@P(t = "购票链接") String buyTicketsLink
+		) throws Exception {
+			try(DruidPooledConnection conn = ds.getConnection()) {
+				TourBases t = new TourBases();
+				t.name = name;
+				t.address = address;
+				t.data = data;
+				t.createTime = new Date();
+				t.coordinate = HttpClientGet(address);;
+				t.buyTicketsLink = buyTicketsLink;
+				tourBasesRepository.update(conn, EXP.INS().key("module_id", moduleId).andKey("id", id), t, true);
+				return APIResponse.getNewSuccessResp();
+			}
+		}
+	
+	@POSTAPI(//
+			path = "createTourBase", 
+			des = "创建科普基地景点", 
+			ret = "" 
+		)
+		public void createTourBase(
+			@P(t = "模块编号") Long moduleId,
+			@P(t = "名称") String name,
+			@P(t = "地址") String address,
+			@P(t = "数据") String data,
+			@P(t = "购票链接") String buyTicketsLink
+		) throws Exception {
+			try(DruidPooledConnection conn = ds.getConnection()) {
+				TourBases t = new TourBases();
+				t.moduleId = moduleId;
+				t.id = IDUtils.getSimpleId();
+				t.name = name;
+				t.address = address;
+				t.coordinate = HttpClientGet(address);
+				t.data = data;
+				t.createTime = new Date();
+				t.buyTicketsLink = buyTicketsLink;
+				tourBasesRepository.insert(conn, t);
+			} 
+		}
+	
+	@POSTAPI(//
+			path = "delupdateTourBase", 
+			des = "删除科普基地景点", 
+			ret = "" 
+		)
+		public void delupdateTourBase(
+			@P(t = "模块编号") Long moduleId,
+			@P(t = "id") String id
+		) throws Exception {
+			try (DruidPooledConnection conn = ds.getConnection()){
+				List<Content> list = contentRepository.getList(conn, EXP.INS().key("org_module", moduleId).andKey("type", 8), 400, 0);
+				List<Long> ids = new LinkedList<Long>();
+				for(Content c:list) {//基地下面的活动也请一起删除
+					JSONObject json =JSONObject.parseObject(c.data);
+					if(id.equals(json.getString("place"))) {
+						ids.add(c.id);
+					}
+				}
+				contentRepository.delete(conn, EXP.INS().key("org_module", moduleId).and(EXP.IN("id", ids.toArray())));
+				tourBasesRepository.delete(conn, EXP.INS().key("module_id", moduleId).andKey("id", Long.parseLong(id)));
+			}
+		}
+	@POSTAPI(//
+			path = "searchTourBase", 
+			des = " 搜索景点", 
+			ret = "" 
+		)
+		public JSONObject searchTourBase(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "关键字") String search,
+			@P(t = "用户定位经纬度") String userCoordinate,
+			int count,
+			int offset
+		) throws Exception {
+		try(DruidPooledConnection conn = ds.getConnection()) {
+			   List<TourBases> list = tourBasesRepository.getList(conn, EXP.LIKE("name", search).key("module_id", moduleId), count, offset);
+			   JSONObject jo = new JSONObject();
+			   JSONArray ja = new JSONArray();
+			   for (int i = 0; i < list.size(); i++) {
+			    JSONObject obj = new JSONObject();
+			    obj.put("moduleId", list.get(i).moduleId);
+			    obj.put("id", list.get(i).id);
+			    obj.put("name", list.get(i).name);
+			    obj.put("address", list.get(i).address);
+			    obj.put("coordinate", list.get(i).coordinate);
+			    obj.put("data", list.get(i).data);
+			    obj.put("createTime", list.get(i).createTime);
+			    obj.put("buyTicketsLink", list.get(i).buyTicketsLink);
+			    ja.add(obj);
+			   }
+			   jo.put("TourBases", ja.toString());
+			   return jo;
+		}
 	}
 	@POSTAPI(//
 		path = "delContentById", 
@@ -467,17 +456,9 @@ public class ZskpOtherContent extends Controller{
 		@P(t = "模块编号") Long moduleId,
 		@P(t = "id") Long id
 	) throws Exception {
-		String _id = TSUtils.get_id(id);//
-		TSQL ts = new TSQL();
-		ts.Term(OP.AND, "ownerId", id);
-		SearchQuery query = ts.build();
-		JSONObject json = replyRepository.search(client, query);
-		JSONArray js = json.getJSONArray("list");
-		for(int i=0;i<js.size();i++) {
-			replyRepository.delete(client, new PrimaryKeyBuilder().add("_id", _id).add("ownerId", id).add("sequenceId",js.getJSONObject(i).getLong("sequenceId")).build());
-		}
 		try (DruidPooledConnection conn = ds.getConnection()) {
 			contentRepository.delete(conn, EXP.INS().key("id", id));			
+			replyRepository.delete(conn, EXP.INS().key("owner_id", id));
 		}
 	}
 	/**
@@ -577,10 +558,6 @@ public class ZskpOtherContent extends Controller{
 			return json;
 		}
 	}
-	
-	/**
-	 * 审核申请
-	 */
 	@POSTAPI(//
 			path = "examineApplyAuthority", 
 			des = "审核申请", 
@@ -633,30 +610,6 @@ public class ZskpOtherContent extends Controller{
 			return j;
 		}
 	}
-	
-	/**
-	 * 搜索内容与用户
-	 */
-	@POSTAPI(//
-		path = "searchTourBase", 
-		des = " 搜索景点", 
-		ret = "" 
-	)
-	public JSONObject searchTourBase(
-		@P(t = "模块编号") String moduleId,
-		@P(t = "关键字") String search,
-		@P(t = "用户定位经纬度") String userCoordinate,
-		int count,
-		int offset
-	) throws Exception {
-		TSQL ts = new TSQL();
-		ts.Term(OP.AND, "moduleId",moduleId).Match(OP.AND, "name", search);
-		ts.addSort(new GeoDistanceSort("coordinate", Arrays.asList(userCoordinate)));//地理位置排序
-		ts.setLimit(count);
-		ts.setOffset(offset);
-		SearchQuery query = ts.build();
-		return tourBasesRepository.search(client, query);
-	}
 	@POSTAPI(//
 		path = "getVersion", 
 		des = " 获取版本", 
@@ -675,42 +628,86 @@ public class ZskpOtherContent extends Controller{
 		return json;
 	}
 	
+//	@POSTAPI(//
+//			path = "getReplyListByUser", //
+//			des = "获取用户回复提问" //
+//	)
+//	public JSONArray getReplyListByUser(//
+//			@P(t = "模块编号",r= false) String moduleId, //
+//			@P(t = "持有者编号",r= false) Long ownerId, //
+//			@P(t = "提交者编号",r = false) Long upUserId, //
+//			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
+//			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
+//			@P(t = "目标用户id",r = false) Long toUserId, //
+//			@P(t = "限定时间状态",r = false) Integer time, //
+//			@P(t = "是否加载二级评论",r = false) Boolean isComment, //
+//			Integer count, Integer offset//
+//	) throws Exception {
+//		if(moduleId == null) {
+//			moduleId = "1180";
+//		}
+//		TSQL ts = new TSQL();
+//		ts.Term(OP.AND, "ownerId", ownerId).Term(OP.AND, "upUserId", upUserId).Term(OP.AND, "status", status);
+//		if (orderDesc) {
+//			ts.addSort(new FieldSort("createTime", SortOrder.DESC));
+//		} else {
+//			ts.addSort(new FieldSort("createTime", SortOrder.ASC));
+//		}
+//		ts.setLimit(count);
+//		ts.setOffset(offset);
+//		SearchQuery query = ts.build();
+//		JSONObject reply = replyRepository.search(client, query);
+//		JSONArray json = reply.getJSONArray("list");
+//		JSONArray returnJson = new JSONArray();
+//		Map<Long, Long> map = new HashMap<Long, Long>();
+//		int index = json.size();
+//		try(DruidPooledConnection conn = ds.getConnection()){
+//			if(time != null) {
+//				for(int i= 0 ;i<index ;i++) {
+//					Long reolyTime = getTimeInMillis(time, json.getJSONObject(i).getString("createTime"));//时间转换为时间戳
+//					if(reolyTime >getTimeInMillis(time)  && reolyTime < new Date().getTime()) {//查询创建时间为：大于一给定时间前，小于当前时间
+//						map.put(json.getJSONObject(i).getLong("ownerId"),json.getJSONObject(i).getLong("ownerId"));						
+//					}
+//				}
+//			}else {
+//				for(int i= 0 ;i<index ;i++) {
+//					map.put(json.getJSONObject(i).getLong("ownerId"),json.getJSONObject(i).getLong("ownerId"));
+//				}				
+//			}
+//			for(Long key:map.keySet()) {
+//				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,status,orderDesc,toUserId,null,isComment==null?false:isComment,count,offset));
+//			}
+//			if(upUserId != null)
+//				isreadRepository.delete(conn, EXP.INS().key("user_id", upUserId));
+//			return returnJson;
+//		}
+		
 	@POSTAPI(//
-			path = "getReplyListByUser", //
-			des = "获取用户回复提问" //
+		path = "getReplyListByUser", //
+		des = "获取用户回复提问" //
 	)
 	public JSONArray getReplyListByUser(//
-			@P(t = "模块编号",r= false) String moduleId, //
-			@P(t = "持有者编号",r= false) Long ownerId, //
-			@P(t = "提交者编号",r = false) Long upUserId, //
-			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
-			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
-			@P(t = "目标用户id",r = false) Long toUserId, //
-			@P(t = "限定时间状态",r = false) Integer time, //
-			@P(t = "是否加载二级评论",r = false) Boolean isComment, //
-			Integer count, Integer offset//
+		@P(t = "模块编号",r= false) String moduleId, //
+		@P(t = "持有者编号",r= false) Long ownerId, //
+		@P(t = "提交者编号",r = false) Long upUserId, //
+//		@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
+		@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
+		@P(t = "目标用户id",r = false) Long toUserId, //
+		@P(t = "限定时间状态",r = false) Integer time, //
+		@P(t = "是否加载二级评论",r = false) Boolean isComment, //
+		Integer count, Integer offset//
 	) throws Exception {
 		if(moduleId == null) {
 			moduleId = "1180";
 		}
-		TSQL ts = new TSQL();
-		ts.Term(OP.AND, "ownerId", ownerId).Term(OP.AND, "upUserId", upUserId).Term(OP.AND, "status", status);
-		if (orderDesc) {
-			ts.addSort(new FieldSort("createTime", SortOrder.DESC));
-		} else {
-			ts.addSort(new FieldSort("createTime", SortOrder.ASC));
-		}
-		ts.setLimit(count);
-		ts.setOffset(offset);
-		SearchQuery query = ts.build();
-		JSONObject reply = replyRepository.search(client, query);
-		JSONArray json = reply.getJSONArray("list");
-		JSONArray returnJson = new JSONArray();
-		Map<Long, Long> map = new HashMap<Long, Long>();
-		int index = json.size();
-		try(DruidPooledConnection conn = ds.getConnection()){
-			if(time != null) {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			JSONArray json = replyRepository.getReplyList(conn,ownerId, upUserId, null, orderDesc, toUserId,  count, offset);
+			JSONArray returnJson = new JSONArray();
+			Map<Long, Long> map = new HashMap<Long, Long>();
+			int index = json.size();
+			if(time != null) {//如果有时间，按照时间筛选返回
 				for(int i= 0 ;i<index ;i++) {
+//					Long reolyTime = getTimeInMillis(time, json.getJSONObject(i).getString("createTime"));//时间转换为时间戳
 					Long reolyTime = getTimeInMillis(time, json.getJSONObject(i).getString("createTime"));//时间转换为时间戳
 					if(reolyTime >getTimeInMillis(time)  && reolyTime < new Date().getTime()) {//查询创建时间为：大于一给定时间前，小于当前时间
 						map.put(json.getJSONObject(i).getLong("ownerId"),json.getJSONObject(i).getLong("ownerId"));						
@@ -722,105 +719,205 @@ public class ZskpOtherContent extends Controller{
 				}				
 			}
 			for(Long key:map.keySet()) {
-				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,status,orderDesc,toUserId,null,isComment==null?false:isComment,count,offset));
+				returnJson.add(getReplyList(moduleId,map.get(key),upUserId,orderDesc,toUserId,null,isComment==null?false:isComment,count,offset));
 			}
-			if(upUserId != null)
-				isreadRepository.delete(conn, EXP.INS().key("user_id", upUserId));
+			if(upUserId != null) {//删除未读记录
+				isreadRepository.delete(conn, EXP.INS().key("user_id", upUserId));				
+			}
 			return returnJson;
 		}
 	}
-	public boolean isAppraise(Long relpyId,Long userId) throws Exception {
-		//查询是否点过赞
-		TSQL isAppraise = new TSQL();
-		isAppraise.Term(OP.AND, "ownerId", relpyId).Term(OP.AND, "userId", userId);//评论id);
-		isAppraise.setGetTotalCount(true);
-		SearchQuery queryIsAppraise = isAppraise.build();
-		Long isCount = appraiseRepository.search(client, queryIsAppraise).getLong("totalCount");//获取当前用户是否点过赞
-		if(isCount > 0) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	
+//	@POSTAPI(//
+//			path = "getReplyList", //
+//			des = "根据状态获取回复评论，没有状态则获取全部" //
+//	)
+//	public JSONArray getReplyList(//
+//			@P(t = "模块编号",r= false) String moduleId, //
+//			@P(t = "持有者编号",r= false) Long ownerId, //
+//			@P(t = "提交者编号",r = false) Long upUserId, //
+//			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
+//			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
+//			@P(t = "目标用户id",r = false) Long toUserId, //
+//			@P(t = "当前用户id",r = false) Long userId, //
+//			@P(t = "是否加载二级评论",r = false) Boolean isComment, //
+//			Integer count, Integer offset//
+//	) throws Exception {
+//		if(moduleId == null) {
+//			moduleId = "1180";
+//		}
+//		TSQL ts = new TSQL();
+//		ts.Term(OP.AND, "ownerId", ownerId).Term(OP.AND, "upUserId", upUserId).Term(OP.AND, "status", status);
+//		if (orderDesc) {
+//			ts.addSort(new FieldSort("createTime", SortOrder.DESC));
+//		} else {
+//			ts.addSort(new FieldSort("createTime", SortOrder.ASC));
+//		}
+//		ts.setLimit(count);
+//		ts.setOffset(offset);
+//		SearchQuery query = ts.build();
+//		JSONObject reply = replyRepository.search(client, query);
+//		JSONArray json = reply.getJSONArray("list");
+//		JSONArray returnJson = new JSONArray();
+//		int index = json.size();
+//		try(DruidPooledConnection conn = ds.getConnection()){
+//			for(int i= 0 ;i<index ;i++) {
+//				//获取每一个评论下的点赞数  
+//				//品论id
+//				//电站表回复你内人
+//				Long relpyId = json.getJSONObject(i).getLong("sequenceId");//评论id
+//				TSQL tsAppraise = new TSQL();
+//				tsAppraise.Term(OP.AND, "ownerId", relpyId);
+//				tsAppraise.setGetTotalCount(true);
+//				SearchQuery queryAppraise = tsAppraise.build();
+//				/////////////////////////////////////
+//				Long appraiseCount = appraiseRepository.search(client, queryAppraise).getLong("totalCount");//获取点赞表中评论id的个数
+//				////查询是否点过赞
+//				ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id", json.getJSONObject(i).getLong("upUserId")));
+//				Content cont = contentRepository.get(conn, EXP.INS().key("id",json.getJSONObject(i).get("ownerId")));
+//				JSONObject j = new JSONObject();
+//				j = json.getJSONObject(i);
+//				//二级评论
+//				if(isComment == null || isComment ) {
+//					TSQL commentTs = new TSQL();
+//					commentTs.Term(OP.AND, "replyId",  relpyId).Term(OP.AND, "toUserId", toUserId).Term(OP.AND, "status", status);
+//					if (orderDesc) {
+//						commentTs.addSort(new FieldSort("createTime", SortOrder.DESC));
+//					} else {
+//						commentTs.addSort(new FieldSort("createTime", SortOrder.ASC));
+//					}
+//					SearchQuery CommentQuery = commentTs.build();
+//					JSONObject comment = commentRepository.search(client, CommentQuery);//二级评论内容
+//					j.put("comment", comment);
+//					
+//				}
+//				j.put("user", user);
+//				j.put("appraiseCount", appraiseCount);
+//				j.put("content", cont);
+//				if(isAppraise(relpyId, userId)) {
+//					j.put("isAppraise", true);
+//				}else {
+//					j.put("isAppraise", false);
+//				}
+//				returnJson.add(j);
+//			}
+//			return returnJson;
+//		}
+//	}
 	@POSTAPI(//
 			path = "getReplyList", //
-			des = "根据状态获取回复评论，没有状态则获取全部" //
+			des = "获取回复评论" //
 	)
 	public JSONArray getReplyList(//
 			@P(t = "模块编号",r= false) String moduleId, //
 			@P(t = "持有者编号",r= false) Long ownerId, //
 			@P(t = "提交者编号",r = false) Long upUserId, //
-			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
+//			@P(t = "审核状态0未审核，1已通过",r = false) String status, //
 			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
 			@P(t = "目标用户id",r = false) Long toUserId, //
 			@P(t = "当前用户id",r = false) Long userId, //
 			@P(t = "是否加载二级评论",r = false) Boolean isComment, //
 			Integer count, Integer offset//
 	) throws Exception {
-		if(moduleId == null) {
-			moduleId = "1180";
-		}
-		TSQL ts = new TSQL();
-		ts.Term(OP.AND, "ownerId", ownerId).Term(OP.AND, "upUserId", upUserId).Term(OP.AND, "status", status);
-		if (orderDesc) {
-			ts.addSort(new FieldSort("createTime", SortOrder.DESC));
-		} else {
-			ts.addSort(new FieldSort("createTime", SortOrder.ASC));
-		}
-		ts.setLimit(count);
-		ts.setOffset(offset);
-		SearchQuery query = ts.build();
-		JSONObject reply = replyRepository.search(client, query);
-		JSONArray json = reply.getJSONArray("list");
-		JSONArray returnJson = new JSONArray();
-		int index = json.size();
-		try(DruidPooledConnection conn = ds.getConnection()){
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			if(moduleId == null) {
+				moduleId = "1180";
+			}
+			JSONArray json = replyRepository.getReplyList(conn,ownerId, upUserId, null, orderDesc, toUserId, count, offset);			
+			JSONArray returnJson = new JSONArray();
+			JSONObject tempJson = null;
+			int index = json.size();
 			for(int i= 0 ;i<index ;i++) {
-				//获取每一个评论下的点赞数  
-				//品论id
-				//电站表回复你内人
+				tempJson = new JSONObject();
+				tempJson = json.getJSONObject(i);
 				Long relpyId = json.getJSONObject(i).getLong("sequenceId");//评论id
-				TSQL tsAppraise = new TSQL();
-				tsAppraise.Term(OP.AND, "ownerId", relpyId);
-				tsAppraise.setGetTotalCount(true);
-				SearchQuery queryAppraise = tsAppraise.build();
-				/////////////////////////////////////
-				Long appraiseCount = appraiseRepository.search(client, queryAppraise).getLong("totalCount");//获取点赞表中评论id的个数
-				////查询是否点过赞
-				ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id", json.getJSONObject(i).getLong("upUserId")));
-				Content cont = contentRepository.get(conn, EXP.INS().key("id",json.getJSONObject(i).get("ownerId")));
-				JSONObject j = new JSONObject();
-				j = json.getJSONObject(i);
-				//二级评论
+				//查询是否点过赞
 				if(isComment == null || isComment ) {
-					TSQL commentTs = new TSQL();
-					commentTs.Term(OP.AND, "replyId",  relpyId).Term(OP.AND, "toUserId", toUserId).Term(OP.AND, "status", status);
-					if (orderDesc) {
-						commentTs.addSort(new FieldSort("createTime", SortOrder.DESC));
-					} else {
-						commentTs.addSort(new FieldSort("createTime", SortOrder.ASC));
-					}
-					SearchQuery CommentQuery = commentTs.build();
-					JSONObject comment = commentRepository.search(client, CommentQuery);//二级评论内容
-					j.put("comment", comment);
-					
+					JSONArray comment =  commentRepository.getCommentList(conn,relpyId, upUserId, null, orderDesc, toUserId,  count, offset);
+					tempJson.put("comment", comment);
 				}
-				j.put("user", user);
-				j.put("appraiseCount", appraiseCount);
-				j.put("content", cont);
-				if(isAppraise(relpyId, userId)) {
-					j.put("isAppraise", true);
+				tempJson.put("content", "ccccccccccccccc");
+				if(judgeAppraise(relpyId, userId)) {
+					tempJson.put("isAppraise", true);
 				}else {
-					j.put("isAppraise", false);
+					tempJson.put("isAppraise", false);
 				}
-				returnJson.add(j);
+				returnJson.add(tempJson);
 			}
 			return returnJson;
 		}
 	}
-	
+//	@POSTAPI(//
+//			path = "getReplyListByReplyId", //
+//			des = "获取二级评论" //
+//	)
+//	public JSONObject getReplyListByReplyId(//
+//			@P(t = "模块编号",r= false) String moduleId, //
+//			@P(t = "持有者编号") Long ownerId, //
+//			@P(t = "评论id") Long replyId, //
+//			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
+//			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
+//			@P(t = "用户id") Long userId, //
+//			Integer count, Integer offset//
+//	) throws Exception {
+//		try(DruidPooledConnection conn = ds.getConnection()){
+//			if(moduleId == null) {
+//				moduleId = "1180";
+//			}
+//			JSONObject json = new JSONObject();
+//			String _id = TSUtils.get_id(ownerId);
+//			PrimaryKey pk = new PrimaryKeyBuilder().add("_id", _id).add("ownerId", ownerId).add("sequenceId", replyId).build();
+//			Reply reply =  replyRepository.get(client, pk);
+//			//修改评论
+//			replyService.editReply(reply.ownerId, reply.sequenceId, reply.title, reply.text, reply.createTime, reply.status, reply.upUserId, reply.atUserId, reply.atUserName, "1");
+//			TSQL replyAppraise = new TSQL();//获取一级评论点赞数
+//			replyAppraise.Term(OP.AND, "ownerId", replyId);
+//			replyAppraise.setGetTotalCount(true);
+//			SearchQuery queryAppraise = replyAppraise.build();
+//			Long replyAppraiseCount = appraiseRepository.search(client, queryAppraise).getLong("totalCount");//获取点赞表中评论id的个数
+//			//查询是否点过赞
+//			if(isAppraise(reply.sequenceId, userId)) {
+//				 json.put("isAppraise",true);
+//			}else {
+//				 json.put("isAppraise",false);
+//			}
+//			ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id",reply.upUserId));
+//			TSQL commentTs = new TSQL();
+//			commentTs.Term(OP.AND, "replyId",  replyId).Term(OP.AND, "status", status);
+//			commentTs.setLimit(count);
+//			commentTs.setOffset(offset);
+//			if (orderDesc) {
+//				commentTs.addSort(new FieldSort("createTime", SortOrder.DESC));
+//			} else {
+//				commentTs.addSort(new FieldSort("createTime", SortOrder.ASC));
+//			}
+//			SearchQuery CommentQuery = commentTs.build();
+//			JSONArray j = commentRepository.search(client, CommentQuery).getJSONArray("list");//二级评论内容
+//			JSONArray commentJson = new JSONArray();
+//			
+//			for(int i= 0 ;i<j.size() ;i++) {//获取二级评论点赞数
+//				TSQL tsAppraise = new TSQL();
+//				tsAppraise.Term(OP.AND, "ownerId", j.getJSONObject(i).get("sequenceId"));
+//				tsAppraise.setGetTotalCount(true);
+//				SearchQuery CommentAppraise = tsAppraise.build();
+//				Long commenAppraise = appraiseRepository.search(client, CommentAppraise).getLong("totalCount");//获取点赞表中评论id的个数
+//				JSONObject jo = new JSONObject();
+//				if(isAppraise(j.getJSONObject(i).getLong("sequenceId"), userId)) {
+//					jo.put("isAppraise",true);
+//				}else {
+//					jo.put("isAppraise",false);
+//				}
+//				jo.put("comment",j.getJSONObject(i));
+//				jo.put("appraiseCount",commenAppraise);
+//				commentJson.add(jo);
+//			}
+//			json.put("reply", reply);
+//			json.put("appraiseCount", replyAppraiseCount);
+//			json.put("replyUser", user);
+//			json.put("comment", commentJson);
+//			isreadRepository.delete(conn, EXP.INS().key("user_id", userId));
+//			return json;
+//		}
+//	}
 	@POSTAPI(//
 			path = "getReplyListByReplyId", //
 			des = "获取二级评论" //
@@ -829,68 +926,62 @@ public class ZskpOtherContent extends Controller{
 			@P(t = "模块编号",r= false) String moduleId, //
 			@P(t = "持有者编号") Long ownerId, //
 			@P(t = "评论id") Long replyId, //
-			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
+//			@P(t = "审核状态，不填表示全部，0未审核，1已通过",r = false) String status, //
 			@P(t = "是否降序（较新的排前面）") Boolean orderDesc, //
 			@P(t = "用户id") Long userId, //
 			Integer count, Integer offset//
 	) throws Exception {
-		try(DruidPooledConnection conn = ds.getConnection()){
+		try (DruidPooledConnection conn = ds.getConnection()) {
 			if(moduleId == null) {
 				moduleId = "1180";
 			}
-			JSONObject json = new JSONObject();
-			String _id = TSUtils.get_id(ownerId);
-			PrimaryKey pk = new PrimaryKeyBuilder().add("_id", _id).add("ownerId", ownerId).add("sequenceId", replyId).build();
-			Reply reply =  replyRepository.get(client, pk);
-			//修改评论
-			replyService.editReply(reply.ownerId, reply.sequenceId, reply.title, reply.text, reply.createTime, reply.status, reply.upUserId, reply.atUserId, reply.atUserName, "1");
-			TSQL replyAppraise = new TSQL();//获取一级评论点赞数
-			replyAppraise.Term(OP.AND, "ownerId", replyId);
-			replyAppraise.setGetTotalCount(true);
-			SearchQuery queryAppraise = replyAppraise.build();
-			Long replyAppraiseCount = appraiseRepository.search(client, queryAppraise).getLong("totalCount");//获取点赞表中评论id的个数
-			//查询是否点过赞
-			if(isAppraise(reply.sequenceId, userId)) {
-				 json.put("isAppraise",true);
-			}else {
-				 json.put("isAppraise",false);
-			}
-			ZskpUser user = userRepository.get(conn, EXP.INS().key("module_id", moduleId).andKey("id",reply.upUserId));
-			TSQL commentTs = new TSQL();
-			commentTs.Term(OP.AND, "replyId",  replyId).Term(OP.AND, "status", status);
-			commentTs.setLimit(count);
-			commentTs.setOffset(offset);
-			if (orderDesc) {
-				commentTs.addSort(new FieldSort("createTime", SortOrder.DESC));
-			} else {
-				commentTs.addSort(new FieldSort("createTime", SortOrder.ASC));
-			}
-			SearchQuery CommentQuery = commentTs.build();
-			JSONArray j = commentRepository.search(client, CommentQuery).getJSONArray("list");//二级评论内容
+			JSONObject rerurnJson = new JSONObject();
 			JSONArray commentJson = new JSONArray();
-			
-			for(int i= 0 ;i<j.size() ;i++) {//获取二级评论点赞数
-				TSQL tsAppraise = new TSQL();
-				tsAppraise.Term(OP.AND, "ownerId", j.getJSONObject(i).get("sequenceId"));
-				tsAppraise.setGetTotalCount(true);
-				SearchQuery CommentAppraise = tsAppraise.build();
-				Long commenAppraise = appraiseRepository.search(client, CommentAppraise).getLong("totalCount");//获取点赞表中评论id的个数
-				JSONObject jo = new JSONObject();
-				if(isAppraise(j.getJSONObject(i).getLong("sequenceId"), userId)) {
-					jo.put("isAppraise",true);
-				}else {
-					jo.put("isAppraise",false);
-				}
-				jo.put("comment",j.getJSONObject(i));
-				jo.put("appraiseCount",commenAppraise);
-				commentJson.add(jo);
+			JSONObject tempJson = null;
+			JSONArray json = commentRepository.getCommentList(conn, replyId, null, null, orderDesc, null, count, offset);
+			JSONObject reply = replyRepository.getReply(conn, replyId);
+			updateReply(reply.getLong("sequenceId"));//
+			rerurnJson.put("reply", reply);
+			//查询REPLY是否点过赞
+			if(judgeAppraise(reply.getLong("sequenceId"), userId)) {
+				rerurnJson.put("isAppraise",true);
+			}else {
+				rerurnJson.put("isAppraise",false);
 			}
-			json.put("reply", reply);
-			json.put("appraiseCount", replyAppraiseCount);
-			json.put("replyUser", user);
-			json.put("comment", commentJson);
-			isreadRepository.delete(conn, EXP.INS().key("user_id", userId));
-			return json;
+			for(int i=0,index = json.size();i<index;i++) {
+				tempJson = new JSONObject();
+				tempJson = json.getJSONObject(i);
+				if(judgeAppraise(json.getJSONObject(i).getLong("sequenceId"), userId)) {
+					tempJson.put("isAppraise",true);
+				}else {
+					tempJson.put("isAppraise",false);
+				}
+				commentJson.add(tempJson);
+			}
+			rerurnJson.put("comment", commentJson);
+			return rerurnJson;
+		}
+				
+	}
+	/*
+	 * 修改评论状态
+	 */
+	public void updateReply(Long id) throws ServerException, SQLException {
+		Reply re = new Reply();
+		re.ext = "1";
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			replyRepository.update(conn, EXP.INS().andKey("sequence_id", id),re,true);			
+		}
+	}
+	public boolean judgeAppraise(
+			@P(t = "内容编号") Long ownerId, 
+			@P(t = "用户编号") Long userId
+	)throws Exception {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			Appraise appraise = appraiseRepository.get(conn,
+					EXP.INS().key("owner_id", ownerId).andKey("user_id", userId));
+			// true为已经点过赞
+			return appraise != null;
 		}
 	}
 	
@@ -915,11 +1006,19 @@ public class ZskpOtherContent extends Controller{
 		gc.set(gc.get(Calendar.YEAR),gc.get(Calendar.MONTH),gc.get(Calendar.DATE));
         return gc.getTimeInMillis();
 	}
+//	public Long getTimeInMillis(int day,String newTime) throws Exception {
+//		SimpleDateFormat sdf1= new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+//		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		System.out.println(sdf1.parse(newTime));
+//		System.out.println(sdf1.parse(newTime).getTime());  
+//		return sdf1.parse(newTime).getTime();
+//	}
 	public Long getTimeInMillis(int day,String newTime) throws Exception {
-		SimpleDateFormat sdf1= new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		System.out.println(sdf1.parse(newTime));
-		System.out.println(sdf1.parse(newTime).getTime());  
-		return sdf1.parse(newTime).getTime();
+		String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(newTime);
+        long ts = date.getTime();
+        res = String.valueOf(ts);
+        return Long.parseLong(res);
 	}
 }
