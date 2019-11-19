@@ -364,7 +364,7 @@
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						uni.stopPullDownRefresh()
 
-						let list = this.$util.tryParseJson(res.data.c).list
+						let list = this.$util.tryParseJson(res.data.c)
 						console.log(list)
 						for (let i = 0; i < list.length; i++) {
 							list[i].title = list[i].name

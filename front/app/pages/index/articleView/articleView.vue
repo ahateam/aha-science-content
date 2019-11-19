@@ -204,7 +204,6 @@
 
 			replayAfter() {
 				let userId = uni.getStorageSync('userId')
-				let status = uni.getStorageSync('status')
 				if (userId == '' || userId == '1234567890') {
 					uni.showToast({
 						title: '登录后可评论',
@@ -233,7 +232,7 @@
 							upUserName: uni.getStorageSync('userName'),
 							text: this.commentContent
 						}
-						this.comment[this.repalyIndex].comment.list.splice(0, 0, user)
+						this.comment[this.repalyIndex].comment.splice(0, 0, user)
 						this.commentContent = ''
 					} else {
 						uni.showToast({

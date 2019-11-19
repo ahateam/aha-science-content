@@ -9,17 +9,17 @@
 				还没有人评论哦,快来抢个首发吧~
 			</view>
 			<view v-for="(item, index) in comment" :key="index" class="eva-item" @click="repaly(item.sequenceId,index,item)">
-				<image :src="item.user.head" mode="aspectFill"></image>
+				<image :src="item.head" mode="aspectFill"></image>
 				<view class="eva-right">
-					<text>{{item.user.name}}</text>
+					<text>{{item.name}}</text>
 					<text>{{item.time}}</text>
 					<view class="zan-box" @click="upvote(item.sequenceId,index,item)" @click.stop v-if="item.jsAdd == false">
 						<text>{{item.appraiseCount}}</text><!-- 点赞数 -->
 						<text class="yticon iconfont kk-shoucang1" :class="{iconCurrent:item.isAppraise}"></text>
 					</view>
 					<text class="content">{{item.text}}</text>
-					<view class="replayBox" v-if="item.comment.list.length > 0" @click.stop @click="navToreplay(item.sequenceId,item.ownerId)">
-						<view class="replayList" v-for="(list,index1) in item.comment.list" :key="index1" v-if="index1 < 3">
+					<view class="replayBox" v-if="item.comment.length > 0" @click.stop="navToreplay(item.sequenceId,item.ownerId)">
+						<view class="replayList" v-for="(list,index1) in item.comment" :key="index1" v-if="index1 < 3">
 							<text class="replayUser">{{list.upUserName}}</text>：<text class="replayText">{{list.text}}</text>
 							<view class="moreReplay" v-if="index1 == 2 && item.comment.list.length>3">
 								查看更多
@@ -41,6 +41,7 @@
 		methods: {
 			//跳转至二级评论
 			navToreplay(id, contentId) {
+				console.log(contentId)
 				uni.navigateTo({
 					url: `/pages/Reply/replyView/replyView?id=${id}&contentId=${contentId}`
 				})
@@ -57,7 +58,7 @@
 					return
 				}
 
-				this.$emit('repaly', id, index, item.user.name)
+				this.$emit('repaly', id, index, item.name)
 			},
 
 			delAppraise(id, index) {
@@ -67,7 +68,7 @@
 				}
 				this.$api.delAppraise(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.$emit('delZan',index)
+						this.$emit('delZan', index)
 					}
 				})
 			},

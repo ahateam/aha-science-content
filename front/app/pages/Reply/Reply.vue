@@ -12,9 +12,9 @@
 		</view>
 		<view v-if='replyList.length >0'>
 			<view class="list">
-				<view class="item" :style="index == 0?'margin-top:0':''" v-for="(item,index) in replyList" :key="index" @click="navToInfo(item[0].content)">
+				<view class="item" :style="index == 0?'margin-top:0':''" v-for="(item,index) in replyList" :key="index" @click="navToInfo(item[0])">
 					<view class="content">
-						{{item[0].content.title}}
+						{{item[0].title}}
 					</view>
 
 					<view class="autoBox" v-for="(info,index1) in item" :key="index1">
@@ -23,10 +23,10 @@
 							<text class="new-tip" v-if="info.ext == 0&&statusCurr == true"></text>
 						</view>
 
-						<view class="replayBox" 　v-if="info.comment.list.length > 0" @click.stop="navToReplay(info.sequenceId,info.content.id,index,index1)">
-							<view class="topMargin" v-for="(list,index2) in info.comment.list" :key="index2" v-if="index2 < 2">
+						<view class="replayBox" 　v-if="info.comment.length > 0" @click.stop="navToReplay(info.sequenceId,info.contentId,index,index1)">
+							<view class="topMargin" v-for="(list,index2) in info.comment" :key="index2" v-if="index2 < 2">
 								<text class="nameBox">{{list.upUserName}}</text>: <text class="textBox">{{list.text}}</text>
-								<view class="moreText" v-if="index2 == 1&&info.comment.list.length > 2">查看更多</view>
+								<view class="moreText" v-if="index2 == 1&&info.comment.length > 2">查看更多</view>
 							</view>
 						</view>
 
@@ -186,15 +186,15 @@
 				if (info) {
 					if (info.type == this.$constData.contentType[2].key || info.type == this.$constData.contentType[0].key) {
 						uni.navigateTo({
-							url: `/pages/index/articleView/articleView?id=${info.id}`
+							url: `/pages/index/articleView/articleView?id=${info.contentId}`
 						})
 					} else if (info.type == this.$constData.contentType[1].key) {
 						uni.navigateTo({
-							url: `/pages/index/videoView/videoView?id=${info.id}`
+							url: `/pages/index/videoView/videoView?id=${info.contentId}`
 						})
 					} else if (info.type == this.$constData.contentType[3].key) {
 						uni.navigateTo({
-							url: `/pages/index/activity/activity?contentId=${info.id}&placeId=${this.$util.tryParseJson(info.data).place}`
+							url: `/pages/index/activity/activity?contentId=${info.contentId}&placeId=${this.$util.tryParseJson(info.data).place}`
 						})
 					}
 				} else {

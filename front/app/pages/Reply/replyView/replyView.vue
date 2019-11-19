@@ -2,9 +2,9 @@
 	<view>
 		<scroll-view class="scroll" scroll-y>
 			<view class="eva-item" v-if="loading">
-				<image style="width: 75upx;height: 75upx;" :src="user.head" mode="aspectFill"></image>
+				<image style="width: 75upx;height: 75upx;" :src="replay.head" mode="aspectFill"></image>
 				<view class="eva-right">
-					<text>{{user.name}}</text>
+					<text>{{replay.name}}</text>
 					<text>{{replay.time}}</text>
 					<view class="zan-box" @click="upZan(id)">
 						<text>{{appraiseCount}}</text> <!-- 点赞数 -->
@@ -17,15 +17,15 @@
 				<text>相关回复</text>
 			</view>
 			<view v-for="(item, index) in comment" :key="index" class="eva-item">
-				<image :src="item.comment.upUserHead" mode="aspectFill"></image>
+				<image :src="item.head" mode="aspectFill"></image>
 				<view class="eva-right">
-					<text>{{item.comment.upUserName}}</text>
+					<text>{{item.name}}</text>
 					<text>{{item.time}}</text>
-					<view class="zan-box" @click="upvote(item.comment.sequenceId,index,item)" @click.stop v-if="item.appraiseCount||item.appraiseCount === 0">
+					<view class="zan-box" @click="upvote(item.sequenceId,index,item)" @click.stop v-if="item.appraiseCount||item.appraiseCount === 0">
 						<text>{{item.appraiseCount}}</text><!-- 点赞数 -->
 						<text class="yticon iconfont kk-shoucang1" :class="{iconCurrent:item.isAppraise}"></text>
 					</view>
-					<text class="content">{{item.comment.text}}</text>
+					<text class="content">{{item.text}}</text>
 				</view>
 			</view>
 			<uniLoadMore :status="pageStatus"></uniLoadMore>
@@ -34,7 +34,7 @@
 		<view class="bottom" v-if="loading">
 			<view class="input-box">
 				<text class="yticon icon-huifu"></text>
-				<input class="input" type="text" :placeholder="'@'+user.name+'：'" v-model="commentContent" placeholder-style="color:#adb1b9;" />
+				<input class="input" type="text" :placeholder="'@'+replay.name+'：'" v-model="commentContent" placeholder-style="color:#adb1b9;" />
 			</view>
 			<text class="confirm-btn" @click="repaly">提交</text>
 		</view>
@@ -121,11 +121,9 @@
 						let m = time.getMonth() * 1 + 1
 						let d = time.getDate()
 						let user = {
-							comment: {
-								upUserName: uni.getStorageSync('userName'),
-								upUserHead: uni.getStorageSync('userHead'),
-								text: this.commentContent
-							},
+							name: uni.getStorageSync('userName'),
+							head: uni.getStorageSync('userHead'),
+							text: this.commentContent,
 							time: `${y}-${m}-${d}`
 						}
 						this.comment.splice(0, 0, user)
@@ -206,8 +204,8 @@
 					}
 				})
 			},
-			
-			delZan(id,item){
+
+			delZan(id, item) {
 				let cnt = {
 					ownerId: id,
 					userId: uni.getStorageSync('userId')
@@ -231,7 +229,7 @@
 				}
 
 				if (this.comment[index].isAppraise) {
-					this.delZan(id,item)
+					this.delZan(id, item)
 					return
 				}
 
@@ -272,12 +270,12 @@
 						data.reply.time = this.getTime(data.reply.createTime)
 						this.replay = data.reply
 						this.user = data.replyUser
-						this.appraiseCount = data.appraiseCount
+						this.appraiseCount = data.reply.appraiseCount
 						this.zanStatus = data.isAppraise
 
 						let comment = data.comment
 						for (let i = 0; i < comment.length; i++) {
-							comment[i].time = this.getTime(comment[i].comment.createTime)
+							comment[i].time = this.getTime(comment[i].createTime)
 						}
 						this.comment = comment
 
@@ -285,7 +283,10 @@
 
 						this.loading = true
 					} else {
-						console.log('error')
+						uni.showToast({
+							title: res.data.rm,
+							icon: 'none'
+						})
 					}
 				})
 			}
