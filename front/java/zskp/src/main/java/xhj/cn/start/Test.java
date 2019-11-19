@@ -9,9 +9,11 @@ import zyxhj.utils.data.rds.RDSUtils;
 import zyxhj.utils.data.ts.TSUtils;
 import zyxhj.zskp.domain.AdvertInfo;
 import zyxhj.zskp.domain.ApplyAuthority;
+import zyxhj.zskp.domain.Comment;
 import zyxhj.zskp.domain.Enroll;
 import zyxhj.zskp.domain.InterestTag;
 import zyxhj.zskp.domain.Isread;
+import zyxhj.zskp.domain.Reply;
 import zyxhj.zskp.domain.TourBases;
 import zyxhj.zskp.domain.UserFavorites;
 import zyxhj.zskp.domain.ZskpKeyword;
@@ -38,7 +40,8 @@ public class Test {
 //			RDSUtils.createTableByEntity(dds, InterestTag.class);
 //			RDSUtils.createTableByEntity(dds, TourBase.class);
 //			RDSUtils.createTableByEntity(dds, UserFavorites.class);
-//			RDSUtils.createTableByEntity(dds, Isread.class);
+//			RDSUtils.createTableByEntity(dds, Reply.class);
+//			RDSUtils.createTableByEntity(dds, Comment.class);
 
 
 //			TSUtils.drapTableByEntity(client,TourBases.class);

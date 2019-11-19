@@ -8,7 +8,6 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 
 import zyxhj.utils.CacheCenter;
-import zyxhj.utils.SendSms;
 import zyxhj.utils.api.APIResponse;
 import zyxhj.utils.api.Controller;
 
@@ -38,13 +37,13 @@ public class SmsServer extends Controller{
 		json.put("date", new Date());
 		String TemplateCode = "";
 		if("loginByCode".equals(type)) {//登录模板
-			TemplateCode = "SMS_165341507";
+			TemplateCode = "SMS_177547862";
 		}else if("register".equals(type)) {//注册模板
-			TemplateCode = "SMS_165341505";
-		}else if("forgetPwd".equals(type)) {//身份验证模板
-			TemplateCode = "SMS_165341508";
+			TemplateCode = "SMS_177537922";
+		}else if("forgetPwd".equals(type)) {//重置密码模板
+			TemplateCode = "SMS_177542871";
 		}else {
-			TemplateCode = "SMS_165341508";//身份验证模板
+			TemplateCode = "SMS_177537938";//身份验证模板
 		}
 		SendSmsResponse res = SendSms.sendSms(phone,num,TemplateCode);
 		System.out.println("sms"+res.getCode());
