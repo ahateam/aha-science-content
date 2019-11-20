@@ -7,7 +7,7 @@
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
-				<el-table-column prop="user.name" label="用户名" width="200">
+				<el-table-column prop="name" label="用户名" width="200">
 				</el-table-column>
 				<el-table-column prop="text" label="评论">
 				</el-table-column>
@@ -56,6 +56,7 @@
 				this.$api.getReplyList(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
+						console.log(this.tableData)
 					} else {
 						this.tableData = []
 					}
@@ -94,6 +95,13 @@
 								type: 'success',
 								message: '删除成功!'
 							});
+							let cnt = {
+								ownerId:info.id,
+								orderDesc:true,
+								count: this.count,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
@@ -120,14 +128,13 @@
 			},
 		},
 		mounted() {
-			 let info = this.$route.params.info
+			let info = this.$route.params.info
 			let cnt = {
 				ownerId:info.id,
 				orderDesc:true,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}
-			console.log(cnt)
 			this.getContents(cnt)
 		}
 	}

@@ -22,7 +22,7 @@
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
+						<el-button @click="delBtn(scope.row)" style="color: red;" type="text" size="small">删除</el-button>
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">详情</el-button>
 						<el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
 					</template>
@@ -72,7 +72,7 @@
 			getContents(cnt) {
 				this.$api.getTourBases(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.tableData = this.$util.tryParseJson(res.data.c).list
+						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {
 						this.tableData = []
 					}
@@ -111,7 +111,14 @@
 							this.$message({
 								type: 'success',
 								message: '删除成功!'
-							})
+							});
+						let cnt = {
+							moduleId: this.$constData.module, // Long 模块编号
+							userCoordinate: '0,0',
+							count: this.count,
+							offset: (this.page - 1) * this.count,
+						}
+						this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
@@ -119,7 +126,6 @@
 							});
 						}
 					})
-					this.$router.push('/activityList')
 				}).catch(() => {
 					this.$message({
 						type: 'info',

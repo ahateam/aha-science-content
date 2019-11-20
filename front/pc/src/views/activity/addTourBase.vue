@@ -225,13 +225,7 @@
 					})
 					return
 				}
-				if (this.address == '' || this.detail_address == '') {
-					this.$message({
-						message: '请填写地点',
-						type: 'warning'
-					})
-					return
-				}
+				
 				if (this.time == '') {
 					this.$message({
 						message: '请选择营业时间',

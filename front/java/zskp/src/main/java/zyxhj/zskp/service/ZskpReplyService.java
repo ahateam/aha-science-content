@@ -179,4 +179,17 @@ public class ZskpReplyService extends Controller {
 			return isreadRepository.getList(conn, EXP.INS().key("user_id", userId), 99, 0).size();
 		}
 	}
+	
+	@POSTAPI(//
+			path = "delReply", //
+			des = "删除回复" //
+	)
+	public void delReply(//
+			@P(t = "持有者编号") Long ownerId, //
+			@P(t = "序列编号") Long sequenceId //
+	) throws ServerException, SQLException {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			replyRepository.delete(conn, EXP.INS().key("owner_id", ownerId).andKey("sequence_id", sequenceId));			
+		}
+	}
 }

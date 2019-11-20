@@ -82,7 +82,7 @@ api.getReplyList = function (cnt, callback) {
 }
 //删除评论
 api.delReply = function (cnt, callback) {
-    util.call(baseUrl + '/reply/delReply', cnt, callback)
+    util.call(baseUrl + '/ZskpReply/delReply', cnt, callback)
 }
 
 //查询申请
