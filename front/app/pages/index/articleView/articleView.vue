@@ -369,10 +369,8 @@
 							text: this.commentContent,
 							time: `${y}-${m}-${d}`,
 							jsAdd: true,
-							user: {
-								name: uni.getStorageSync('userName'),
-								head: uni.getStorageSync('userHead'),
-							}
+							name: uni.getStorageSync('userName'),
+							head: uni.getStorageSync('userHead')
 						}
 						this.comment.splice(0, 0, data)
 						console.log(this.comment)
@@ -435,9 +433,9 @@
 				}
 				this.$api.getAppraiseCount(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-						console.log(this.$util.tryParseJson(res.data.c).totalCount)
-						this.contentUpvote = this.$util.tryParseJson(res.data.c).totalCount
+						let data = this.$util.tryParseJson(res.data.c)
+						this.contentUpvote = data.appraiseCount
+						this.upvoteStatus = data.isAppraise
 					} else {
 						console.log('erorr')
 					}
