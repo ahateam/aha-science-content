@@ -6,7 +6,10 @@
 					<p><img :src="this.head" width="40" height="40" class="head_pic" /></p>
 					<p>用户id：{{this.id}}</p>
 					<p>用户昵称：{{this.name}}</p>
-					<p>用户密码：{{this.pwd}}</p>
+					<p>用户密码： <el-button type="danger" icon="el-icon-question" v-if="!showPwd" circle @click="showPwdFun"></el-button> 
+						<span v-if="showPwd">{{this.pwd}}</span>
+						<el-button type="danger" plain @click="dialogVisible = true">重置密码</el-button>
+					</p>
 					<p>学校/单位：{{this.company}}</p>
 					<p>手机号：{{this.phone}}</p>
 					<p>权限：{{this.authority==1?'普通':this.authority==2?'内部人员':'管理员'}}</p>
@@ -36,7 +39,18 @@
 				</el-button>
 			</el-col>
 		</el-row>
+		<el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+			<p>请输入密码：</p>
+			<el-input v-model="repwd1" placeholder="请输入密码"></el-input>
+			<p>请再一次输入密码：</p>
+			<el-input v-model="repwd2" placeholder="请输入密码"></el-input>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="resPwd()">确 定</el-button>
+			</span>
+		</el-dialog>
 	</div>
+
 </template>
 
 <script>
@@ -44,7 +58,11 @@
 		name: "userInfo",
 		data() {
 			return {
-				auth:'',
+				showPwd: false,
+				repwd1: '',
+				repwd2: '',
+				dialogVisible: false,
+				auth: '',
 				contentId: '',
 				activeName: 'first',
 				info: '',
@@ -59,7 +77,7 @@
 				updateTime: '',
 				createTime: '',
 				isShowl: false,
-				authList:this.$constData.authList
+				authList: this.$constData.authList
 			}
 		},
 		methods: {
@@ -73,22 +91,83 @@
 			handleClick(tab, event) {
 
 			},
-			upAuth(){
+			handleClose() {
+
+			},
+			upAuth() {
 				let cnt = {
-					moduleId:this.$constData.module,
-					id:this.id,
-					authority:this.auth,
+					moduleId: this.$constData.module,
+					adminId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
+					authority: this.auth,
+					userId: this.id,
 				}
-				this.$api.updateUserInfo(cnt, (res => {
+				this.$api.setUserauthority(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.$message({
 							message: '设置成功',
 							type: 'success'
 						});
-						this.$router.push('/contentList')
+						this.$router.push('/userInfo')
+						this.authority = this.auth;
 					} else {
 						this.$message({
-							message: res.data.c,
+							message: res.data.rm,
+							type: 'warning'
+						});
+						this.imgList = []
+					}
+				}))
+			},
+			showPwdFun(){
+				let cnt = {
+					moduleId: this.$constData.module,
+					id: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
+				}
+				this.$api.getUser(cnt, (res => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						if(JSON.parse(res.data.c).authority != 3){
+							this.$message({
+								message: '你不是超级管理员，没有权限查看密码',
+								type: 'warning'
+							});
+							return
+						}
+						this.showPwd= true
+					} else {
+						this.$message({
+							message: res.data.rc,
+							type: 'warning'
+						});
+						this.imgList = []
+					}
+				}))
+			},
+			resPwd(id) {
+				if (this.repwd1 != this.repwd2) {
+					this.$message({
+						message: "密码不一致",
+						type: 'warning'
+					});
+					return
+				}
+				this.dialogVisible = false
+				let cnt = {
+					moduleId: this.$constData.module,
+					adminId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
+					pwd: this.repwd2,
+					userId: this.id,
+				}
+				this.$api.resUserPwd(cnt, (res => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.$message({
+							message: '设置成功',
+							type: 'success'
+						});
+						this.$router.push('/userInfo')
+						this.pwd = this.repwd1;
+					} else {
+						this.$message({
+							message: res.data.rm,
 							type: 'warning'
 						});
 						this.imgList = []

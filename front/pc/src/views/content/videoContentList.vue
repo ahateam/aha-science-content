@@ -57,8 +57,8 @@
 		<el-row style="height: 80px;">
 			<el-col :span="24">
 				当前页数：{{page}}
-				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(page-1)">上一页</el-button>
-				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(page+1)">下一页</el-button>
+				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(0)">上一页</el-button>
+				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(1)">下一页</el-button>
 			</el-col>
 		</el-row>
 	</div>
@@ -145,8 +145,13 @@
 				})
 			},
 			/* 分页*/
-			changePage(page) {
-				this.page = page
+			changePage(e) {
+				if (e) {
+					this.page += 1
+				} else {
+					this.page -= 1
+				}
+				localStorage.setItem("page_videoContentList", this.page)
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
@@ -180,6 +185,13 @@
 								type: 'success',
 								message: '删除成功!'
 							});
+							let cnt = {
+								module: this.$constData.module,
+								count: this.count,
+								type: this.typeList[1].value,
+								offset: (this.page - 1) * this.count
+							}
+							this.getContents(cnt)
 						} else {
 							this.$message({
 								type: 'error',
@@ -353,6 +365,10 @@
 		mounted() {
 			this.getSvip()
 			this.getChannel()
+			let page = Number(localStorage.getItem('page_videoContentList'))
+			if (page) {
+				this.page = page
+			}
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,

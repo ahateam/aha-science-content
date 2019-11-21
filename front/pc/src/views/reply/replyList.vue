@@ -26,8 +26,8 @@
 		<el-row style="height: 80px;">
 			<el-col :span="24">
 				当前页数：{{page}}
-				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(page-1)">上一页</el-button>
-				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(page+1)">下一页</el-button>
+				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(0)">上一页</el-button>
+				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(1)">下一页</el-button>
 			</el-col>
 		</el-row>
 	</div>
@@ -38,7 +38,7 @@
 		name: "contentList",
 		data() {
 			return {
-				keyword:'',
+				keyword: '',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -93,8 +93,13 @@
 				})
 			},
 			/* 分页*/
-			changePage(page) {
-				this.page = page
+			changePage(e) {
+				if (e) {
+					this.page += 1
+				} else {
+					this.page -= 1
+				}
+				localStorage.setItem("page_replyList", this.page)
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
@@ -115,11 +120,16 @@
 			},
 		},
 		mounted() {
+			let page = Number(localStorage.getItem('page_replyList'))
+			if (page) {
+				this.page = page
+			}
 			let cnt = {
 				module: this.$constData.module,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}
+
 			this.getContents(cnt)
 		}
 	}

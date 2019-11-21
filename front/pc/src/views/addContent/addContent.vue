@@ -251,12 +251,16 @@
 					let date = new Date()
 					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 						encodeURIComponent(files[0].name)
+							console.log('---------tmpName--------------------')
+						console.log(tmpName)
 					client.multipartUpload(tmpName, files[0], {
 						meta: {
 							year: 2017,
 							people: 'test'
 						}
 					}).then(res => {
+						console.log('--------res-------------------')
+						console.log(res)
 						//取出存好的url
 						let address = res.res.requestUrls[0]
 						console.log(address)

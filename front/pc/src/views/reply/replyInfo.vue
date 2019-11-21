@@ -6,7 +6,7 @@
 		<el-row class="content-box">
 		</el-row>
 		<el-row class="table-box">
-			<el-table :data="tableData" border style="width: 100%">
+			<el-table :data="tableData" style="width: 100%;margin-bottom: 20px;">
 				<el-table-column prop="name" label="用户名" width="200">
 				</el-table-column>
 				<el-table-column prop="text" label="评论">
@@ -17,7 +17,8 @@
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" size="small">删除</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" style="color: red;" size="small">删除</el-button>
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看回复</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -29,6 +30,25 @@
 				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(page+1)">下一页</el-button>
 			</el-col>
 		</el-row>
+		
+		
+		<el-dialog title="回复" :visible.sync="dialogTableVisible">
+		  <el-table :data="tableData1" style="width: 100%;margin-bottom: 20px;">
+		  	<el-table-column prop="name" label="用户名" width="200">
+		  	</el-table-column>
+		  	<el-table-column prop="text" label="评论">
+		  	</el-table-column>
+		  	<el-table-column prop="appraiseCount" label="点赞数">
+		  	</el-table-column>
+		  	<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
+		  	</el-table-column>
+		  	<el-table-column label="操作" width="200">
+		  		<template slot-scope="scope">
+		  			<el-button @click="delCommentBtn(scope.row,scope.$index)" type="text" style="color: red;" size="small">删除</el-button>
+		  		</template>
+		  	</el-table-column>
+		  </el-table>
+		</el-dialog>
 	</div>
 </template>
 
@@ -37,7 +57,9 @@
 		name: "contentList",
 		data() {
 			return {
+				dialogTableVisible:false,
 				tableData: [],
+				tableData1:[],
 				count: 10,
 				page: 1,
 				pageOver: true,
@@ -78,6 +100,43 @@
 				}
 				this.getContents(cnt)
 			},
+			infoBtn(info){
+				this.tableData1=info.comment
+				this.dialogTableVisible = true
+			},
+			//删除回复
+			delCommentBtn(info,index){
+					this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(async () => {
+						let cnt = {
+							ownerId: info.replyId,
+							sequenceId: info.sequenceId,
+							isReply:"comment",
+						}
+						this.$api.delReply(cnt, (res) => {
+							if (res.data.rc == this.$util.RC.SUCCESS) {
+								this.$message({
+									type: 'success',
+									message: '删除成功!'
+								});
+								this.tableData1.splice(index,1)
+							} else {
+								this.$message({
+									type: 'error',
+									message: '删除失败!'
+								});
+							}
+						})
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+			},
 			/* 删除内容*/
 			delBtn(info) {
 				this.$confirm('此操作将永久删除, 是否继续?', '提示', {
@@ -87,7 +146,8 @@
 				}).then(async () => {
 					let cnt = {
 						ownerId: info.ownerId,
-						sequenceId:info.sequenceId,
+						sequenceId: info.sequenceId,
+						isReply:"reply",
 					}
 					this.$api.delReply(cnt, (res) => {
 						if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -96,8 +156,8 @@
 								message: '删除成功!'
 							});
 							let cnt = {
-								ownerId:info.id,
-								orderDesc:true,
+								ownerId: info.id,
+								orderDesc: true,
 								count: this.count,
 								offset: (this.page - 1) * this.count
 							}
@@ -116,22 +176,12 @@
 					});
 				});
 			},
-			//查看 详情
-			infoBtn(info) {
-				this.$router.push({
-					path: '/contentInfo',
-					name: 'contentInfo',
-					params: {
-						info: info
-					}
-				})
-			},
 		},
 		mounted() {
 			let info = this.$route.params.info
 			let cnt = {
-				ownerId:info.id,
-				orderDesc:true,
+				ownerId: info.id,
+				orderDesc: true,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

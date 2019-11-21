@@ -89,9 +89,9 @@
 			<el-button type="primary" @click="addContent" style="margin: 0 auto;display: block;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
-		<div style="text-align: center;margin-top: 20px;">
-			<iframe :src="src" width="500px" height="300px"></iframe>
-			<iframe :src="imgSrc" width="500px" height="300px"></iframe>
+		<div style="text-align: center;margin-top: 50px;">
+				<video :src="src" controls="controls" style="width: 20%; margin-bottom: 150px;"></video>
+				<img :src="imgSrc"  style="width: 20%; margin-bottom: 150px;" />
 		</div>
 	</div>
 </template>
@@ -202,6 +202,26 @@
 			},
 			//--------
 			addContent() {
+				if(this.title == ''){
+					this.$message({
+						message: "请输入标题",
+						type: 'warning'
+					});
+					return;
+				}if(this.text == ''){
+					this.$message({
+						message: "请输入简介",
+						type: 'warning'
+					});
+					return;
+				}
+				if(this.src == ''){
+					this.$message({
+						message: "请上传视频",
+						type: 'warning'
+					});
+					return;
+				}
 				let that = this
 				let dataUrl = {
 					url: this.src,

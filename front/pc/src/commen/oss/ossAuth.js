@@ -7,15 +7,13 @@ const OSS = require('ali-oss');
 
 
 let client = new OSS({
-    region: 'oss-cn-hangzhou',
+    region: 'oss-cn-zhangjiakou',
     //云账号AccessKey有所有API访问权限，建议遵循阿里云安全最佳实践，部署在服务端使用RAM子账号或STS，部署在客户端使用STS。
-    accessKeyId: 'LTAIJ9mYIjuW54Cj',
-    accessKeySecret: '89EMlXLsP13H8mWKIvdr4iM1OvdVxs',
-    //测试服
-    bucket: 'weapp-xhj'
-    //正式服
-    // bucket: 'jitijingji-test1'
+    accessKeyId: 'LTAI4FcuT5ZQCiukxiMZimeY',
+    accessKeySecret: 'yeisKKgf7MbgRpe7Cq8DWSG2C6c144',
+    bucket: 'zskp-file'
 });
+
 
 export default {
     client,
