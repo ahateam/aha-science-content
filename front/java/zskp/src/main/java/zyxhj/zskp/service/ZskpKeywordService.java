@@ -2,8 +2,10 @@ package zyxhj.zskp.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
@@ -97,19 +99,34 @@ public class ZskpKeywordService extends Controller{
 		int count,
 		int offset) throws Exception {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), count, offset);
-			int index = list.size();
 			if(userId ==null) {
 				return otherContent.getContents(module, null, (byte)4, null, null, null, null, count, offset);
 			}
-			JSONArray json = new JSONArray();
-			JSONArray ja = new JSONArray();
-			for(int i = 0;i<index;i++) {
-				json.add(list.get(i).keyword);
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), 3, 0);
+			int index = list.size();
+			if(index <= 0 || list==null) {
+				return otherContent.getContents(module, null, (byte)4, null, null, null, null, count, offset);
 			}
-			JSONObject tag = new JSONObject();
-			tag.put("homeCotent", json);
-			ja = otherContent.getContents(module, null, (byte)4, null, null, null, tag, count, offset);
+			JSONArray json = null;
+			JSONArray temp = null;
+			Map<Long, Object> map = new HashMap<Long, Object>();
+			JSONArray ja = new JSONArray();
+			JSONObject tag = null;
+			for(int i = 0;i<index;i++) {
+				json = new JSONArray();
+				tag = new JSONObject();
+				temp = new JSONArray();
+				json.add(list.get(i).keyword);
+				tag.put("homeCotent", json);
+				temp = otherContent.getContents(module, null, (byte)4, null, null, null, tag, 5, 0);
+				for(int j=0;j<temp.size();j++) {
+					map.put(temp.getJSONObject(j).getLong("id"),temp.get(j));
+				}
+			}
+			for(Long key:map.keySet()) {
+				ja.add(map.get(key));
+			}
+//			ja = otherContent.getContents(module, null, (byte)4, null, null, null, tag, 15, offset);
 			return ja;
 		}
 	}
@@ -138,10 +155,13 @@ public class ZskpKeywordService extends Controller{
 				tagList.add(list.get(i).keyword);
 			}
 			for(int i=0,index = ja.size();i<index;i++) {
+				keywordRepository.addKeywordPageview(conn, ja.getString(i));
 				if(tagList.contains(ja.getString(i))) {//判断关键词是否存在与用户兴趣表中
 					interestTagRepository.addInteresttagPageview(userId,ja.getString(i));//有就浏览量加一
 				}else {
-					createInterestTag(userId,ja.getString(i));//没有就创建
+					if(ja.getString(i) != null && ja.getString(i).length()>0) {
+						createInterestTag(userId,ja.getString(i));//没有就创建						
+					}
 				}
 			}
 			return c;
@@ -199,4 +219,17 @@ public class ZskpKeywordService extends Controller{
 			return list;
 		}
 	}
+	@POSTAPI(//
+			path = "getAllInterestTag", 
+			des = "查询用户兴趣标签", 
+			ret = "" 
+		)
+		public JSONArray getAllInterestTag(
+			int count,
+			int offset
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				return interestTagRepository.getAllInterestTag(count, offset);
+			}
+		}
 }
