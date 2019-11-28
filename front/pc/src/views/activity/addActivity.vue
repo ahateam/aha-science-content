@@ -194,11 +194,7 @@
 					return
 				}
 				if (this.time == '') {
-					this.$message({
-						message: '请选择活动时间',
-						type: 'warning'
-					})
-					return
+					this.time = '长期'
 				}
 				this.editorBtn()
 			},
@@ -244,7 +240,7 @@
 							message: '创建成功',
 							type: 'success'
 						});
-						that.$router.push('/contentList')
+						that.$router.push('/activityList')
 					} else {
 						this.$message({
 							message: res.data.c,
@@ -258,7 +254,7 @@
 				let cnt = {
 					moduleId: this.$constData.module, // Long 模块编号
 					userCoordinate: '0,0',
-					count: 300, // int
+					count: 500, // int
 					offset: 0, // int
 				}
 				this.$api.getTourBases(cnt, (res) => {

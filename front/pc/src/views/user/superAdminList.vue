@@ -4,7 +4,7 @@
 			用户管理
 		</el-row>
 		<el-row class="content-box">
-			<el-button @click="adduser">创建普通管理员</el-button>
+			<el-button @click="adduser">创建超级管理员</el-button>
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
@@ -78,7 +78,7 @@
 				//获取内容列表
 				let cnt = {
 					moduleId: this.$constData.module,
-					authority: 3,
+					authority: 4,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -105,7 +105,7 @@
 							});
 							let recnt = {
 								moduleId: this.$constData.module,
-								authority:3,
+								authority:4,
 								count: this.count,
 								offset: (this.page - 1) * this.count
 							}
@@ -145,7 +145,7 @@
 							});
 							let recnt = {
 								moduleId: this.$constData.module,
-								authority:3,
+								authority:4,
 								count: this.count,
 								offset: (this.page - 1) * this.count
 							}
@@ -179,7 +179,7 @@
 					path: '/addUser',
 					name: 'addUser',
 					params:{
-						info:3
+						info:4
 					}
 				})
 			}
@@ -187,7 +187,7 @@
 		mounted() {
 			let cnt = {
 				moduleId: this.$constData.module,
-				authority: 3,
+				authority: 4,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

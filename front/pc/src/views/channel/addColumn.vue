@@ -134,20 +134,7 @@
 			},
 			///-----------
 			createChannel() {
-				if(this.title == ''){
-					this.$message({
-						message: '请输入标题',
-						type: 'warning'
-					});
-					return;
-				}
-				if(this.text == ''){
-					this.$message({
-						message: '请输入简介',
-						type: 'warning'
-					});
-					return;
-				}
+				
 				if(this.imgSrc == ''){
 					this.$message({
 						message: '请上传图片',

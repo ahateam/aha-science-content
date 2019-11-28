@@ -52,7 +52,7 @@
 			</el-col>
 			<el-col :span="13">
 				<el-form label-width="80px">
-					<el-form-item label="关键词:">
+					<el-form-item label="关键词">
 						<el-select v-model="value" multiple default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
 							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
@@ -60,6 +60,17 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
+		</el-row>
+		<el-row style="margin-bottom: 10px" v-if="this.isShowpage">
+			<el-col :span="8">
+				<el-form label-width="80px">
+					<el-form-item label="浏览量">
+						<el-input v-model="pageview" :value="pageview" placeholder="请输入内容" style="width: 217px;"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-radio v-model="viewradio" label="1">浏览量可见</el-radio>
+			<el-radio v-model="viewradio" label="0">浏览量不可见</el-radio>
 		</el-row>
 		<el-row style="margin-bottom: 10px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
@@ -82,6 +93,9 @@
 		name: "addContent",
 		data() {
 			return {
+				viewradio: '',
+				isShowpage: false,
+				pageview: '',
 				keywordList: [{
 					keyword: '',
 					id: ''
@@ -170,6 +184,8 @@
 					tags: JSON.stringify(tags),
 					title: this.title,
 					data: JSON.stringify(data),
+					pageview: this.pageview,
+					isPageView: this.viewradio,
 				}
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
@@ -241,31 +257,46 @@
 					}
 				})
 			},
-
 			getChannelById(id) {
 				let cnt = {
 					id: id, // Long 专栏id
 				}
-				this.$api.getChannlById(cnt,(res)=>{
-					if(res.data.rc == this.$util.RC.SUCCESS){
+				this.$api.getChannlById(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let type = this.$util.tryParseJson(res.data.c).type
-						if(type == this.$constData.channelType[0].value){
+						if (type == this.$constData.channelType[0].value) {
 							this.vip = id
-						}else{
+						} else {
 							this.upChannelId = id
 						}
-					}else{
+					} else {
 						console.log('error')
+					}
+				})
+			},
+			getUser() {
+				let cnt = {
+					moduleId: this.$constData.module,
+					id: this.userId,
+				}
+				this.$api.getUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let userInfo = this.$util.tryParseJson(res.data.c)
+						if (userInfo.authority == 4) {
+							console.log(userInfo)
+							this.isShowpage = true
+						}
 					}
 				})
 			}
 		},
 		mounted() {
+			this.getUser()
 			let info = this.$route.params.info
+			console.log(info)
 			this.getChannels(info)
 			this.getVips()
 			this.getKeyword()
-			console.log(info)
 			this.id = info.id
 			this.title = info.title
 			this.status = info.status
@@ -278,8 +309,9 @@
 			this.cotentHtml = JSON.parse(info.data).editor[0].value
 			this.editor.txt.html(this.cotentHtml)
 			this.value = info.tags.homeCotent
-
+			this.pageview = info.pageView
 			this.getChannelById(info.upChannelId)
+			this.viewradio = info.isPageView + ''
 		}
 	}
 </script>

@@ -53,7 +53,13 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-			
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="浏览量:">
+						<el-input v-model="pageView" placeholder="请输入要显示的浏览量" style="width:217px;"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
 			<el-col :span="8" v-if="this.upChannelId == ''">
 				<el-form label-width="80px">
 					<el-form-item label="栏目:">
@@ -77,7 +83,7 @@
 			<el-col :span="13">
 				<el-form label-width="80px">
 					<el-form-item label="关键词:">
-						<el-select v-model="value" multiple   default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
+						<el-select v-model="value" filterable multiple   default-first-option placeholder="请选择文章标签-提示:可多选,可搜索,可删除" style="width: 100%;">
 							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
 						</el-select>
@@ -104,6 +110,8 @@
 		name: "addVideoContent",
 		data() {
 			return {
+				isShowpage:false,
+				pageView:'',
 				keywordList:[{
 					keyword: '',
 					id: ''
@@ -242,6 +250,7 @@
 					tags: JSON.stringify(tags),
 					title: this.title,
 					data: dataUrl,
+					pageView: this.pageView == '' ? 0 : this.pageView,
 				}
 				if (this.upChannelId != '') {
 					cnt.upChannelId = this.upChannelId
@@ -304,12 +313,28 @@
 						this.keywordList = this.$util.tryParseJson(res.data.c)
 					}
 				})
+			},
+			getUser() {
+				let cnt = {
+					moduleId: this.$constData.module,
+					id: this.userId,
+				}
+				this.$api.getUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let userInfo = this.$util.tryParseJson(res.data.c)
+						if (userInfo.authority == 4) {
+						console.log(userInfo)
+							this.isShowpage = true
+						}
+					}
+				})
 			}
 		},
 		mounted() {
 			this.getVips()
 			this.getChannels()
 			this.getKeyword()
+			this.getUser()
 			let info = this.$route.params.info
 			if (info != undefined) {
 				this.upChannelId = info.id

@@ -116,7 +116,9 @@ export default {
       spinner: "el-icon-loading"
     });
     let loginUser = JSON.parse(localStorage.getItem("loginUser"));
-    if (loginUser.authority == 3) {
+	if (loginUser.authority == 4) {
+	  this.menuList = menu.supermenu;
+	}else if (loginUser.authority == 3) {
       this.menuList = menu.menu;
     } else if (loginUser.authority == 2) {
       this.menuList = menu.insiderMenu;

@@ -4,7 +4,7 @@ const constData = {}
 
 constData.module = 1180,
 
-	constData.chnnelTagmodule = 11705
+constData.chnnelTagmodule = 11705
 
 /* 栏目类型 */
 constData.channelType = [{
@@ -149,6 +149,9 @@ constData.tagstatus = [{
 ]
 
 constData.authList = [{
+	name: '超级管理员权限',
+	id: '4'
+},{
 	name: '管理员权限',
 	id: '3'
 }, {

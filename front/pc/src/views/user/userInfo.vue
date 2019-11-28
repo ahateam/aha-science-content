@@ -6,7 +6,7 @@
 					<p><img :src="this.head" width="40" height="40" class="head_pic" /></p>
 					<p>用户id：{{this.id}}</p>
 					<p>用户昵称：{{this.name}}</p>
-					<p>用户密码： <el-button type="danger" icon="el-icon-question" v-if="!showPwd" circle @click="showPwdFun"></el-button> 
+					<p>用户密码： <el-button type="danger" icon="el-icon-question" v-if="!showPwd" circle @click="showPwdFun"></el-button>
 						<span v-if="showPwd">{{this.pwd}}</span>
 						<el-button type="danger" plain @click="dialogVisible = true">重置密码</el-button>
 					</p>
@@ -118,21 +118,22 @@
 					}
 				}))
 			},
-			showPwdFun(){
+			showPwdFun() {
 				let cnt = {
 					moduleId: this.$constData.module,
 					id: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				}
 				this.$api.getUser(cnt, (res => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						if(JSON.parse(res.data.c).authority != 3){
+						if (JSON.parse(res.data.c).authority == 3 || JSON.parse(res.data.c).authority == 4) {
+							this.showPwd = true
+						} else {
 							this.$message({
 								message: '你不是超级管理员，没有权限查看密码',
 								type: 'warning'
 							});
 							return
 						}
-						this.showPwd= true
 					} else {
 						this.$message({
 							message: res.data.rc,

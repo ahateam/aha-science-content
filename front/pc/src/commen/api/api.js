@@ -116,6 +116,11 @@ api.editteContentTag = function (cnt, callback) {
 api.register = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/register', cnt, callback)
 }
+//创建用户
+api.createUser = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/createUser', cnt, callback)
+}
+
 //获取用户
 api.getUsers = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/getUsers', cnt, callback)
