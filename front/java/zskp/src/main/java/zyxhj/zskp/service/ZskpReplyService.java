@@ -165,7 +165,7 @@ public class ZskpReplyService extends Controller {
 		try (DruidPooledConnection conn = ds.getConnection()) {
 			if("reply".equals(isReply)) {				
 				replyRepository.delete(conn, EXP.INS().key("owner_id", ownerId).andKey("sequence_id", sequenceId));
-				commentRepository.delete(conn, EXP.INS().key("reply_id", replyId));
+				commentRepository.delete(conn, EXP.INS().key("reply_id", sequenceId));
 			}else if("comment".equals(isReply)) {
 				commentRepository.delete(conn, EXP.INS().key("sequence_id", sequenceId));
 			}
