@@ -15,6 +15,14 @@
 						<button @click="createUserFavorite" class="followBtn" v-if="followStatus == false">关注</button>
 						<button @click="delUserFavorite" class="followBtn" v-else-if="followStatus == true">已关注</button>
 					</view>
+
+					<view class="otherInfo" v-if="contentRemark||mp3Src">
+						<view class="remark" v-if="contentRemark">
+							{{contentRemark}}
+						</view>
+						<audio v-if="mp3Src" :src="mp3Src" :poster="mp3Img" name="mp3" :action="audioAction" controls></audio>
+					</view>
+
 					<view class="articleInfo">
 						<view v-for="(item,index) in flow" :key="index">
 							<view v-if="item.type == 'textarea'">
@@ -26,6 +34,11 @@
 						</view>
 					</view>
 
+					<view class="writerBox" v-if="contentSource||contentAuthor">
+						<view v-if="contentSource">来源:<text>{{contentSource}}</text></view>
+						<view v-if="contentAuthor">原作者:<text>{{contentAuthor}}</text></view>
+					</view>
+
 					<!-- 点赞分享 -->
 					<view class="actions">
 						<view class="action-item">
@@ -34,12 +47,12 @@
 								<text>{{contentUpvote}}赞</text>
 							</button>
 						</view>
-						<!-- <view class="action-item">
+						<view class="action-item">
 							<button type="primary" @click="shareBtn">
 								<i class="yticon iconfont kk-share"></i>
 								<text>分享</text>
 							</button>
-						</view> -->
+						</view>
 
 						<!-- <view class="action-item">
 							<button type="primary" @click="createHb">
@@ -132,13 +145,13 @@
 
 				/* 点赞 */
 				commentId: 0, //点赞对象id
+				contentUpvote: 0, //文章点赞数
 				upvoteStatus: false, //文章点赞状态
 				/* 点赞end */
 
 				/* 评论 */
 				comment: [], //评论列表
 				totalCount: 0, //文章评论数
-				contentUpvote: 0, //文章点赞数
 				commentContent: '', //评论内容
 
 				//二級回復
@@ -152,7 +165,21 @@
 
 				pageStatus: false,
 
-				followId: ''
+				followId: '',
+
+				// 其他信息
+				contentRemark: '',
+
+				// 音频
+				mp3Src: '',
+				mp3Img: '',
+				audioAction: {
+					method: 'pause'
+				},
+
+				contentSource: '', //来源
+				contentAuthor: '', //原作者
+
 			}
 		},
 		onLoad(res) {
@@ -669,6 +696,14 @@
 						this.getUserById(detailData.upUserId)
 						this.getBoolFavoriteUser(detailData.upUserId)
 						this.getCommentByContentId()
+						this.contentRemark = detailData.contentRemark
+						this.contentSource = detailData.contentSource
+						this.contentAuthor = detailData.contentAuthor
+						this.mp3Src = detailData.mp3Src
+						let imgList = this.$util.tryParseJson(detailData.data).imgList
+						if (imgList.length > 0) {
+							this.mp3Img = imgList[0].src
+						}
 					}
 				}))
 			},
@@ -878,11 +913,6 @@
 		}
 	}
 
-	.noEva {
-		font-size: 30upx;
-		color: #303133;
-		padding: 20rpx 30rpx;
-	}
 
 	.contentImg {
 		image {
@@ -968,5 +998,34 @@
 
 	.currentIcon {
 		color: $color-main;
+	}
+
+	.otherInfo {
+		margin-top: $box-margin-top;
+		font-size: $list-info;
+		color: $list-title-color;
+	}
+
+	.remark {
+		padding: 10upx;
+		background-color: rgba($color: #999999, $alpha: .1);
+		margin-bottom: 15upx;
+		text-indent: 2em;
+	}
+
+	.writerBox {
+		// display: flex;
+		// align-items: center;
+		margin-top: $box-margin-top;
+		color: $list-info-color;
+		font-size: $list-info;
+
+		view {
+			margin: 10upx;
+		}
+
+		text {
+			margin-left: 10upx;
+		}
 	}
 </style>

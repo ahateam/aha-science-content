@@ -11,6 +11,7 @@
 			<text class="upName" v-if="upName">{{upName}}</text>
 			<text class="time" v-if="item.type != -1">{{time}}</text>
 			<view v-else class="address"><text class="iconfont kk-location"></text>{{time}}</view>
+			<view v-if="item.type != -1" class="seeNumber">阅读量：{{item.pageView}}</view>
 		</view>
 	</view>
 </template>
@@ -86,6 +87,10 @@
 			width: 60upx;
 			height: 60upx;
 		}
+	}
+
+	.seeNumber {
+		margin-top: 10rpx;
 	}
 
 	.bottom {

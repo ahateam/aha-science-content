@@ -52,12 +52,12 @@
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type" :pageView="item.pageView"></three-img>
 				</view>
 			</view>
 
 			<view v-else-if="item.type == constData.contentType[0].key">
-				<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
+				<only-text :title="item.title" :upName="item.user.name" :time="item.time" :pageView="item.pageView"></only-text>
 			</view>
 
 			<view v-else-if="item.type == -1">

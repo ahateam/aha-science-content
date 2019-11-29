@@ -8,9 +8,9 @@
 				</swiper-item>
 			</swiper>
 			<!-- <view class="block"></view> -->
-			<view class="infoBox">
+		<!-- 	<view class="infoBox">
 				{{channelInfo.data.info}}
-			</view>
+			</view> -->
 		</view>
 		<view >
 			<view class="contentBox" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">

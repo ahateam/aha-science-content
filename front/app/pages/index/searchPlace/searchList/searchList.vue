@@ -12,8 +12,8 @@
 		</navBar>
 
 		<!-- 搜索内容列表 -->
-		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
-			<right-video :title="item.title" :upName="item.address" :imgSrc="item.imgList[0].src" :time="item.margin+'km'" :type="item.type"></right-video>
+		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" class="listBox">
+			<right-video :item="item" :upName="item.address" :time="item.margin+'km'"></right-video>
 		</view>
 
 		<uni-load-more :status="pageStatus"></uni-load-more>
@@ -113,7 +113,7 @@
 				this.pageStatus = 'loading'
 				this.$api.searchTourBase(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						let searchs = this.$util.tryParseJson(res.data.c).list
+						let searchs = this.$util.tryParseJson(res.data.c)
 						this.setContentList(searchs)
 					} else {
 						console.log('error')
@@ -213,5 +213,10 @@
 			top: 4upx;
 			z-index: 10;
 		}
+	}
+
+	.listBox {
+		background-color: #FFFFFF;
+		padding: $box-margin-top $box-margin-left;
 	}
 </style>

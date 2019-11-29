@@ -155,7 +155,11 @@
 				"enablePullDownRefresh": true
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/index/activity/helpCenter/helpCenter",
+            "style" : {}
+        }
+    ],
 	"tabBar": {
 		"color": "#C0C4CC",
 		"selectedColor": "#fb7299",

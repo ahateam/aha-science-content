@@ -6,16 +6,17 @@
 				<image :src="item.src" mode="scaleToFill"></image>
 			</view>
 		</view>
-		<view>
+		<view class="bottom">
 			<text class="upName">{{upName}}</text>
 			<text class="time">{{time}}</text>
+			<text class="seeNumber">阅读量：{{pageView}}</text>
 		</view>
 	</view>
 </template>
 
 <script>
 	export default {
-		props: ['title', 'imgList', 'upName', 'time', 'type'],
+		props: ['title', 'imgList', 'upName', 'time', 'type', 'pageView'],
 		data() {
 			return {};
 		}
@@ -71,20 +72,23 @@
 		}
 	}
 
-	.upName {
+	.bottom {
+		margin-top: 20upx;
 		font-size: 26upx;
 		color: #aaa;
 	}
-
+	
 	.time {
-		font-size: 26rpx;
-		color: #aaa;
+		margin-left: 20rpx;
+	}
+	
+	.seeNumber {
 		margin-left: 20rpx;
 	}
 
 	.imgBox {
 		margin-right: 4rpx;
 		flex: 1;
-		
+
 	}
 </style>

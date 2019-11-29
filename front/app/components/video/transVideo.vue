@@ -7,9 +7,10 @@
 				<image :src="iconSrc" mode="widthFix"></image>
 			</view>
 		</view>
-		<view>
+		<view class="bottom">
 			<text class="upName" v-if="item.user">{{item.user.name}}</text>
 			<text class="time">{{item.time}}</text>
+			<text class="seeNumber">阅读量：{{item.pageView}}</text>
 		</view>
 	</view>
 </template>
@@ -78,16 +79,20 @@
 		}
 	}
 
-	.upName {
+	.bottom {
+		margin-top: 20upx;
 		font-size: 26upx;
 		color: #aaa;
 	}
 
 	.time {
-		font-size: 26rpx;
-		color: #aaa;
 		margin-left: 20rpx;
 	}
+
+	.seeNumber {
+		margin-left: 20rpx;
+	}
+
 
 	.liveTag {
 		border: 1px solid $color-main;

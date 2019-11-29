@@ -37,6 +37,10 @@
 			</view>
 		</view>
 
+		<view class="flexBox">
+			<button class="helpCenter" @click="navToCenter">问答中心</button>
+		</view>
+
 		<view class="fixBox">
 			<button class="signUpBtn" type="primary" @click="signUp" v-if="shopStatus == false">报 名</button>
 			<button class="signUpBtn cntShop" type="primary" @click="signUp" v-if="shopStatus == true">报 名</button>
@@ -95,6 +99,12 @@
 			this.getEnrolls()
 		},
 		methods: {
+			navToCenter() {
+				uni.navigateTo({
+					url: `./helpCenter/helpCenter?id=${this.contentId}`
+				})
+			},
+
 			getNowTime() {
 				let time = Math.round(new Date() * 1)
 				return time
@@ -387,5 +397,29 @@
 		padding: 0 10upx;
 		margin-right: 10upx;
 		font-weight: normal;
+	}
+
+	.flexBox {
+		padding-left: 30upx;
+
+		.button-hover {
+			background-color: rgba($color: #999999, $alpha: .1);
+		}
+	}
+
+	.helpCenter {
+		display: inline-block;
+		padding: 0 30upx;
+		font-size: 32upx;
+		color: $color-main;
+		line-height: 80upx;
+		border-radius: 15upx;
+		border: 1upx solid $color-main;
+		margin: 10upx auto;
+		background-color: #FFFFFF;
+
+		&:after {
+			border: none;
+		}
 	}
 </style>

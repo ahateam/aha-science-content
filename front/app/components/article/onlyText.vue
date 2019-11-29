@@ -2,15 +2,16 @@
 	<view class="body">
 		<view class="title">{{title}}</view>
 		<view class="bottom">
-			<text class="upName">{{upName}}</text>
+			<text>{{upName}}</text>
 			<text class="time">{{time}}</text>
+			<text class="seeNumber">阅读量：{{pageView}}</text>
 		</view>
 	</view>
 </template>
 
 <script>
 	export default {
-		props: ['title', 'imgSrc', 'upName', 'time'],
+		props: ['title', 'imgSrc', 'upName', 'time', 'pageView'],
 		data() {
 			return {
 
@@ -42,16 +43,15 @@
 
 	.bottom {
 		margin-top: 20upx;
-	}
-
-	.upName {
 		font-size: 26upx;
 		color: #aaa;
 	}
 
 	.time {
-		font-size: 26rpx;
-		color: #aaa;
+		margin-left: 20rpx;
+	}
+
+	.seeNumber {
 		margin-left: 20rpx;
 	}
 </style>

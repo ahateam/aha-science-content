@@ -18,6 +18,19 @@
 						<button @click="delUserFavorite" class="followBtn" v-else-if="followStatus == true">已关注</button>
 						<!-- <text class="yticon icon-xia show-icon"></text> -->
 					</view>
+					
+					<view class="otherInfo" v-if="contentRemark||mp3Src">
+						<view class="remark" v-if="contentRemark">
+							{{contentRemark}}
+						</view>
+						<audio v-if="mp3Src" :src="mp3Src" :poster="mp3Img" name="mp3" :action="audioAction" controls></audio>
+					</view>
+					
+					<view class="writerBox" v-if="contentSource||contentAuthor">
+						<view v-if="contentSource">来源:<text>{{contentSource}}</text></view>
+						<view v-if="contentAuthor">原作者:<text>{{contentAuthor}}</text></view>
+					</view>
+					
 					<!-- 点赞评论等操作 -->
 					<view class="actions">
 						<view class="action-item">
@@ -26,12 +39,12 @@
 								<text>{{contentUpvote}}赞</text>
 							</button>
 						</view>
-						<!-- <view class="action-item">
+						<view class="action-item">
 							<button type="primary" @click="shareBtn">
 								<i class="yticon iconfont kk-share"></i>
 								<text>分享</text>
 							</button>
-						</view> -->
+						</view>
 
 						<!-- <view class="action-item">
 							<button type="primary" @click="createHb">
@@ -145,6 +158,19 @@
 				followId: '',
 
 				pageStatus: false,
+				
+				// 其他信息
+				contentRemark: '',
+				
+				// 音频
+				mp3Src: '',
+				mp3Img: '',
+				audioAction: {
+					method: 'pause'
+				},
+				
+				contentSource: '', //来源
+				contentAuthor: '', //原作者
 			}
 		},
 		onLoad(res) {
@@ -678,6 +704,14 @@
 						this.getUserById(detailData.upUserId)
 						this.getBoolFavoriteUser(detailData.upUserId)
 						this.getCommentByContentId()
+						this.contentRemark = detailData.contentRemark
+						this.contentSource = detailData.contentSource
+						this.contentAuthor = detailData.contentAuthor
+						this.mp3Src = detailData.mp3Src
+						let imgList = this.$util.tryParseJson(detailData.data).imgList
+						if (imgList.length > 0) {
+							this.mp3Img = imgList[0].src
+						}
 					}
 				}))
 			},
@@ -931,5 +965,34 @@
 
 	.currentIcon {
 		color: $color-main;
+	}
+	
+	.otherInfo {
+		margin-top: $box-margin-top;
+		font-size: $list-info;
+		color: $list-title-color;
+	}
+	
+	.remark {
+		padding: 10upx;
+		background-color: rgba($color: #999999, $alpha: .1);
+		margin-bottom: 15upx;
+		text-indent: 2em;
+	}
+	
+	.writerBox {
+		// display: flex;
+		// align-items: center;
+		margin-top: $box-margin-top;
+		color: $list-info-color;
+		font-size: $list-info;
+	
+		view {
+			margin: 10upx;
+		}
+	
+		text {
+			margin-left: 10upx;
+		}
 	}
 </style>

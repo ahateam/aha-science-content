@@ -2,8 +2,8 @@
     "name" : "掌上科普",
     "appid" : "__UNI__DAAB002",
     "description" : "",
-    "versionName" : "1.0.7",
-    "versionCode" : 107,
+    "versionName" : "1.0.8",
+    "versionCode" : 108,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -63,8 +63,8 @@
             "sdkConfigs" : {
                 "oauth" : {
                     "weixin" : {
-                        "appid" : "wxc5a7520814c89f2d",
-                        "appsecret" : "0eb2041974c520362e3550db68d889bd",
+                        "appid" : "wx18ea6690fff30165",
+                        "appsecret" : "c511c80e46bfdaa0995321a0bb71322e",
                         "UniversalLinks" : ""
                     }
                 },
@@ -79,7 +79,7 @@
                 },
                 "share" : {
                     "weixin" : {
-                        "appid" : "wxc5a7520814c89f2d",
+                        "appid" : "wx18ea6690fff30165",
                         "UniversalLinks" : ""
                     }
                 }
