@@ -48,28 +48,6 @@
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
-		<!-- <el-row>
-			<el-col :span="4">
-				<div class="title-box">你可输入的标签:</div>
-			</el-col>
-			<el-col :span="18">
-				<el-tag type="info" v-for="tag in vipTagList" :key="tag.name">{{tag.name}}</el-tag>
-			</el-col>
-		</el-row>
-		<el-row>
-			<el-col :span="4">
-				<div class="title-box">标签:</div>
-			</el-col>
-			<el-col :span="18" class="text-box">
-				<el-tag :key="tag" v-for="tag in tagList" closable :disable-transitions="false" @close="handleClose(tag)">
-					{{tag}}
-				</el-tag>
-				<el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small"
-				 @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
-				</el-input>
-				<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
-			</el-col>
-		</el-row> -->
 		<el-col :span="24" style="text-align: center">
 			<el-button style="padding: 1em 4em" type="primary" @click="createChannel">创建栏目</el-button>
 		</el-col>
@@ -141,6 +119,27 @@
 			},
 			///-----------
 			createChannel() {
+				if(this.title == ''){
+					this.$message({
+						message: '请输入标题',
+						type: 'warning'
+					});
+					return;
+				}
+				if(this.text == ''){
+					this.$message({
+						message: '请输入简介',
+						type: 'warning'
+					});
+					return;
+				}
+				if(this.imgSrc == ''){
+					this.$message({
+						message: '请上传图片',
+						type: 'warning'
+					});
+					return;
+				}
 				let that = this
 				let data = {
 					info: this.text,

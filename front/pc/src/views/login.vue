@@ -52,6 +52,7 @@
 			},
 			//登录
 			loginBtn() {
+				this.loading = true
 				if (this.username == '' || this.password == '') {
 					this.$message.error('请将账号密码输入完整')
 				} else {
@@ -67,6 +68,7 @@
 							this.$router.push('/content')
 						} else {
 							this.$message.error('登录信息不正确')
+							this.loading = false
 						}
 					})
 				}

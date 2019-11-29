@@ -42,7 +42,7 @@ public class TourBases {
 	/**
 	 * 数据
 	 */
-	@RDSAnnField(column = RDSAnnField.SHORT_TEXT)
+	@RDSAnnField(column = RDSAnnField.TEXT)
 	public String data;
 	
 	/**

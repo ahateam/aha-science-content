@@ -52,37 +52,6 @@ public class ZskpReplyService extends Controller {
 			log.error(e.getMessage(), e);
 		}
 	}
-
-//	@POSTAPI(//
-//			path = "createReply", //
-//			des = "创建回复", //
-//			ret = "Reply实例" //
-//	)
-//	public APIResponse createReply(//
-//			@P(t = "持有者编号") Long ownerId, //
-//			@P(t = "提交者编号") Long upUserId, //
-//			@P(t = "@对象编号") Long atUserId, //
-//			@P(t = "@对象名称") String atUserName, //
-//			@P(t = "标题") String title, //
-//			@P(t = "正文") String text, //
-//			@P(t = "扩展") String ext//
-//	) throws ServerException, SQLException {
-//		try (DruidPooledConnection conn = ds.getConnection()) {
-//			Content c = contentRepository.get(conn, EXP.INS().key("id", ownerId));	
-//			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
-//			if("5".equals(c.status.toString())) {
-//				return APIResponse.getNewFailureResp(new RC("fail","该内容下已被设置为不可评论"));
-//			}else if ("1".equals(user.id.toString())) {
-//				return APIResponse.getNewFailureResp(new RC("fail","你已被禁言"));
-//			}
-//			Reply re =  replyService.createReply(ownerId, upUserId, atUserId, atUserName, title, text, ext);
-//			Isread t = new Isread();
-//			t.userId = upUserId;
-//			t.replyId = re.sequenceId;
-//			isreadRepository.insert(conn, t);
-//			return APIResponse.getNewSuccessResp(re);
-//		}
-//	}
 	@POSTAPI(//
 		path = "createReply", //
 		des = "创建回复", //
@@ -115,12 +84,8 @@ public class ZskpReplyService extends Controller {
 			reply.atUserName = atUserName;
 			reply.title = title;
 			reply.text = text;
-			reply.ext = "0";
+			reply.ext = "1";
 			replyRepository.insert(conn, reply);
-			Isread t = new Isread();
-			t.userId = upUserId;
-			t.replyId = reply.sequenceId;
-			isreadRepository.insert(conn, t);
 			return APIResponse.getNewSuccessResp(reply);
 		}
 	}
@@ -161,7 +126,14 @@ public class ZskpReplyService extends Controller {
 				c.toUserId = 0L;
 				c.toUserName = "no";	
 			}
+			Isread t = new Isread();
+			t.userId = upUserId;
+			t.replyId = c.sequenceId;
+			isreadRepository.insert(conn, t);
 			commentRepository.insert(conn, c);
+			Reply re = new Reply();
+			re.ext = "0";
+			replyRepository.update(conn, EXP.INS().andKey("sequence_id", replyId),re,true);			
 			return APIResponse.getNewSuccessResp(c);
 		}
 	}
@@ -186,10 +158,17 @@ public class ZskpReplyService extends Controller {
 	)
 	public void delReply(//
 			@P(t = "持有者编号") Long ownerId, //
-			@P(t = "序列编号") Long sequenceId //
+			@P(t = "序列编号") Long sequenceId, //
+			@P(t = "评论编号",r = false) Long replyId,
+			@P(t = "删除评论还是回复",r = false) String isReply //
 	) throws ServerException, SQLException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			replyRepository.delete(conn, EXP.INS().key("owner_id", ownerId).andKey("sequence_id", sequenceId));			
+			if("reply".equals(isReply)) {				
+				replyRepository.delete(conn, EXP.INS().key("owner_id", ownerId).andKey("sequence_id", sequenceId));
+				commentRepository.delete(conn, EXP.INS().key("reply_id", sequenceId));
+			}else if("comment".equals(isReply)) {
+				commentRepository.delete(conn, EXP.INS().key("sequence_id", sequenceId));
+			}
 		}
 	}
 }

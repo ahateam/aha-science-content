@@ -16,6 +16,7 @@ const addVideoContent = () => import('./views/addContent/addVideoContent')
 //评论
 const replyList = () => import('./views/reply/replyList')
 const replyInfo = () => import('./views/reply/replyInfo')
+const commentList = () => import('./views/reply/commentList')
 //栏目
 const svipList = () => import('./views/svip/svipList')
 const svipInfoList = () => import('./views/svip/svipInfoList')
@@ -38,6 +39,8 @@ const userInfo = () => import('./views/user/userInfo')
 const adminList = () => import('./views/user/adminList')
 const insiderList = () => import('./views/user/insiderList')
 const addUser = () => import('./views/user/addUser')
+const superAdminList = () => import('./views/user/superAdminList')
+
 //标签
 const homeTag = () => import('./views/tag/homeTag')
 const tagGroup = () => import('./views/tag/tagGroup')
@@ -159,6 +162,10 @@ export default new Router({
 					path: '/replyInfo',
 					name: 'replyInfo',
 					component: replyInfo
+				},{
+					path: '/commentList',
+					name: 'commentList',
+					component: commentList
 				},
 				//用户
 				{
@@ -186,6 +193,12 @@ export default new Router({
 					name: 'addUser',
 					component: addUser
 				},
+				{
+					path: '/superAdminList',
+					name: 'superAdminList',
+					component: superAdminList
+				},
+				
 				//广告
 				{
 					path: '/advertList',

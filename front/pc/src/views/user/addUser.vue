@@ -36,6 +36,7 @@
 		name: "addUser",
 		data() {
 			return {
+				au:'',
 				title: '',
 				phone: '',
 				pwd: '',
@@ -49,8 +50,10 @@
 					name: this.title,
 					phone: this.phone,
 					pwd: this.pwd,
+					au:this.au,
 				}
-				that.$api.register(cnt, (res => {
+				console.log(cnt)
+				that.$api.createUser(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
 							message: '创建成功',
@@ -59,13 +62,16 @@
 						that.$router.push('/contentList')
 					} else {
 						this.$message({
-							message: res.data.c,
+							message: res.data.rm,
 							type: 'warning'
 						});
 						that.imgList = []
 					}
 				}))
 			}
+		},
+		mounted(){
+			this.au = this.$route.params.info;
 		}
 
 	}

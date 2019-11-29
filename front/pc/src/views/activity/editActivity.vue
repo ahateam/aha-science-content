@@ -15,10 +15,22 @@
 			</el-date-picker>
 		</el-row>
 		<el-row style="padding: 20px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="10">
 				<span class="title-box"> 标题：</span>
 				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
+			</el-col>
+			<el-col :span="10">
+				<span class="title-box"> 科普基地：</span>
+				<el-select filterable v-model="place" placeholder="请选择科普基地" style="margin-right: 10px;">
+					<el-option v-for="(item,index) in placeList" :key="index" :label="item.name" :value="item.id"></el-option>
+				</el-select>
+			</el-col>
+		</el-row>
+		<el-row style="padding: 20px">
+			<el-col :span="10">
+				<span class="title-box"> 活动时间：</span>
+				<el-date-picker v-model="uptime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+				</el-date-picker>
 			</el-col>
 		</el-row>
 		<el-row style="margin-bottom: 10px">
@@ -54,6 +66,9 @@
 		name: "editActivity",
 		data() {
 			return {
+				uptime:'',
+				place:'',
+				placeList:'',
 				liveStartTime: '',
 				liveEndTime: '',
 				liveTime: '',
@@ -122,14 +137,39 @@
 				}
 				this.editorBtn()
 			},
+			getTime(time) {
+				let y = time.getFullYear()
+				let m = time.getMonth() * 1 + 1
+				let d = time.getDate()
+				return `${y}-${m}-${d}`
+			},
+			getPlace() {
+				let cnt = {
+					moduleId: this.$constData.module, // Long 模块编号
+					userCoordinate: '0,0',
+					count: 300, // int
+					offset: 0, // int
+				}
+				this.$api.getTourBases(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.placeList = this.$util.tryParseJson(res.data.c)
+					} else {
+						this.addressList = []
+					}
+				})
+			},
 			editorBtn() {
 				let that = this
 				let text = this.editor.txt.html()
+				let time1 = new Date(this.uptime[0])
+				let time2 = new Date(this.uptime[1])
+				let newTime = this.getTime(time1) + '至' + this.getTime(time2)
 				let data = {
 					show: this.show,
 					imgList: this.imgList,
 					place: this.place,
 					address: this.address,
+					time: this.uptime == ''?this.time:newTime,
 					info: text,
 					live: this.live,
 				}
@@ -144,7 +184,6 @@
 					cnt.liveStartTime = this.liveTime[0];
 					cnt.liveEndTime = this.liveTime[1];
 				}
-				console.log(data)
 				that.$api.editContent(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
@@ -163,8 +202,8 @@
 			},
 		},
 		mounted() {
+			this.getPlace() 
 			let info = this.$route.params.info
-			console.log(info)
 			this.id = info.id
 			this.title = info.title
 			this.status = info.status

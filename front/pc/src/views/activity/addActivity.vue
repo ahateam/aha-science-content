@@ -33,7 +33,7 @@
 			</el-col>
 
 			<el-col :span="10">
-				<span class="title-box"> 活动时间：</span>
+				<span class="title-box"> 活动时间：<el-button @click="timeStr">长期有效</el-button></span>
 				<el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
 				</el-date-picker>
 			</el-col>
@@ -47,7 +47,8 @@
 			</el-col>
 			<el-col :span="10">
 				<span class="title-box"> 直播时间：</span>(可暂时不设置)
-				<el-date-picker v-model="liveTime" value-format="timestamp" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+				<el-date-picker v-model="liveTime" value-format="timestamp" type="datetimerange" range-separator="至"
+				 start-placeholder="开始日期" end-placeholder="结束日期">
 				</el-date-picker>
 			</el-col>
 		</el-row>
@@ -83,7 +84,7 @@
 		name: "addContent",
 		data() {
 			return {
-				liveTime:'',
+				liveTime: '',
 				zhibo: '',
 				homeTagName: '',
 				homeTag: '',
@@ -93,9 +94,8 @@
 				tag: '',
 				time: '',
 				workTime: '',
-
+				newTime:'',
 				address: '',
-
 				place: '',
 				placeList: [],
 
@@ -114,7 +114,13 @@
 				this.mechGrantImg = event.target.files[0]
 				this.doUpload(this.mechGrantImg)
 			},
-
+			timeStr() {
+				this.time = '长期'
+				this.$message({
+					message: '已选择长期有效',
+					type: 'success'
+				})
+			},
 			doUpload(file) {
 				let date = new Date()
 				this.size = file.size
@@ -188,11 +194,7 @@
 					return
 				}
 				if (this.time == '') {
-					this.$message({
-						message: '请选择活动时间',
-						type: 'warning'
-					})
-					return
+					this.time = '长期'
 				}
 				this.editorBtn()
 			},
@@ -203,16 +205,19 @@
 					src: this.imgSrc
 				}
 				this.imgList.push(imgSrc)
-				let time1 = new Date(this.time[0])
-				let time2 = new Date(this.time[1])
-				let newTime = this.getTime(time1) + '至' + this.getTime(time2)
+				if (this.time != '长期') {
+					let time1 = new Date(this.time[0])
+					let time2 = new Date(this.time[1])
+					let newTime = this.getTime(time1) + '至' + this.getTime(time2)
+					this.newTime = newTime
+				}
 				let text = this.editor.txt.html()
 				let data = {
 					show: this.show,
 					imgList: this.imgList,
 					place: this.place,
 					address: this.address,
-					time: newTime,
+					time: this.time == '长期'?this.time:this.newTime,
 					info: text,
 					live: this.zhibo,
 				}
@@ -225,7 +230,7 @@
 					title: this.title,
 					data: JSON.stringify(data),
 				}
-				if(this.liveTime != ''){
+				if (this.liveTime != '') {
 					cnt.liveStartTime = this.liveTime[0];
 					cnt.liveEndTime = this.liveTime[1];
 				}
@@ -235,7 +240,7 @@
 							message: '创建成功',
 							type: 'success'
 						});
-						that.$router.push('/contentList')
+						that.$router.push('/activityList')
 					} else {
 						this.$message({
 							message: res.data.c,
@@ -249,12 +254,12 @@
 				let cnt = {
 					moduleId: this.$constData.module, // Long 模块编号
 					userCoordinate: '0,0',
-					count: 50, // int
+					count: 500, // int
 					offset: 0, // int
 				}
 				this.$api.getTourBases(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
-						this.placeList = this.$util.tryParseJson(res.data.c).list
+						this.placeList = this.$util.tryParseJson(res.data.c)
 					} else {
 						this.addressList = []
 					}

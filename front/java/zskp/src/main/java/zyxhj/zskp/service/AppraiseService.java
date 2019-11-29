@@ -91,12 +91,15 @@ public class AppraiseService extends Controller {
 			@P(t = "用户编号", r = false) Long userId,
 			@P(t = "状态", r = false) String value
 	) throws Exception {
-//		TSQL ts = new TSQL();
-//		ts.Term(OP.AND, "ownerId", ownerId).Term(OP.AND, "userId", userId).Term(OP.AND, "value", value);
-//		ts.setGetTotalCount(true);
-//		SearchQuery query = ts.build();
-//		return appraiseRepository.search(client, query);
-		return null;
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			Long count = appraiseRepository.getAppraiseCount(conn, ownerId);
+			   Appraise appraise = appraiseRepository.get(conn,
+			     EXP.INS().key("owner_id", ownerId).andKey("user_id", userId));
+			   JSONObject jo = new JSONObject();
+			   jo.put("appraiseCount", count);
+			   jo.put("isAppraise", appraise!=null);
+			   return jo;		
+		}
 	}
 
 	//

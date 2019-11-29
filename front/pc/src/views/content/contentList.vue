@@ -39,10 +39,14 @@
 		</el-row>
 
 		<el-row class="table-box">
-			<el-table :data="tableData" border style="width: 100%">
+				<el-table
+				    :data="tableData"
+				    style="width: 100%"
+				    :default-sort = "{prop: 'date', order: 'descending'}"
+				    >
 				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="pageView" label="浏览量">
+				<el-table-column prop="pageView"  sortable label="浏览量">
 				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
@@ -59,8 +63,8 @@
 		<el-row style="height: 80px;margin-bottom: 80px;">
 			<el-col :span="24">
 				当前页数：{{page}}
-				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(page-1)">上一页</el-button>
-				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(page+1)">下一页</el-button>
+				<el-button type="primary" size="small" :disabled="page==1" @click="changePage(0)">上一页</el-button>
+				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(1)">下一页</el-button>
 			</el-col>
 		</el-row>
 	</div>
@@ -150,8 +154,13 @@
 				})
 			},
 			/* 分页*/
-			changePage(page) {
-				this.page = page
+			changePage(e) {
+				if (e) {
+					this.page += 1
+				} else {
+					this.page -= 1
+				}
+				localStorage.setItem("page_contentList", this.page)
 				//获取内容列表
 				let cnt = {
 					module: this.$constData.module,
@@ -392,6 +401,10 @@
 			this.getSvip()
 			this.getChannel()
 			this.getKeywords()
+			let page = Number(localStorage.getItem('page_contentList'))
+			if (page) {
+				this.page = page
+			}
 			//获取内容列表
 			let cnt = {
 				module: this.$constData.module,

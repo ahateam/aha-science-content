@@ -236,6 +236,39 @@ public class ZskpUserService extends Controller{
 			}
 		}
 	}
+	@POSTAPI(//
+			path = "createUser", 
+			des = "注册", 
+			ret = "" 
+		)
+		public APIResponse createUser(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "昵称") String name,
+			@P(t = "手机号") String phone,
+			@P(t = "dji") Byte au,
+			@P(t = "密码") String pwd
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				ZskpUser user = new ZskpUser();
+				user.moduleId = moduleId;
+				user.id = IDUtils.getSimpleId();
+				user.name = name;
+				user.phone = phone;
+				user.pwd = pwd;
+				user.status = ZskpUser.STATUS_NORMAL;
+				user.head = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131055185&di=4fc467c4531fc69f310817c26c4457dd&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F69ad7a731f43d4b8729f1a2fbe65c43801ca0f033250-EV1vMf_fw658";
+				user.authority = au;
+				user.createTime = new Date();
+				user.updateTime = new Date();
+				ZskpUser temp = userRepository.get(conn, EXP.INS().key("phone", phone).andKey("module_id",moduleId));
+				if(temp != null) {
+					return APIResponse.getNewFailureResp(new RC("fail", "手机号已存在"));
+				}
+				userRepository.insert(conn, user);
+				user.pwd = "**";
+				return APIResponse.getNewSuccessResp(user);
+			}
+		}
 
 	/**
 	 * 绑定手机
@@ -349,6 +382,7 @@ public class ZskpUserService extends Controller{
 		@P(t = "单位",r = false) String company,
 		@P(t = "权限",r = false) Byte authority,
 		@P(t = "状态",r = false) Byte status,
+		@P(t = "操作人id",r = false) Long adminId,
 		@P(t = "扩展",r = false) String ext
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
@@ -356,7 +390,7 @@ public class ZskpUserService extends Controller{
 			user.name = name;
 			user.head = head;
 			user.company = company;
-			user.authority = authority;
+//			user.authority = authority;
 			user.status = status;
 			user.ext = ext;
 			user.updateTime = new Date();
@@ -364,7 +398,67 @@ public class ZskpUserService extends Controller{
 			return user;
 		}
 	}
-
+	@POSTAPI(//
+			path = "setUserauthority", 
+			des = "重置用户权限", 
+			ret = "" 
+		)
+		public APIResponse setUserauthority(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "操作人id") Long adminId,
+			@P(t = "权限",r = false) Byte authority,
+			@P(t = "用户id",r = false) String userId
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				ZskpUser userTemp = userRepository.get(conn, EXP.INS().key("id",adminId));
+				if("4".equals(authority.toString())) {
+					if(userTemp.authority.equals(ZskpUser.AUTHORITY_FOUR)) {
+						ZskpUser user = new ZskpUser();
+						user.authority = authority;
+						user.updateTime = new Date();
+						userRepository.update(conn, EXP.INS().key("id",userId).andKey("module_id",moduleId), user,true);
+						return APIResponse.getNewSuccessResp();					
+					}else {
+						return APIResponse.getNewFailureResp(new RC("fail", "你不是超级管理员，没有权限重置超级管理员权限"));
+					}
+				}else {
+					if(userTemp.authority.equals(ZskpUser.AUTHORITY_THREE) || userTemp.authority.equals(ZskpUser.AUTHORITY_FOUR)) {
+						ZskpUser user = new ZskpUser();
+						user.authority = authority;
+						user.updateTime = new Date();
+						userRepository.update(conn, EXP.INS().key("id",userId).andKey("module_id",moduleId), user,true);
+						return APIResponse.getNewSuccessResp();					
+					}else {
+						return APIResponse.getNewFailureResp(new RC("fail", "你不是管理员，没有权限重置用户权限"));
+					}
+				}
+				
+			}
+		}
+	@POSTAPI(//
+			path = "resUserPwd", 
+			des = "重置用户密码", 
+			ret = "" 
+		)
+		public APIResponse resUserPwd(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "操作人id") Long adminId,
+			@P(t = "密码",r = false) String pwd,
+			@P(t = "用户id",r = false) String userId
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				ZskpUser userTemp = userRepository.get(conn, EXP.INS().key("id",adminId));
+				if(userTemp.authority.equals(ZskpUser.AUTHORITY_THREE) || userTemp.authority.equals(ZskpUser.AUTHORITY_FOUR) ) {
+					ZskpUser user = new ZskpUser();
+					user.pwd = pwd;
+					user.updateTime = new Date();
+					userRepository.update(conn, EXP.INS().key("id",userId).andKey("module_id",moduleId), user,true);
+					return APIResponse.getNewSuccessResp();					
+				}else {
+					return APIResponse.getNewFailureResp(new RC("fail", "你不是管理员，没有权限重置密码"));
+				}
+			}
+		}
 	/**
 	 * 创建用户申请
 	 */

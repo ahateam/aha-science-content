@@ -57,10 +57,19 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="浏览量:">
+						<el-input v-model="pageView" placeholder="请输入要显示的浏览量" style="width:217px;"></el-input>
+					</el-form-item>
+				</el-form>
+				  <el-radio v-model="viewradio" label="1">浏览量可见</el-radio>
+				  <el-radio v-model="viewradio" label="0">浏览量不可见</el-radio>
+			</el-col>
 			<el-col :span="13">
 				<el-form label-width="80px">
 					<el-form-item label="关键词:">
-						<el-select v-model="value" multiple default-first-option placeholder="请选择文章标签-提示:可多选，可删除" style="width: 100%;">
+						<el-select v-model="value" filterable multiple default-first-option placeholder="请选择文章标签-提示:可多选,可搜索,可删除" style="width: 100%;">
 							<el-option v-for="item in keywordList" :key="item.id" :label="item.keyword" :value="item.keyword">
 							</el-option>
 						</el-select>
@@ -78,7 +87,7 @@
 			<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交
 			</el-button>
 		</el-row>
-		
+
 	</div>
 </template>
 
@@ -91,6 +100,9 @@
 		name: "addContent",
 		data() {
 			return {
+				viewradio:'1',
+				isShowpage: false,
+				pageView: '',
 				keywordList: [{
 					keyword: '',
 					id: ''
@@ -173,6 +185,8 @@
 					tags: JSON.stringify(tags),
 					title: this.title,
 					data: JSON.stringify(data),
+					pageView: this.pageView == '' ? 0 : this.pageView,
+					isPageView:this.viewradio,
 				}
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
@@ -183,6 +197,7 @@
 							message: '添加成功',
 							type: 'success'
 						});
+						localStorage.setItem('tempContent','')
 						that.$router.push('/contentList')
 					} else {
 						this.$message({
@@ -236,6 +251,21 @@
 						this.keywordList = this.$util.tryParseJson(res.data.c)
 					}
 				})
+			},
+			getUser() {
+				let cnt = {
+					moduleId: this.$constData.module,
+					id: this.userId,
+				}
+				this.$api.getUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let userInfo = this.$util.tryParseJson(res.data.c)
+						if (userInfo.authority == 4) {
+						console.log(userInfo)
+							this.isShowpage = true
+						}
+					}
+				})
 			}
 
 		},
@@ -243,6 +273,7 @@
 			this.getVips()
 			this.getChannels()
 			this.getKeyword()
+			this.getUser()
 			this.editor = new wangEditor('#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
@@ -251,12 +282,16 @@
 					let date = new Date()
 					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 						encodeURIComponent(files[0].name)
+					console.log('---------tmpName--------------------')
+					console.log(tmpName)
 					client.multipartUpload(tmpName, files[0], {
 						meta: {
 							year: 2017,
 							people: 'test'
 						}
 					}).then(res => {
+						console.log('--------res-------------------')
+						console.log(res)
 						//取出存好的url
 						let address = res.res.requestUrls[0]
 						console.log(address)
@@ -279,8 +314,14 @@
 					console.log(e)
 				}
 			}
+			this.editor.customConfig.onchange = function (html) {
+			        // html 即变化之后的内容
+					localStorage.setItem("tempContent",html);
+			    }
 			this.editor.create();
+		this.editor.txt.html(localStorage.getItem('tempContent'))
 		}
+		
 	}
 </script>
 

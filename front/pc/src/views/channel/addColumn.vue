@@ -134,6 +134,14 @@
 			},
 			///-----------
 			createChannel() {
+				
+				if(this.imgSrc == ''){
+					this.$message({
+						message: '请上传图片',
+						type: 'warning'
+					});
+					return;
+				}
 				let that = this
 				let data = {
 					info: this.text,

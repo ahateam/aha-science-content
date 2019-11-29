@@ -84,6 +84,10 @@ api.getReplyList = function (cnt, callback) {
 api.delReply = function (cnt, callback) {
     util.call(baseUrl + '/ZskpReply/delReply', cnt, callback)
 }
+//huifu
+api.getReplyListByReplyId = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/getReplyListByReplyId', cnt, callback)
+}
 
 //查询申请
 api.getApplyAuthoritys = function (cnt, callback) {
@@ -112,14 +116,32 @@ api.editteContentTag = function (cnt, callback) {
 api.register = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/register', cnt, callback)
 }
+//创建用户
+api.createUser = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/createUser', cnt, callback)
+}
+
 //获取用户
 api.getUsers = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/getUsers', cnt, callback)
+}
+//重置用户密码
+api.resUserPwd = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/resUserPwd', cnt, callback)
+}
+//重置用户权限
+api.setUserauthority = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/setUserauthority', cnt, callback)
 }
 //封禁用户
 api.closeUser = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/closeUser', cnt, callback)
 }
+//查看用户
+api.getUser = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/getUser', cnt, callback)
+}
+
 //修改用户信息
 api.updateUserInfo = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/updateUserInfo', cnt, callback)
@@ -191,7 +213,10 @@ api.createKeyword = function (cnt, callback) {
 api.delKeyword = function (cnt, callback) {
     util.call(baseUrl + '/ZskpKeyword/delKeyword', cnt, callback)
 }
-
+//查询所有兴趣标签
+api.getAllInterestTag = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpKeyword/getAllInterestTag', cnt, callback)
+}
 
 export default api
 

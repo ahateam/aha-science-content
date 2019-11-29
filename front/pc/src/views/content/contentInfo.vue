@@ -9,7 +9,9 @@
 			<h1>基本信息：</h1>
 			<p>内容id：{{id}}</p>
 			<p>浏览量：{{pageView}}</p>
-			<p>关键词：<el-tag v-for="item in tags" type="info" style="margin-right: 5px;">{{item}}</el-tag></p>
+			<p v-if="this.isShowpage">实际浏览量：{{truePageView}}</p>
+			<p>关键词：<el-tag v-for="item in tags" type="info" style="margin-right: 5px;">{{item}}</el-tag>
+			</p>
 			<p>类型：{{type}}</p>
 			<p>当前状态：{{status}}</p>
 			<p>栏目/专题：<el-button @click="infoChannel" v-if="orShow">查看所属栏目/专题</el-button><span>{{upChannelId}}</span></p>
@@ -50,7 +52,9 @@
 		name: "contetnInfo",
 		data() {
 			return {
-				orShow:true,
+				isShowpage: false,
+				truePageView: '',
+				orShow: true,
 				id: '',
 				pageView: '',
 				status: '',
@@ -58,14 +62,15 @@
 				type: '',
 				upChannelId: '',
 				upUserId: '',
-				user:'',
+				user: '',
 				updateTime: '',
 				createTime: '',
-channel:'',
+				channel: '',
 				contentInfo: {},
 				textList: [],
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 			}
 		},
 		methods: {
@@ -103,7 +108,7 @@ channel:'',
 					}
 				}
 			},
-			getChannel(){
+			getChannel() {
 				let cnt = {
 					module: this.$constData.module,
 					count: 200,
@@ -115,17 +120,33 @@ channel:'',
 					}
 				})
 			},
-			infoChannel(){
+			infoChannel() {
 				this.orShow = false
-				if(this.contentInfo.upChannelId == ''){
+				if (this.contentInfo.upChannelId == '') {
 					this.upChannelId = '本内容没有设置栏目或专题'
 					return;
 				}
-				this.upChannelId =this.channelFliter(this.contentInfo.upChannelId)
+				this.upChannelId = this.channelFliter(this.contentInfo.upChannelId)
+			},
+			getUser() {
+				let cnt = {
+					moduleId: this.$constData.module,
+					id: this.userId,
+				}
+				this.$api.getUser(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						let userInfo = this.$util.tryParseJson(res.data.c)
+						if (userInfo.authority == 4) {
+							console.log(userInfo)
+							this.isShowpage = true
+						}
+					}
+				})
 			}
 		},
 		mounted() {
 			this.getChannel()
+			this.getUser()
 			this.contentInfo = this.$route.params.info
 			console.log(this.$route.params.info)
 			let a = JSON.parse(this.contentInfo.data).editor
@@ -139,6 +160,7 @@ channel:'',
 			this.type = this.typeFliter(this.contentInfo.type)
 			this.upUserId = this.contentInfo.upUserId
 			this.user = this.contentInfo.user.name
+			this.truePageView = this.contentInfo.truePageView
 			this.updateTime = this.timeFliter(this.contentInfo.updateTime)
 			this.createTime = this.timeFliter(this.contentInfo.createTime)
 		}

@@ -25,7 +25,7 @@
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
-				<span class="title-box"> 营业时间：</span>
+				<span class="title-box"> 营业时间：<el-button style="margin-right: 8px;" @click="timeStr">长期有效</el-button></span>
 				<el-time-picker is-range arrow-control v-model="time" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
 				 placeholder="选择时间范围">
 				</el-time-picker>
@@ -155,7 +155,13 @@
 				this.locData.latitude = e.point.lat
 				console.log(this.locData)
 			},
-
+			timeStr() {
+				this.time = '长期'
+				this.$message({
+					message: '已选择长期有效',
+					type: 'success'
+				})
+			},
 			getMechData1() {
 				this.mechGrantImg = event.target.files[0]
 				this.doUpload(this.mechGrantImg)
@@ -225,7 +231,7 @@
 					})
 					return
 				}
-				
+
 				if (this.time == '') {
 					this.$message({
 						message: '请选择营业时间',
@@ -245,13 +251,16 @@
 			editorBtn() {
 				let that = this
 				this.imgList.push(this.imgSrc)
-				let time1 = new Date(this.time[0])
-				let time2 = new Date(this.time[1])
-				let newTime = this.getTime(time1) + '至' + this.getTime(time2)
+				if (this.time != '长期') {
+					let time1 = new Date(this.time[0])
+					let time2 = new Date(this.time[1])
+					let newTime = this.getTime(time1) + '至' + this.getTime(time2)
+					this.newTime = newTime
+				}
 				let data = {
 					info: this.editor.txt.html(),
 					img: this.imgList,
-					workTime: newTime,
+					workTime: this.time == '长期'?this.time:this.newTime,
 				}
 				let cnt = {
 					moduleId: this.$constData.module,
@@ -260,17 +269,21 @@
 					data: JSON.stringify(data),
 					buyTicketsLink: this.shopLink,
 				}
+				if (this.address == '') {
+					cnt.address = this.province + '' + this.city + '' + this.area + '' + this.detail_address
+				}
 				console.log(cnt)
 				that.$api.createTourBase(cnt, (res => {
+					console.log(res)
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
 							message: '创建成功',
 							type: 'success'
 						});
-						that.$router.push('/contentList')
+						that.$router.push('/tourBaseList')
 					} else {
 						this.$message({
-							message: res.data.c,
+							message: res.data.rm,
 							type: 'warning'
 						});
 						that.imgList = []

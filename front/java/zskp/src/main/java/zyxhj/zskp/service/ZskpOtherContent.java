@@ -36,12 +36,14 @@ import zyxhj.utils.IDUtils;
 import zyxhj.utils.Singleton;
 import zyxhj.utils.api.APIResponse;
 import zyxhj.utils.api.Controller;
+import zyxhj.utils.api.RC;
 import zyxhj.utils.api.ServerException;
 import zyxhj.utils.data.DataSource;
 import zyxhj.utils.data.EXP;
 import zyxhj.zskp.domain.AdvertInfo;
 import zyxhj.zskp.domain.ApplyAuthority;
 import zyxhj.zskp.domain.Appraise;
+import zyxhj.zskp.domain.Comment;
 import zyxhj.zskp.domain.Enroll;
 import zyxhj.zskp.domain.Reply;
 import zyxhj.zskp.domain.TourBases;
@@ -114,7 +116,7 @@ public class ZskpOtherContent extends Controller{
 		if(tags !=null && tags.size()>0) {
 			exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
 		}
-		exp.append("ORDER BY create_time DESC ");
+		exp.append("ORDER BY page_view DESC ");
 		try (DruidPooledConnection conn = ds.getConnection()) {			
 			List<Content> list = contentRepository.getList(conn,exp, count, offset);
 			if(list == null && list.size()<=0) {
@@ -372,7 +374,7 @@ public class ZskpOtherContent extends Controller{
 			des = "创建科普基地景点", 
 			ret = "" 
 		)
-		public void createTourBase(
+		public APIResponse createTourBase(
 			@P(t = "模块编号") Long moduleId,
 			@P(t = "名称") String name,
 			@P(t = "地址") String address,
@@ -386,10 +388,15 @@ public class ZskpOtherContent extends Controller{
 				t.name = name;
 				t.address = address;
 				t.coordinate = HttpClientGet(address);
-				t.data = data;
+				if(data.length()<10000) {
+				    t.data = data;
+			   }else {
+				   return APIResponse.getNewFailureResp(new RC("fail", "简介长度大于10000,当前长度"+data.length()));
+			   }
 				t.createTime = new Date();
 				t.buyTicketsLink = buyTicketsLink;
 				tourBasesRepository.insert(conn, t);
+				return APIResponse.getNewSuccessResp();
 			} 
 		}
 	
@@ -767,10 +774,13 @@ public class ZskpOtherContent extends Controller{
 	 * 修改评论状态
 	 */
 	public void updateReply(Long id) throws ServerException, SQLException {
+		Comment c = new Comment();
+		c.ext = "1";
 		Reply re = new Reply();
 		re.ext = "1";
 		try (DruidPooledConnection conn = ds.getConnection()) {
 			replyRepository.update(conn, EXP.INS().andKey("sequence_id", id),re,true);			
+			commentRepository.update(conn, EXP.INS().andKey("sequence_id", id), c, true);
 		}
 	}
 	public boolean judgeAppraise(
@@ -784,7 +794,31 @@ public class ZskpOtherContent extends Controller{
 			return appraise != null;
 		}
 	}
-	
+		/**
+		 * 活动编辑时修改科普基地或活动时间
+		 */
+		@POSTAPI( //
+				path = "editData", //
+				des = "活动编辑时修改科普基地或活动时间", //
+				ret = "" //
+		)
+		public APIResponse editData(
+				@P(t = "内容所属模块")String ModuleId, 
+				@P(t = "内容编号")Long id, 
+				@P(t = "基地编号", r = false)Long tourBasesId,
+				@P(t = "活动时间", r = false)String time
+		) throws Exception {
+			try(DruidPooledConnection conn = ds.getConnection()) {
+				Content content = contentRepository.get(conn, EXP.INS().key("org_module", ModuleId).andKey("id", id));
+				JSONObject jo = JSONObject.parseObject(content.data);
+				jo.put("place", tourBasesId);
+				jo.put("time", time);
+				content.data = jo.toJSONString();
+				contentRepository.update(conn, EXP.INS().key("org_module", ModuleId).andKey("id", id), content, true);
+				return APIResponse.getNewSuccessResp(jo);
+			}
+		}
+
 	public String HttpClientGet(String address) throws Exception {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("http://api.map.baidu.com/geocoding/v3/?address="+address+"&output=json&ak=WHqoGrrCvXVIjhiZDuGIyBBK76imLNtE");
