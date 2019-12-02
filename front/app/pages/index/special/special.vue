@@ -1,14 +1,14 @@
 <template>
 	<view>
-		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="title"></navBar>
+		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" ></navBar>
 		<view class="topBox">
 			<view class="bannerBox">
 				<image :src="channelInfo.data.img" mode="aspectFill"></image>
 			</view>
 			<!-- <view class="block"></view> -->
-			<view class="infoBox">
+			<!-- <view class="infoBox">
 				{{channelInfo.data.info}}
-			</view>
+			</view> -->
 		</view>
 		<view class="contentBox" :style="'border-color:'+borderColor">
 			<view class="contentList" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
@@ -23,12 +23,12 @@
 					</view>
 
 					<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-						<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+						<three-img :item="item"></three-img>
 					</view>
 				</view>
 
 				<view v-else-if="item.type == constData.contentType[0].key">
-					<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
+					<only-text :item="item"></only-text>
 				</view>
 			</view>
 

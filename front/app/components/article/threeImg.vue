@@ -1,22 +1,22 @@
 <template>
 	<view class="body">
-		<text class="title">{{title}}</text>
+		<text class="title">{{item.title}}</text>
 		<view class="imgList">
-			<view class="imgBox" v-for="(item,index) in imgList" :key="index" v-if="index < 3">
-				<image :src="item.src" mode="scaleToFill"></image>
+			<view class="imgBox" v-for="(list,index) in item.imgList" :key="index" v-if="index < 3">
+				<image :src="list.src" mode="scaleToFill"></image>
 			</view>
 		</view>
 		<view class="bottom">
-			<text class="upName">{{upName}}</text>
-			<text class="time">{{time}}</text>
-			<text class="seeNumber">阅读量：{{pageView}}</text>
+			<text class="upName">{{item.user.name}}</text>
+			<text class="time">{{item.time}}</text>
+			<text class="seeNumber" v-if="item.isPageView">阅读量：{{item.pageView}}</text>
 		</view>
 	</view>
 </template>
 
 <script>
 	export default {
-		props: ['title', 'imgList', 'upName', 'time', 'type', 'pageView'],
+		props: ['item'],
 		data() {
 			return {};
 		}
@@ -77,11 +77,11 @@
 		font-size: 26upx;
 		color: #aaa;
 	}
-	
+
 	.time {
 		margin-left: 20rpx;
 	}
-	
+
 	.seeNumber {
 		margin-left: 20rpx;
 	}

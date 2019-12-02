@@ -24,7 +24,7 @@
 		</scroll-view>
 
 		<!-- 搜索内容列表 -->
-		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" style="background-color: #FFFFFF;">
+		<view v-for="(item,index) in contents" :key="index" @click="navToInfo(item)" class="search-list">
 			<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
 				<view v-if="item.show == constData.contentShow[0].key">
 					<trans-video :item="item"></trans-video>
@@ -35,12 +35,11 @@
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"
-					 :pageView="item.pageView"></three-img>
+					<three-img :item="item"></three-img>
 				</view>
 			</view>
 			<view v-else-if="item.type == constData.contentType[0].key">
-				<only-text :title="item.title" :upName="item.user.name" :time="item.time" :pageView="item.pageView"></only-text>
+				<only-text :item="item"></only-text>
 			</view>
 		</view>
 
@@ -253,6 +252,11 @@
 
 	.noUser {
 		font-size: $list-info;
+		padding: $box-margin-top $box-margin-left;
+	}
+
+	.search-list {
+		background-color: #FFFFFF;
 		padding: $box-margin-top $box-margin-left;
 	}
 </style>

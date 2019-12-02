@@ -28,11 +28,11 @@
 				</view>
 
 				<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-					<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+					<three-img :item="item"></three-img>
 				</view>
 			</view>
 			<view v-else-if="item.type == constData.contentType[0].key">
-				<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
+				<only-text :item="item"></only-text>
 			</view>
 		</view>
 		<uniLoadMore :status="pageStatus"></uniLoadMore>

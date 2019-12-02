@@ -58,7 +58,7 @@
 				</view>
 			</view>
 
-			<view class="autoBox" @click="changeLevel">
+			<view class="autoBox" @click="bindWx">
 				<view class="leftBox">
 					微信号
 				</view>
@@ -80,10 +80,12 @@
 
 <script>
 	import navBar from '@/components/zhouWei-navBar/index.vue'
+	// import uniPopup from '@/components/uni-popup/uni-popup.vue'
 
 	export default {
 		components: {
 			navBar,
+			// uniPopup
 		},
 		data() {
 			return {
@@ -101,6 +103,8 @@
 				userNameBox: false,
 
 				openId: uni.getStorageSync('openId'),
+				bindWxShow: false,
+
 			}
 		},
 		methods: {
@@ -123,11 +127,45 @@
 				})
 			},
 
-			changeLevel() {
-				uni.showToast({
-					title: '功能开发中~',
-					icon: 'none'
-				})
+			reMoveBidn() {
+
+			},
+
+			bindWx() {
+				if (!this.openId) {
+					uni.login({
+						success: (res) => {
+							uni.showLoading({
+								title: '绑定中'
+							})
+							let openId = res.authResult.openid
+							let cnt = {
+								moduleId: this.$constData.module, // String 模块编号
+								id: uni.getStorageSync('userId'), // Long 用户id
+								openId: openId, // String openid
+							}
+							this.$api.bindingwx(cnt, (res) => {
+								if (res.data.rc == this.$util.RC.SUCCESS) {
+									uni.setStorageSync('openId', openId)
+									this.openId = openId
+									uni.showToast({
+										title: '绑定成功！'
+									})
+								} else {
+									uni.showToast({
+										title: res.data.rm,
+										icon: 'none'
+									})
+								}
+							})
+						},
+						fail: (err) => {
+							console.log('login fail:', err);
+						}
+					})
+				} else {
+					this.bindWxShow = true
+				}
 			},
 
 			//打开修改盒子
@@ -333,7 +371,7 @@
 		width: 8em;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space:nowrap;
+		white-space: nowrap;
 		display: inline-block;
 		text-align: right;
 	}
@@ -373,5 +411,22 @@
 		border-bottom: 2px solid $color-main;
 		width: 20vw;
 		vertical-align: middle;
+	}
+
+	.bindBox {
+		width: 500upx;
+		height: 500upx;
+		color: #333333;
+		font-size: $list-title;
+
+		button {
+			display: inline-block;
+			width: 200upx;
+			line-height: 65upx;
+
+			&:after {
+				border: none;
+			}
+		}
 	}
 </style>

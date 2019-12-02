@@ -237,6 +237,12 @@
 						icon: 'none'
 					})
 					return
+				} else if (this.commentContent == '') {
+					uni.showToast({
+						title: '请输入回复内容',
+						icon: 'none'
+					})
+					return
 				}
 
 				let cnt = {
@@ -365,6 +371,12 @@
 				if (userId == '' || userId == '1234567890') {
 					uni.showToast({
 						title: '登录后可评论',
+						icon: 'none'
+					})
+					return
+				} else if (this.commentContent == '') {
+					uni.showToast({
+						title: '请输入回复内容',
 						icon: 'none'
 					})
 					return

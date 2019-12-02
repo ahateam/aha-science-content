@@ -198,9 +198,6 @@
 					return
 				}
 
-
-
-
 				this.isRotate = true
 				let cnt = {
 					moduleId: this.$constData.module, // String 模块编号

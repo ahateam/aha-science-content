@@ -3,10 +3,10 @@
 		<view class="imgBox">
 			<image :src="imgSrc" mode="aspectFill"></image>
 		</view>
-		<view class="titleBox">
+		<view class="titleBox" v-if="title">
 			{{title}}
 		</view>
-		<view class="textBox">
+		<view class="textBox" v-if="text">
 			{{text}}
 		</view>
 	</view>

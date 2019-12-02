@@ -10,7 +10,7 @@
 		<view class="bottom">
 			<text class="upName" v-if="item.user">{{item.user.name}}</text>
 			<text class="time">{{item.time}}</text>
-			<text class="seeNumber">阅读量：{{item.pageView}}</text>
+			<text class="seeNumber" v-if="item.isPageView">阅读量：{{item.pageView}}</text>
 		</view>
 	</view>
 </template>

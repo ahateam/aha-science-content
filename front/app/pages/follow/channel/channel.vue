@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" :title="title"></navBar>
+		<navBar type="transparentFixed" transparentFixedFontColor="#FFF"></navBar>
 		<view class="topBox">
 			<swiper class="bannerBox">
 				<swiper-item v-for="(item,index) in adList" :key="index" @click="linkSrc(item)">
@@ -8,11 +8,11 @@
 				</swiper-item>
 			</swiper>
 			<!-- <view class="block"></view> -->
-		<!-- 	<view class="infoBox">
+			<!-- 	<view class="infoBox">
 				{{channelInfo.data.info}}
 			</view> -->
 		</view>
-		<view >
+		<view>
 			<view class="contentBox" v-for="(item,index) in contents" :key="index" @click="navToInfo(item)">
 
 				<view v-if="item.type == constData.contentType[1].key||item.type == constData.contentType[2].key||item.type == constData.contentType[3].key">
@@ -25,12 +25,12 @@
 					</view>
 
 					<view v-else-if="item.show == constData.contentShow[2].key&&item.type == constData.contentType[2].key">
-						<three-img :title="item.title" :upName="item.user.name" :imgList="item.imgList" :time="item.time" :type="item.type"></three-img>
+						<three-img :item="item"></three-img>
 					</view>
 				</view>
 
 				<view v-else-if="item.type == constData.contentType[0].key">
-					<only-text :title="item.title" :upName="item.user.name" :time="item.time"></only-text>
+					<only-text :item="item"></only-text>
 				</view>
 			</view>
 
@@ -236,12 +236,12 @@
 				power: this.$constData.contentPaid[0].key
 			}
 			this.getContents(cnt)
-			
+
 			let cnt1 = {
 				id: this.id
 			}
 			this.getChannlById(cnt1)
-			
+
 			let cnt2 = {
 				moduleId: this.$constData.module, // Long 模块编号
 				type: this.$constData.adData[1].key, // Byte <选填> 类型
@@ -255,10 +255,10 @@
 </script>
 
 <style lang="scss" scoped>
-	.contentBox{
+	.contentBox {
 		padding: $box-margin-top $box-margin-left;
 	}
-	
+
 	.topBox {
 		width: 100vw;
 		height: 45vw;
