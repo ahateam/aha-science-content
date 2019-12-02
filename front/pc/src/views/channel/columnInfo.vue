@@ -155,6 +155,7 @@
 					data: JSON.stringify(data),
 					boxBackgroundColor: this.colors,
 				}
+				console.log(cnt)
 				this.$api.editChannel(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({

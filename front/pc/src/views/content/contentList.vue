@@ -42,11 +42,12 @@
 				<el-table
 				    :data="tableData"
 				    style="width: 100%"
-				    :default-sort = "{prop: 'date', order: 'descending'}"
 				    >
 				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="pageView"  sortable label="浏览量">
+				<el-table-column prop="pageView"   label="显示浏览量">
+				</el-table-column>
+				<el-table-column prop="truePageView"   label="浏览量">
 				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
@@ -140,6 +141,7 @@
 			},
 			/*获取内容列表*/
 			getContents(cnt) {
+				cnt.re = 'admin'
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
@@ -209,7 +211,7 @@
 					module: this.$constData.module,
 					type: this.typeList[0].value,
 					count: this.count,
-					offset: (this.page - 1) * this.count,
+					offset: 0,
 				}
 				if (this.keyword == '') {
 					this.getContents(cnt)

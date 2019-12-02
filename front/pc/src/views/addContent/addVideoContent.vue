@@ -12,7 +12,7 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box">输入简介：</span>
-				<el-input placeholder="请输入简介" v-model="text" style="display: inline-block;width: 400px">
+				<el-input type="textarea" placeholder="请输入简介" :autosize="{ minRows: 2, maxRows: 15}" v-model="text" style="display: inline-block;width: 400px">
 				</el-input>
 			</el-col>
 		</el-row>

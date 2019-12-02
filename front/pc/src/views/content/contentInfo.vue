@@ -19,7 +19,10 @@
 			<p>创建者用户名：{{user}}</p>
 			<p>修改时间：{{updateTime}}</p>
 			<p>创建时间：{{createTime}}</p>
-
+			<p>口播mp3：<audio :src="mp3Src" controls="controls" ref='audio'></audio></p>
+			<p>作者：{{contentAuthor}}</p>
+			<p>来源：{{contentSource}}</p>
+			<p>摘要：{{contentRemark}}</p>
 			<hr />
 		</el-row>
 
@@ -52,6 +55,10 @@
 		name: "contetnInfo",
 		data() {
 			return {
+				mp3Src:'',
+				contentRemark: '',
+				contentSource: '',
+				contentAuthor: '',
 				isShowpage: false,
 				truePageView: '',
 				orShow: true,
@@ -163,6 +170,10 @@
 			this.truePageView = this.contentInfo.truePageView
 			this.updateTime = this.timeFliter(this.contentInfo.updateTime)
 			this.createTime = this.timeFliter(this.contentInfo.createTime)
+			this.mp3Src = this.contentInfo.mp3Src
+			this.contentRemark = this.contentInfo.contentRemark
+			this.contentSource = this.contentInfo.contentSource
+			this.contentAuthor = this.contentInfo.contentAuthor
 		}
 	}
 </script>

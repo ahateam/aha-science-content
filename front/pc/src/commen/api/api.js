@@ -133,6 +133,22 @@ api.resUserPwd = function (cnt, callback) {
 api.setUserauthority = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/setUserauthority', cnt, callback)
 }
+//读取文件
+api.getFilterText = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/getFilterText', cnt, callback)
+}
+//写入文件
+api.readFilterText = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/readFilterText', cnt, callback)
+}
+//删除文件
+api.delFilterText = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/delFilterText', cnt, callback)
+}
+//搜索用户
+api.searchUsers = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpUserService/searchUsers', cnt, callback)
+}
 //封禁用户
 api.closeUser = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/closeUser', cnt, callback)

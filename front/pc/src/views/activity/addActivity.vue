@@ -243,7 +243,7 @@
 						that.$router.push('/activityList')
 					} else {
 						this.$message({
-							message: res.data.c,
+							message: res.data.rm,
 							type: 'warning'
 						});
 						that.imgList = []

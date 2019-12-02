@@ -82,7 +82,7 @@ const supermenu = [{
 		child: [{
 			path: '/superAdminList',
 			title: '超级管理员管理'
-		},{
+		}, {
 			path: '/adminList',
 			title: '管理员管理'
 		}, {
@@ -97,9 +97,14 @@ const supermenu = [{
 		title: '审核管理',
 		icon: 'course_jilu',
 		child: [{
-			path: '/insiderExamineList',
-			title: '内部人员审核'
-		}]
+				path: '/insiderExamineList',
+				title: '内部人员审核'
+			},
+			{
+				path: '/StringFilterList',
+				title: '敏感词管理'
+			}
+		]
 	}, {
 		title: '数据统计',
 		icon: 'course_tongji',
@@ -209,9 +214,14 @@ const menu = [{
 		title: '审核管理',
 		icon: 'course_jilu',
 		child: [{
-			path: '/insiderExamineList',
-			title: '内部人员审核'
-		}]
+				path: '/insiderExamineList',
+				title: '内部人员审核'
+			},
+			{
+				path: '/StringFilterList',
+				title: '敏感词管理'
+			}
+		]
 	}, {
 		title: '数据统计',
 		icon: 'course_tongji',

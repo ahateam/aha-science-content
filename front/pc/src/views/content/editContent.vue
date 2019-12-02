@@ -72,6 +72,35 @@
 			<el-radio v-model="viewradio" label="1">浏览量可见</el-radio>
 			<el-radio v-model="viewradio" label="0">浏览量不可见</el-radio>
 		</el-row>
+		<el-row style="margin-top: 10px">
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="作者">
+						<el-input v-model="contentAuthor" placeholder="请输入" style="width:217px;"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="来源">
+						<el-input v-model="contentSource" placeholder="请输入" style="width:217px;"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="摘要">
+						<el-input type="textarea" maxlength="30" show-word-limit v-model="contentRemark" placeholder="请输入(最大30个字符)"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="20">
+				<span class="title-box"> 口播MP3：</span>
+				<input @change="getMP3($event)" type="file" class="upload" />
+				</el-input>
+				<audio :src="mp3Src" controls="controls" ref='audio'></audio>
+			</el-col>
+		</el-row>
 		<el-row style="margin-bottom: 10px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -89,10 +118,17 @@
 
 <script>
 	import wangEditor from 'wangeditor'
+	import ossAuth from '@/commen/oss/ossAuth.js'
+	
+	let client = ossAuth.client
 	export default {
 		name: "addContent",
 		data() {
 			return {
+				mp3Src:'',
+				contentRemark: '',
+				contentSource: '',
+				contentAuthor: '',
 				viewradio: '',
 				isShowpage: false,
 				pageview: '',
@@ -130,11 +166,63 @@
 			}
 		},
 		methods: {
+			getMP3() {
+				if(event.target.files[0].type != 'audio/mp3'){
+					this.$message({
+						message: '请上传MP3格式的文件',
+						type: 'error'
+					});
+					return;
+				}
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload2(this.mechGrantImg)
+			},
+			doUpload2(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/MP3/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file, 1)
+			},
+			multipartUpload(upName, upFile, val) {
+				//Vue中封装的分片上传方法（详见官方文档）
+				let _this = this
+				try {
+					let result = client.multipartUpload(upName, upFile, {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						let _index = address.indexOf('?')
+						let src = ''
+						if (_index == -1) {
+							src = address
+						} else {
+							src = address.substring(0, _index)
+						}
+						if (val == 0) {
+							this.src = src
+						} else if (val == 1) {
+							this.mp3Src = src
+						}
+					}).catch(err => {
+						console.log(err)
+					})
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			},
 			channelListFilter(val) {
 				let channelList = this.channelList
 				console.log("q" + channelList[0].id)
 				for (let i = 0; i < channelList.length; i++) {
-					console.log("44")
 					if (channelList[i].id == val) {
 						return channelList[i].title
 					}
@@ -170,9 +258,6 @@
 				let tags = {
 					homeCotent: this.value
 				}
-				if (that.upChannelId != '') {
-					cnt.upChannelId = parseInt(that.upChannelId)
-				}
 				let cnt = {
 					id: this.id,
 					module: this.$constData.module,
@@ -186,6 +271,10 @@
 					data: JSON.stringify(data),
 					pageview: this.pageview,
 					isPageView: this.viewradio,
+					mp3Src:this.mp3Src,
+					contentRemark: this.contentRemark,
+					contentSource: this.contentSource,
+					contentAuthor: this.contentAuthor,
 				}
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
@@ -291,9 +380,49 @@
 			}
 		},
 		mounted() {
+			this.editor = new wangEditor('#editor')
+			this.editor.customConfig.zIndex = 1
+			let _this = this
+			this.editor.customConfig.customUploadImg = function(files, insert) {
+				try {
+					let date = new Date()
+					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+						encodeURIComponent(files[0].name)
+					console.log('---------tmpName--------------------')
+					console.log(tmpName)
+					client.multipartUpload(tmpName, files[0], {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						console.log('--------res-------------------')
+						console.log(res)
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						console.log(address)
+						let _index = address.indexOf('?')
+						if (_index == -1) {
+							_this.imgSrc = address
+						} else {
+							_this.imgSrc = address.substring(0, _index)
+						}
+						insert(_this.imgSrc)
+					}).catch(err => {
+						console.log(err)
+					})
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			}
+			this.editor.create()
+			
 			this.getUser()
 			let info = this.$route.params.info
-			console.log(info)
 			this.getChannels(info)
 			this.getVips()
 			this.getKeyword()
@@ -303,15 +432,18 @@
 			this.power = info.power
 			this.show = JSON.parse(info.data).show
 			this.contentType = info.type
-			this.editor = new wangEditor('#editor')
-			this.editor.customConfig.zIndex = 1
-			this.editor.create()
 			this.cotentHtml = JSON.parse(info.data).editor[0].value
 			this.editor.txt.html(this.cotentHtml)
 			this.value = info.tags.homeCotent
 			this.pageview = info.pageView
 			this.getChannelById(info.upChannelId)
 			this.viewradio = info.isPageView + ''
+			this.mp3Src = info.mp3Src
+			this.contentRemark = info.contentRemark
+			this.contentSource = info.contentSource
+			this.contentAuthor = info.contentAuthor
+			
+			
 		}
 	}
 </script>

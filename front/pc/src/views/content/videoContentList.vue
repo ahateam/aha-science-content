@@ -41,14 +41,16 @@
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="pageView" label="浏览量">
+				<el-table-column prop="pageView" label="显示浏览量">
+				</el-table-column>
+				<el-table-column prop="truePageView" label="浏览量">
 				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button>
-						<!-- <el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button> -->
+						<el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button @click="delBtn(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
 					</template>
 				</el-table-column>
@@ -219,8 +221,8 @@
 			//编辑修改
 			updateBtn(info) {
 				this.$router.push({
-					path: '/editContent',
-					name: 'editContent',
+					path: '/editVideo',
+					name: 'editVideo',
 					params: {
 						info: info
 					}
@@ -306,6 +308,9 @@
 					type: this.typeList[1].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count,
+				}
+				if (cnt.offset != 0) {
+					cnt.offset = 0;
 				}
 				if (this.keyword == '') {
 					this.getContents(cnt)

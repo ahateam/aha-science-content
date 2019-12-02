@@ -46,6 +46,7 @@ const homeTag = () => import('./views/tag/homeTag')
 const tagGroup = () => import('./views/tag/tagGroup')
 //申请
 const insiderExamineList = () => import('./views/examine/insiderExamineList')
+const StringFilterList = () => import('./views/examine/StringFilterList')
 //数据
 const interestTagList = () => import('./views/dataInfo/interestTagList')
 const enrollList = () => import('./views/dataInfo/enrollList')
@@ -53,6 +54,8 @@ const enrollList = () => import('./views/dataInfo/enrollList')
 const addColumn = () => import('./views/channel/addColumn')
 const columnInfo = () => import('./views/channel/columnInfo')
 const columnList = () => import('./views/channel/columnList')
+
+
 Vue.use(Router)
 
 export default new Router({
@@ -247,7 +250,12 @@ export default new Router({
 					path: '/columnList',
 					name: 'columnList',
 					component: columnList
+				},{
+					path: '/StringFilterList',
+					name: 'StringFilterList',
+					component: StringFilterList
 				}
+				
 			]
 		},
 		{

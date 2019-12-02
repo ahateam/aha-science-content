@@ -4,7 +4,13 @@
 			用户管理
 		</el-row>
 		<el-row class="content-box">
+			<el-col :span="6">
+				<el-input placeholder="搜索全部用户名称或者手机号" v-model="keyword">
+					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				</el-input>
+			</el-col>
 		</el-row>
+		
 		<el-row class="table-box">
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column label="头像">
@@ -42,6 +48,7 @@
 		name: "contentList",
 		data() {
 			return {
+				keyword:'',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -49,6 +56,21 @@
 			}
 		},
 		methods: {
+			search(){
+				let cnt = {
+					moduleId: this.$constData.module,
+					name:this.keyword,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				if(cnt.offset != 0){
+					cnt.offset = 0;
+				}
+				this.$api.searchUsers(cnt, (res) => {
+				if (res.data.rc == this.$util.RC.SUCCESS) {
+					this.tableData = this.$util.tryParseJson(res.data.c)
+				}})
+			},
 			timeFliter(row, col, val) {
 				let timer = new Date(val)
 				let dataTime = timer.toLocaleDateString() + ' ' + timer.toLocaleTimeString('chinese', {

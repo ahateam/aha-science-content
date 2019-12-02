@@ -63,8 +63,8 @@
 						<el-input v-model="pageView" placeholder="请输入要显示的浏览量" style="width:217px;"></el-input>
 					</el-form-item>
 				</el-form>
-				  <el-radio v-model="viewradio" label="1">浏览量可见</el-radio>
-				  <el-radio v-model="viewradio" label="0">浏览量不可见</el-radio>
+				<el-radio v-model="viewradio" label="1">浏览量可见</el-radio>
+				<el-radio v-model="viewradio" label="0">浏览量不可见</el-radio>
 			</el-col>
 			<el-col :span="13">
 				<el-form label-width="80px">
@@ -75,6 +75,35 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
+			</el-col>
+		</el-row>
+		<el-row style="margin-top: 10px">
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="作者">
+						<el-input v-model="contentAuthor" placeholder="请输入" style="width:217px;"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="来源">
+						<el-input v-model="contentSource" placeholder="请输入" style="width:217px;"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="8" v-if="this.isShowpage">
+				<el-form label-width="80px">
+					<el-form-item label="摘要">
+						<el-input type="textarea" maxlength="30" show-word-limit v-model="contentRemark" placeholder="请输入(最大30个字符)"></el-input>
+					</el-form-item>
+				</el-form>
+			</el-col>
+			<el-col :span="20">
+				<span class="title-box"> 口播MP3：</span>
+				<input @change="getMP3($event)" type="file" class="upload" />
+				</el-input>
+				<audio :src="mp3Src" controls="controls" ref='audio'></audio>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
@@ -100,7 +129,12 @@
 		name: "addContent",
 		data() {
 			return {
-				viewradio:'1',
+				tempDate:{},
+				mp3Src: '',
+				contentRemark: '',
+				contentSource: '',
+				contentAuthor: '',
+				viewradio: '1',
 				isShowpage: false,
 				pageView: '',
 				keywordList: [{
@@ -127,7 +161,7 @@
 					title: '',
 					id: 0,
 				}],
-				show: 0,
+				show: 1,
 				title: '',
 				type: 5,
 				status: this.$constData.statusList[3].value,
@@ -138,6 +172,59 @@
 			}
 		},
 		methods: {
+			getMP3() {
+				if(event.target.files[0].type != 'audio/mp3'){
+					this.$message({
+						message: '请上传MP3格式的文件',
+						type: 'error'
+					});
+					return;
+				}
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload2(this.mechGrantImg)
+			},
+			doUpload2(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/MP3/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file, 1)
+			},
+			multipartUpload(upName, upFile, val) {
+				//Vue中封装的分片上传方法（详见官方文档）
+				let _this = this
+				try {
+					let result = client.multipartUpload(upName, upFile, {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						let _index = address.indexOf('?')
+						let src = ''
+						if (_index == -1) {
+							src = address
+						} else {
+							src = address.substring(0, _index)
+						}
+						if (val == 0) {
+							this.src = src
+						} else if (val == 1) {
+							this.mp3Src = src
+						}
+					}).catch(err => {
+						console.log(err)
+					})
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			},
 			subBtn() {
 				if (this.title == '') {
 					this.$message({
@@ -186,7 +273,11 @@
 					title: this.title,
 					data: JSON.stringify(data),
 					pageView: this.pageView == '' ? 0 : this.pageView,
-					isPageView:this.viewradio,
+					isPageView: this.viewradio,
+					mp3Src: this.mp3Src,
+					contentRemark: this.contentRemark,
+					contentSource: this.contentSource,
+					contentAuthor: this.contentAuthor,
 				}
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
@@ -197,7 +288,7 @@
 							message: '添加成功',
 							type: 'success'
 						});
-						localStorage.setItem('tempContent','')
+						localStorage.setItem('tempContent', '')
 						that.$router.push('/contentList')
 					} else {
 						this.$message({
@@ -261,7 +352,7 @@
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let userInfo = this.$util.tryParseJson(res.data.c)
 						if (userInfo.authority == 4) {
-						console.log(userInfo)
+							console.log(userInfo)
 							this.isShowpage = true
 						}
 					}
@@ -314,14 +405,30 @@
 					console.log(e)
 				}
 			}
-			this.editor.customConfig.onchange = function (html) {
-			        // html 即变化之后的内容
-					localStorage.setItem("tempContent",html);
-			    }
+			this.editor.customConfig.onchange = function(html) {
+				// html 即变化之后的内容
+				localStorage.setItem("tempContentHtml", html);
+			}
 			this.editor.create();
-		this.editor.txt.html(localStorage.getItem('tempContent'))
+			this.editor.txt.html(localStorage.getItem('tempContentHtml'))
+			let temp = JSON.parse(localStorage.getItem('tempContent'))
+			this.title = temp.title
+			this.pageView = temp.pageView
+			this.contentRemark = temp.contentRemark
+			this.contentSource = temp.contentSource
+			this.contentAuthor = temp.contentAuthor
+		},
+		beforeDestroy(){
+			this.tempDate={
+				title: this.title,
+				pageView: this.pageView,
+				contentRemark: this.contentRemark,
+				contentSource: this.contentSource,
+				contentAuthor: this.contentAuthor,
+			}
+			localStorage.setItem("tempContent", JSON.stringify(this.tempDate));
 		}
-		
+
 	}
 </script>
 
