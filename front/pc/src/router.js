@@ -13,6 +13,8 @@ const addContent = () => import('./views/addContent/addContent')
 const editContent = () => import('./views/content/editContent')
 const editVideo = () => import('./views/content/editVideo')
 const addVideoContent = () => import('./views/addContent/addVideoContent')
+const contentListByDraft = () => import('./views/content/contentListByDraft')
+
 //评论
 const replyList = () => import('./views/reply/replyList')
 const replyInfo = () => import('./views/reply/replyInfo')
@@ -96,6 +98,11 @@ export default new Router({
 					path: '/addVideoContent',
 					name: 'addVideoContent',
 					component: addVideoContent
+				},
+				{
+					path: '/contentListByDraft',
+					name: 'contentListByDraft',
+					component: contentListByDraft
 				},
 				{
 					path: '/editContent',

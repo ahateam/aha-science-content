@@ -6,11 +6,12 @@
 			<el-col :span="20">
 				<span class="title-box"> 标题：</span>
 				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
+				状态:{{statusInfo}}
 			</el-col>
 		</el-row>
 
 		<el-row>
-			<el-col :span="8">
+			<!-- <el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="状态">
 						<el-select v-model="status" placeholder="请选择" style="margin-right: 10px;">
@@ -19,7 +20,7 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
-			</el-col>
+			</el-col> -->
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="显示">
@@ -73,21 +74,21 @@
 			<el-radio v-model="viewradio" label="0">浏览量不可见</el-radio>
 		</el-row>
 		<el-row style="margin-top: 10px">
-			<el-col :span="8" v-if="this.isShowpage">
+			<el-col :span="8" >
 				<el-form label-width="80px">
 					<el-form-item label="作者">
 						<el-input v-model="contentAuthor" placeholder="请输入" style="width:217px;"></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8" v-if="this.isShowpage">
+			<el-col :span="8" >
 				<el-form label-width="80px">
 					<el-form-item label="来源">
 						<el-input v-model="contentSource" placeholder="请输入" style="width:217px;"></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8" v-if="this.isShowpage">
+			<el-col :span="8" >
 				<el-form label-width="80px">
 					<el-form-item label="摘要">
 						<el-input type="textarea" maxlength="30" show-word-limit v-model="contentRemark" placeholder="请输入(最大30个字符)"></el-input>
@@ -109,8 +110,14 @@
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
-			<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交修改
-			</el-button>
+			<el-col :span="12">
+				<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交
+				</el-button>
+			</el-col>
+			<el-col :span="12">
+				<el-button  @click="subBtnByDraft" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">存入草稿箱
+				</el-button>
+			</el-col>
 		</el-row>
 
 	</div>
@@ -125,6 +132,7 @@
 		name: "addContent",
 		data() {
 			return {
+				statusInfo:'',
 				mp3Src:'',
 				contentRemark: '',
 				contentSource: '',
@@ -159,13 +167,21 @@
 				}],
 				show: 0,
 				title: '',
-				status: '',
+				status: this.$constData.statusList[3].value,
 				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				statusList: this.$constData.statusList,
 				showList: this.$constData.showList,
 			}
 		},
 		methods: {
+			statusFliter(val) {
+				let statusList = this.statusList
+				for (let i = 0; i < statusList.length; i++) {
+					if (statusList[i].value == val) {
+						return statusList[i].name
+					}
+				}
+			},
 			getMP3() {
 				if(event.target.files[0].type != 'audio/mp3'){
 					this.$message({
@@ -228,6 +244,10 @@
 					}
 				}
 			},
+			subBtnByDraft(){
+				this.status = 1
+				this.editorBtn()
+			},
 			subBtn() {
 				let that = this
 				let a = this.editor.txt.getJSON()
@@ -279,6 +299,7 @@
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
 				}
+				console.log(cnt)
 				that.$api.editContent(cnt, (res => {
 					if (res.data.rc == that.$util.RC.SUCCESS) {
 						that.$message({
@@ -428,7 +449,8 @@
 			this.getKeyword()
 			this.id = info.id
 			this.title = info.title
-			this.status = info.status
+			// this.status = info.status
+			this.statusInfo = this.statusFliter(info.status)
 			this.power = info.power
 			this.show = JSON.parse(info.data).show
 			this.contentType = info.type

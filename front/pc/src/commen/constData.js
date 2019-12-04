@@ -19,7 +19,7 @@ constData.channelType = [{
 
 /**contentList*/
 constData.statusList = [{
-		name: '待审核',
+		name: '草稿箱',
 		value: 1,
 	},
 	{

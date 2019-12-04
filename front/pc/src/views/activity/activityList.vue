@@ -199,8 +199,11 @@
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
-					offset: 0,
+					offset: (this.page - 1) * this.count,
 					type: this.typeList[3].value, // Byte <选填> 类型
+				}
+				if(cnt.offset != 0){
+					cnt.offset = 0;
 				}
 				if (this.keyword == '') {
 					this.getContents(cnt)

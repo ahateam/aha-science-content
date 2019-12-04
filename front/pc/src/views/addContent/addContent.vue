@@ -7,7 +7,7 @@
 			</el-col>
 		</el-row>
 		<el-row>
-			<el-col :span="8">
+			<!-- <el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="状态:">
 						<el-select v-model="status" placeholder="请选择" style="margin-right: 10px;">
@@ -16,7 +16,7 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
-			</el-col>
+			</el-col> -->
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="显示:">
@@ -78,21 +78,21 @@
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
-			<el-col :span="8" v-if="this.isShowpage">
+			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="作者">
 						<el-input v-model="contentAuthor" placeholder="请输入" style="width:217px;"></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8" v-if="this.isShowpage">
+			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="来源">
 						<el-input v-model="contentSource" placeholder="请输入" style="width:217px;"></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
-			<el-col :span="8" v-if="this.isShowpage">
+			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="摘要">
 						<el-input type="textarea" maxlength="30" show-word-limit v-model="contentRemark" placeholder="请输入(最大30个字符)"></el-input>
@@ -101,9 +101,17 @@
 			</el-col>
 			<el-col :span="20">
 				<span class="title-box"> 口播MP3：</span>
-				<input @change="getMP3($event)" type="file" class="upload" />
+				<input @change="getMP3($event)" ref="mp3pathClear" type="file" class="upload" />
+				<el-button size="mini" round @click="delmp4src('mp3')">取消mp3</el-button>
 				</el-input>
 				<audio :src="mp3Src" controls="controls" ref='audio'></audio>
+			</el-col>
+			<el-col :span="20">
+				<span class="title-box"> 上传视频：</span>
+				<input @change="getMP4($event)" ref="mp4pathClear" type="file" class="upload" />
+				<el-button size="mini" round @click="delmp4src('mp4')">取消视频</el-button>
+				</el-input>
+				<video :src="mp4Src" controls="controls" style="width: 20%;"></video>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
@@ -113,8 +121,14 @@
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
-			<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交
-			</el-button>
+			<el-col :span="12">
+				<el-button type="primary" @click="subBtn" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">提交
+				</el-button>
+			</el-col>
+			<el-col :span="12">
+				<el-button  @click="subBtnByDraft" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">存入草稿箱
+				</el-button>
+			</el-col>
 		</el-row>
 
 	</div>
@@ -129,7 +143,8 @@
 		name: "addContent",
 		data() {
 			return {
-				tempDate:{},
+				tempDate: {},
+				mp4Src: '',
 				mp3Src: '',
 				contentRemark: '',
 				contentSource: '',
@@ -172,8 +187,18 @@
 			}
 		},
 		methods: {
+			delmp4src(e) {
+				if (e == 'mp3') {
+					this.mp3Src = ''
+					this.$refs.mp3pathClear.value = ''
+				}
+				if (e == 'mp4') {
+					this.mp4Src = ''
+					this.$refs.mp4pathClear.value = ''
+				}
+			},
 			getMP3() {
-				if(event.target.files[0].type != 'audio/mp3'){
+				if (event.target.files[0].type != 'audio/mp3') {
 					this.$message({
 						message: '请上传MP3格式的文件',
 						type: 'error'
@@ -183,12 +208,30 @@
 				this.mechGrantImg = event.target.files[0]
 				this.doUpload2(this.mechGrantImg)
 			},
+			getMP4() {
+				// if(event.target.files[0].type != 'audio/mp3'){
+				// 	this.$message({
+				// 		message: '请上传MP4格式的文件',
+				// 		type: 'error'
+				// 	});
+				// 	return;
+				// }
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg)
+			},
 			doUpload2(file) {
 				let date = new Date()
 				this.size = file.size
 				let tmpName = 'zskp/MP3/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 					encodeURIComponent(file.name)
 				this.multipartUpload(tmpName, file, 1)
+			},
+			doUpload(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file, 0)
 			},
 			multipartUpload(upName, upFile, val) {
 				//Vue中封装的分片上传方法（详见官方文档）
@@ -210,7 +253,7 @@
 							src = address.substring(0, _index)
 						}
 						if (val == 0) {
-							this.src = src
+							this.mp4Src = src
 						} else if (val == 1) {
 							this.mp3Src = src
 						}
@@ -248,6 +291,10 @@
 				}
 				this.editorBtn()
 			},
+			subBtnByDraft(){
+				this.status = 1
+				this.editorBtn()
+			},
 			editorBtn() {
 				let that = this
 				let text = this.editor.txt.html()
@@ -257,7 +304,8 @@
 						value: text
 					}],
 					show: this.show,
-					imgList: this.imgList
+					imgList: this.imgList,
+					video: this.mp4Src,
 				}
 				let tags = {
 					homeCotent: this.value
@@ -279,6 +327,7 @@
 					contentSource: this.contentSource,
 					contentAuthor: this.contentAuthor,
 				}
+				console.log(cnt)
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
 				}
@@ -418,8 +467,8 @@
 			this.contentSource = temp.contentSource
 			this.contentAuthor = temp.contentAuthor
 		},
-		beforeDestroy(){
-			this.tempDate={
+		beforeDestroy() {
+			this.tempDate = {
 				title: this.title,
 				pageView: this.pageView,
 				contentRemark: this.contentRemark,

@@ -39,6 +39,13 @@
 				<input @change="getMechData1($event)" type="file" class="upload" v-if="imgSrc == ''" />
 			</el-col>
 		</el-row>
+		<el-row style="padding: 20px" v-if="this.advertType == '0' ">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="20">
+				<h2> 你选择的广告类别:【APP主页广告】</h2>
+				<h1 style="font-size: 16px;">APP主页广告图片建议：（横屏图片）比如：高度固定为固定高度150px,长度建议最低320px</h1>
+			</el-col>
+		</el-row>
 		<el-row style="padding: 20px" v-if="this.advertType == '1' ">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -47,14 +54,17 @@
 					<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
 					</el-option>
 				</el-select>
+				<h1 style="font-size: 16px;">科普栏目广告图片建议：（横屏图片）比如：高度185px左右,长度建议400px左右</h1>
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px" v-if="this.advertType == '2' ">
-			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="2" style="min-height: 20px">
+			</el-col>
 			<el-col :span="22">
 				<h2> 你选择的广告类别:【APP启动页广告】，请你选择是否启用当前广告：</h2>
 				<el-radio v-model="radio" label="0">设置当前广告为启动页广告</el-radio>
 				<el-radio v-model="radio" label="1">仅添加，以后设置</el-radio>
+				<h1 style="font-size: 16px;">启动图分辨率建议：（手机竖屏图片）1920px*1080px</h1>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
@@ -75,8 +85,9 @@
 		name: "addAdvert",
 		data() {
 			return {
-				channelList:'',
-				upChannelId:'',
+				uploadImgInfo:{},
+				channelList: '',
+				upChannelId: '',
 				radio: '',
 				advertTypeList: this.$constData.advertTypeList,
 				advertType: '',
@@ -93,7 +104,7 @@
 				let cnt = {
 					module: this.$constData.module,
 					status: 0,
-					type:'0',
+					type: '0',
 					count: 20,
 					offset: 0,
 				};
@@ -126,7 +137,8 @@
 					}).then(res => {
 						//取出存好的url
 						let address = res.res.requestUrls[0]
-						console.log(address)
+						// this.uploadImgInfo = address+'?x-oss-process=image/info'
+						// console.log(this.uploadImgInfo)
 						let _index = address.indexOf('?')
 						if (_index == -1) {
 							_this.imgSrc = address
@@ -195,10 +207,10 @@
 					sortSize: this.level,
 					type: this.advertType,
 				}
-				if(this.advertType == '1'){
+				if (this.advertType == '1') {
 					cnt.channelId = this.upChannelId
 				}
-				if(this.advertType == '2'){
+				if (this.advertType == '2') {
 					cnt.status = this.radio
 				}
 				console.log(cnt)
@@ -219,7 +231,7 @@
 				}))
 			},
 		},
-		mounted(){
+		mounted() {
 			this.getChannels()
 		}
 	}

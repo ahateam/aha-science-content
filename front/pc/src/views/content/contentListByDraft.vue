@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			图文管理
+			图文管理-<span style="color: chocolate;">草稿箱</span>
 		</el-row>
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
@@ -26,8 +26,6 @@
 			</el-col>
 			<el-col :span="6">
 				<el-button plain @click="getContentsBtn">默认列表</el-button>
-				<el-button type="primary" plain @click="createContent" style="float: right;">发布图文</el-button>
-				<el-button  plain @click="draftContent" style="float: right;">草稿箱</el-button>
 			</el-col>
 		</el-row>
 
@@ -74,7 +72,7 @@
 
 <script>
 	export default {
-		name: "contentList",
+		name: "contentListByDraft",
 		data() {
 			return {
 				tag: [],
@@ -143,7 +141,7 @@
 			/*获取内容列表*/
 			getContents(cnt) {
 				cnt.re = 'admin'
-				cnt.status=this.$constData.statusList[3].value
+				cnt.status=this.$constData.statusList[0].value
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
@@ -316,9 +314,6 @@
 			},
 			createContent() {
 				this.$router.push('/addContent')
-			},
-			draftContent(){
-				this.$router.push('/contentListByDraft')
 			},
 			getSvip() {
 				let cnt = {
