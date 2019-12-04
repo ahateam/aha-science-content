@@ -6,7 +6,7 @@ import zyxhj.utils.data.rds.RDSAnnField;
 import zyxhj.utils.data.rds.RDSAnnID;
 
 /**
- * 基地景点
+ * 是否已读
  */
 @RDSAnnEntity(alias = "tb_zskt_isread")
 public class Isread {

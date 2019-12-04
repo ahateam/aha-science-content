@@ -116,7 +116,7 @@ public class ZskpOtherContent extends Controller{
 		if(tags !=null && tags.size()>0) {
 			exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
 		}
-		exp.append("ORDER BY page_view DESC ");
+		exp.append("ORDER BY page_view asc");
 		try (DruidPooledConnection conn = ds.getConnection()) {			
 			List<Content> list = contentRepository.getList(conn,exp, count, offset);
 			if(list == null && list.size()<=0) {
@@ -429,7 +429,7 @@ public class ZskpOtherContent extends Controller{
 			des = " 搜索景点", 
 			ret = "" 
 		)
-		public JSONObject searchTourBase(
+		public  List<TourBases>  searchTourBase(
 			@P(t = "模块编号") String moduleId,
 			@P(t = "关键字") String search,
 			@P(t = "用户定位经纬度") String userCoordinate,
@@ -437,23 +437,8 @@ public class ZskpOtherContent extends Controller{
 			int offset
 		) throws Exception {
 		try(DruidPooledConnection conn = ds.getConnection()) {
-			   List<TourBases> list = tourBasesRepository.getList(conn, EXP.LIKE("name", search).key("module_id", moduleId), count, offset);
-			   JSONObject jo = new JSONObject();
-			   JSONArray ja = new JSONArray();
-			   for (int i = 0; i < list.size(); i++) {
-			    JSONObject obj = new JSONObject();
-			    obj.put("moduleId", list.get(i).moduleId);
-			    obj.put("id", list.get(i).id);
-			    obj.put("name", list.get(i).name);
-			    obj.put("address", list.get(i).address);
-			    obj.put("coordinate", list.get(i).coordinate);
-			    obj.put("data", list.get(i).data);
-			    obj.put("createTime", list.get(i).createTime);
-			    obj.put("buyTicketsLink", list.get(i).buyTicketsLink);
-			    ja.add(obj);
-			   }
-			   jo.put("TourBases", ja.toString());
-			   return jo;
+			   List<TourBases> list = tourBasesRepository.getList(conn, EXP.INS().and(EXP.LIKE("name", search)).andKey("module_id", moduleId), count, offset);
+			   return list;
 		}
 	}
 	@POSTAPI(//
@@ -662,9 +647,9 @@ public class ZskpOtherContent extends Controller{
 			int index = json.size();
 			if(time != null) {//如果有时间，按照时间筛选返回
 				for(int i= 0 ;i<index ;i++) {
-//					Long reolyTime = getTimeInMillis(time, json.getJSONObject(i).getString("createTime"));//时间转换为时间戳
 					Long reolyTime = getTimeInMillis(time, json.getJSONObject(i).getString("createTime"));//时间转换为时间戳
-					if(reolyTime >getTimeInMillis(time)  && reolyTime < new Date().getTime()) {//查询创建时间为：大于一给定时间前，小于当前时间
+					System.out.println(new Date().getTime());
+					if(reolyTime >getTimeInMillis(time) && reolyTime < new Date().getTime()) {//查询创建时间为：大于一给定时间前，小于当前时间
 						map.put(json.getJSONObject(i).getLong("ownerId"),json.getJSONObject(i).getLong("ownerId"));						
 					}
 				}
@@ -709,12 +694,11 @@ public class ZskpOtherContent extends Controller{
 				tempJson = new JSONObject();
 				tempJson = json.getJSONObject(i);
 				Long relpyId = json.getJSONObject(i).getLong("sequenceId");//评论id
-				//查询是否点过赞
+				//查询二级评论
 				if(isComment == null || isComment ) {
 					JSONArray comment =  commentRepository.getCommentList(conn,relpyId, upUserId, null, orderDesc, toUserId,  count, offset);
 					tempJson.put("comment", comment);
 				}
-				tempJson.put("content", "ccccccccccccccc");
 				if(judgeAppraise(relpyId, userId)) {
 					tempJson.put("isAppraise", true);
 				}else {

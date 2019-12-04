@@ -2,8 +2,12 @@ package zyxhj.zskp.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
@@ -28,12 +32,16 @@ import zyxhj.zskp.domain.ZskpUser;
 import zyxhj.zskp.repository.ApplyAuthorityRepository;
 import zyxhj.zskp.repository.UserFavoritesRepository;
 import zyxhj.zskp.repository.UserRepository;
+import zyxhj.zskp.util.FileUtil;
+import zyxhj.zskp.util.SensitiveWordInit;
 
 public class ZskpUserService extends Controller{
 	private UserRepository userRepository;
 	private ApplyAuthorityRepository applyAuthorityRepository;
 	private UserFavoritesRepository favoritesRepository;
 	private ContentRepository contentRepository;
+	private FileUtil fileUtil;
+	private SensitiveWordInit sensitiveWordInit;
 	private DruidDataSource ds;
 	public ZskpUserService(String node) {
 		super(node);
@@ -43,6 +51,8 @@ public class ZskpUserService extends Controller{
 			applyAuthorityRepository = Singleton.ins(ApplyAuthorityRepository.class);
 			favoritesRepository = Singleton.ins(UserFavoritesRepository.class);
 			contentRepository = Singleton.ins(ContentRepository.class);
+			fileUtil = Singleton.ins(FileUtil.class);
+			sensitiveWordInit = Singleton.ins(SensitiveWordInit.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -289,7 +299,6 @@ public class ZskpUserService extends Controller{
 			user.phone = phone;
 			user.updateTime = new Date();
 			ZskpUser temp = userRepository.get(conn, EXP.INS().key("phone", phone).andKey("module_id",moduleId));
-			System.out.println(temp != null);
 			if(temp != null) {
 				return APIResponse.getNewFailureResp(new RC("fail", "手机号重复"));
 			}
@@ -306,17 +315,22 @@ public class ZskpUserService extends Controller{
 		public APIResponse bindingwx(
 			@P(t = "模块编号") String moduleId,
 			@P(t = "用户id") Long id,
-			@P(t = "openid") String openId
+			@P(t = "openid") String openId,
+			@P(t = "微信头像") String head
 		) throws ServerException, SQLException {
 			try(DruidPooledConnection conn = ds.getConnection()){
-				ZskpUser user = new ZskpUser();
-				user.openId = openId;
 				ZskpUser temp = userRepository.get(conn, EXP.INS().key("open_id", openId).andKey("module_id",moduleId));
 				if(temp != null) {
 					return APIResponse.getNewFailureResp(new RC("fail", "微信号重复"));
 				}
-				userRepository.update(conn, EXP.INS().key("id",id).andKey("module_id",moduleId), user,true);
 				ZskpUser returnUser = userRepository.get(conn, EXP.INS().key("id", id).andKey("module_id",moduleId));
+				ZskpUser user = new ZskpUser();
+				user.openId = openId;
+				if("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131055185&di=4fc467c4531fc69f310817c26c4457dd&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F69ad7a731f43d4b8729f1a2fbe65c43801ca0f033250-EV1vMf_fw658".equals(returnUser.head)) {
+					user.head = head;
+					returnUser.head = head;
+				}
+				userRepository.update(conn, EXP.INS().key("id",id).andKey("module_id",moduleId), user,true);				
 				return APIResponse.getNewSuccessResp(returnUser);
 			}
 		}
@@ -505,6 +519,22 @@ public class ZskpUserService extends Controller{
 			return userList;
 		}
 	}
+	@POSTAPI(//
+			path = "searchUsers", 
+			des = "查询用户信息", 
+			ret = "" 
+		)
+		public List<ZskpUser> searchUsers(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "搜索",r =false) String name,
+			int count,
+			int offset
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				List<ZskpUser> userList = userRepository.getList(conn, EXP.INS(false).key("module_id", moduleId).and(EXP.INS().LIKE("phone", name).or(EXP.INS().LIKE("name",name))), count, offset);
+				return userList;
+			}
+		}
 	/**
 	 * 创建用户关注
 	 */
@@ -637,17 +667,54 @@ public class ZskpUserService extends Controller{
 			return json;
 		}
 	}
-//	/**
-//	 * 微信登录
-//	 */
-//	@POSTAPI(//
-//		path = "wxLogin", 
-//		des = "微信登录", 
-//		ret = "" 
-//	)
-//	public void wxLogin(
-//	) {
-//		
-//	}
+	@POSTAPI(//
+		path = "getFilterText", 
+		des = "读取文件", 
+		ret = "" 
+	)
+	public String getFilterText(
+	) throws ServerException, SQLException {
+		String ciname = StringUtils.join("configs/", "filterText.txt");
+		return fileUtil.ReadFileByLine(ciname).toString();
+	}
+	@POSTAPI(//
+		path = "readFilterText", 
+		des = "写入文件", 
+		ret = "" 
+	)
+	public void readFilterText(
+			String txt
+	) throws ServerException, SQLException {
+		String ciname = StringUtils.join("configs/", "filterText.txt");
+		fileUtil.fileChaseFW(ciname,txt);
+	}
+	@POSTAPI(//
+			path = "delFilterText", 
+			des = "删除文件", 
+			ret = "" 
+		)
+		public APIResponse delFilterText(
+				String txt
+		) throws ServerException, SQLException {
+		String ciname = StringUtils.join("configs/", "filterText.txt");
+			try {
+				Set<String> StringSet = sensitiveWordInit.readSensitiveWordFile();
+				if(!StringSet.remove(txt)) {
+					return APIResponse.getNewFailureResp(new RC("fail", "没有这个敏感词，请检查后重新输入"));
+				}
+				Iterator<String> it = StringSet.iterator();  
+//				fileUtil.clearInfoForFile(ciname); 
+				StringBuffer sb = new StringBuffer();
+				while (it.hasNext()) {  
+				  String str = it.next();  
+				  sb.append(str+"\r\n");
+				}  
+				fileUtil.fileChaseFW2(ciname,sb.toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return APIResponse.getNewSuccessResp();
+		}
 	
 }

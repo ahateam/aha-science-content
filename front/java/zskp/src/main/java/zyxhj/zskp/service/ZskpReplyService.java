@@ -28,6 +28,7 @@ import zyxhj.zskp.repository.CommentRepository;
 import zyxhj.zskp.repository.IsreadRepository;
 import zyxhj.zskp.repository.ReplyRepository;
 import zyxhj.zskp.repository.UserRepository;
+import zyxhj.zskp.util.SensitivewordFilter;
 
 public class ZskpReplyService extends Controller {
 	private static Logger log = LoggerFactory.getLogger(ReplyService.class);
@@ -39,6 +40,7 @@ public class ZskpReplyService extends Controller {
 	private IsreadRepository isreadRepository;
 	private ReplyRepository replyRepository;
 	private CommentRepository commentRepository;
+	private SensitivewordFilter sensitivewordFilter;
 	public ZskpReplyService(String node) {
 		super(node);
 		try {
@@ -48,6 +50,7 @@ public class ZskpReplyService extends Controller {
 			isreadRepository = Singleton.ins(IsreadRepository.class);
 			replyRepository = Singleton.ins(ReplyRepository.class);
 			commentRepository = Singleton.ins(CommentRepository.class);
+			sensitivewordFilter = Singleton.ins(SensitivewordFilter.class);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -83,7 +86,7 @@ public class ZskpReplyService extends Controller {
 			reply.atUserId = atUserId;
 			reply.atUserName = atUserName;
 			reply.title = title;
-			reply.text = text;
+			reply.text = sensitivewordFilter.StringFilterMain(text);
 			reply.ext = "1";
 			replyRepository.insert(conn, reply);
 			return APIResponse.getNewSuccessResp(reply);

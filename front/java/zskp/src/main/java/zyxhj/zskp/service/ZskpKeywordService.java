@@ -118,7 +118,7 @@ public class ZskpKeywordService extends Controller{
 				temp = new JSONArray();
 				json.add(list.get(i).keyword);
 				tag.put("homeCotent", json);
-				temp = otherContent.getContents(module, null, (byte)4, null, null, null, tag, 5, 0);
+				temp = otherContent.getContents(module, null, (byte)4, null, null, null, tag, count, offset);
 				for(int j=0;j<temp.size();j++) {
 					map.put(temp.getJSONObject(j).getLong("id"),temp.get(j));
 				}
