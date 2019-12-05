@@ -711,44 +711,53 @@
 				count: this.count, // Integer
 				offset: this.offset, // Integer
 			}
-			if (this.tagName == '活动') {
-				cnt.type = this.constData.contentType[3].key
-			} else if (this.tagName == '科普栏目') {
-				cnt.type = 0
-				this.channelList = []
-				this.getChannels(cnt)
-			} else if (this.tagName == '科普基地') {
-				let cnt1 = {
-					moduleId: this.constData.module, // String 所属模块
-					userCoordinate: this.location, // String <选填> 用户定位经纬度
-					count: this.count, // Integer
-					offset: this.offset, // Integer
-				}
-				this.getTourBases(cnt1, index)
-			} else if (this.tagName == '专题页面') {
-				cnt.type = 1
-				this.channelList = []
-				this.getChannels(cnt)
-			} else if (this.tagName == '推荐') {
+			switch (this.tagName) {
+				case '活动':
+					cnt.type = this.constData.contentType[3].key;
+					this.getContentsByTag(cnt, index);
+					break;
 
-				this.contents = []
-				let userId = uni.getStorageSync('userId')
-				console.log(userId)
-				if (userId != '' && userId != '1234567890') {
-					cnt.userId = userId
-				}
-				this.getKeywordContent(cnt, index)
-			} else if (this.tagName != '' && this.tagName != '全部') {
-				cnt.tags = `{"homeCotent":"${this.tagName}"}`
-				this.contents = []
-				this.getContentsByTag(cnt, index)
+				case '科普栏目':
+					cnt.type = 0
+					this.channelList = []
+					this.getChannels(cnt)
+					break;
+
+				case '科普基地':
+					cnt = {
+						moduleId: this.constData.module, // String 所属模块
+						userCoordinate: this.location, // String <选填> 用户定位经纬度
+						count: this.count, // Integer
+						offset: this.offset, // Integer
+					};
+					this.getTourBases(cnt, index);
+					break;
+
+				case '专题页面':
+					cnt.type = 1;
+					this.channelList = [];
+					this.getChannels(cnt);
+					break;
+
+				case '推荐':
+					this.contents = [];
+					let userId = uni.getStorageSync('userId');
+					console.log(userId);
+					if (userId != '' && userId != '1234567890') {
+						cnt.userId = userId
+					};
+					this.getKeywordContent(cnt, index);
 			}
-
+			// if (this.tagName != '' && this.tagName != '全部') {
+			// 	cnt.tags = `{"homeCotent":"${this.tagName}"}`
+			// 	this.contents = []
+			// 	this.getContentsByTag(cnt, index)
+			// }
 		},
 		//上滑加载更多
 		onReachBottom() {
 			let index = this.tabCurrentIndex
-			if (this.tagsList[index].pageOver == true) {
+			if (this.tagsList[index].pageOver) {
 				return
 			}
 			this.page += 1
@@ -761,37 +770,51 @@
 				count: this.count, // Integer
 				offset: (this.page - 1) * this.count, // Integer
 			}
-			if (this.tagName == '活动') {
-				cnt.type = this.constData.contentType[3].key
-			} else if (this.tagName == '科普栏目') {
-				let cnt1 = {
-					module: this.$constData.module, // Long 模块编号
-					// status: this.$constData.tagStatus[1].key, // Byte <选填> 状态
-					// tags: tags, // String <选填> 标签（json）
-					count: this.count, // int 
-					offset: (this.page - 1) * this.count, // int 
-				}
-				this.getChannels(cnt1)
-				return
-			} else if (this.tagName == '科普基地') {
-				let cnt1 = {
-					moduleId: this.constData.module, // String 所属模块
-					userCoordinate: this.location, // String <选填> 用户定位经纬度
-					count: this.count, // Integer
-					offset: (this.page - 1) * this.count, // Integer
-				}
-				this.getTourBases(cnt1, index)
-				return
-			} else if (this.tagName == '推荐') {
-				let userId = uni.getStorageSync('userId')
-				if (userId != '' && userId != '1234567890') {
-					cnt.userId = userId
-				}
-				this.getKeywordContent(cnt, index)
-			} else if (this.tagName != '' && this.tagName != '全部') {
-				cnt.tags = `{"homeCotent":"${this.tagName}"}`
-				this.getContentsByTag(cnt, index)
+
+			switch (this.tagName) {
+				case '活动':
+					cnt.type = this.constData.contentType[3].key
+					this.getData(this.tabCurrentIndex)
+					break;
+
+				case '科普栏目':
+					cnt = {
+						module: this.constData.module, // Long 模块编号
+						// status: this.$constData.tagStatus[1].key, // Byte <选填> 状态
+						// tags: tags, // String <选填> 标签（json）
+						count: this.count, // int 
+						offset: (this.page - 1) * this.count, // int 
+					}
+					this.getChannels(cnt)
+					break;
+
+				case '科普基地':
+					cnt = {
+						moduleId: this.constData.module, // String 所属模块
+						userCoordinate: this.location, // String <选填> 用户定位经纬度
+						count: this.count, // Integer
+						offset: (this.page - 1) * this.count, // Integer
+					}
+					this.getTourBases(cnt, index)
+					break;
+
+				case '推荐':
+					let userId = uni.getStorageSync('userId')
+					if (userId != '' && userId != '1234567890') {
+						cnt.userId = userId
+					}
+					this.getKeywordContent(cnt, index)
+					break;
+
+				case '专题页面':
+					cnt.type = 1
+					this.getChannels(cnt)
 			}
+
+			// if (this.tagName != '' && this.tagName != '全部') {
+			// 	cnt.tags = `{"homeCotent":"${this.tagName}"}`
+			// 	this.getContentsByTag(cnt, index)
+			// }
 		},
 
 	}
