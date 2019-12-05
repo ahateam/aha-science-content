@@ -103,7 +103,6 @@
 
 	.time {
 		display: inline-block;
-		margin-left: 20upx;
 		vertical-align: middle;
 	}
 
@@ -114,6 +113,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		margin-right: 20upx;
 	}
 
 	.address {

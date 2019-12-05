@@ -4,7 +4,7 @@
 			<uniLoadMore status="loading"></uniLoadMore>
 		</view>
 
-		<scroll-view class="scroll" scroll-y v-if="pageStatus">
+		<view class="scroll" scroll-y v-if="pageStatus">
 			<view class="scroll-content">
 				<view class="introduce-section">
 					<text class="title">{{detailData.title}}</text>
@@ -16,11 +16,14 @@
 						<button @click="delUserFavorite" class="followBtn" v-else-if="followStatus == true">已关注</button>
 					</view>
 
-					<view class="otherInfo" v-if="contentRemark||mp3Src">
+					<view class="otherInfo" v-if="contentRemark||mp3Src||videoSrc">
 						<view class="remark" v-if="contentRemark">
 							{{contentRemark}}
 						</view>
 						<audio v-if="mp3Src" :src="mp3Src" :poster="mp3Img" name="mp3" :action="audioAction" controls></audio>
+						<view>
+							<video v-if="videoSrc" :src="videoSrc" controls></video>
+						</view>
 					</view>
 
 					<view class="articleInfo">
@@ -63,13 +66,13 @@
 					</view>
 					<!-- 点赞分享end -->
 				</view>
-
 				<!-- 评论区 -->
-				<comment :comment="comment" @upZan="upZan" @delZan="delZan" @repaly="openReplay"></comment>
+				<view style="width: 100%;">
+					<comment :comment="comment" @upZan="upZan" @delZan="delZan" @repaly="openReplay"></comment>
+				</view>
 				<!-- 评论end -->
-
 			</view>
-		</scroll-view>
+		</view>
 
 		<view class="poster" v-if="posterShow" @click="hiddenPoster">
 			<view class="posterImg" @click.stop>
@@ -173,6 +176,7 @@
 				// 音频
 				mp3Src: '',
 				mp3Img: '',
+				videoSrc: '',
 				audioAction: {
 					method: 'pause'
 				},
@@ -712,6 +716,7 @@
 						this.contentSource = detailData.contentSource
 						this.contentAuthor = detailData.contentAuthor
 						this.mp3Src = detailData.mp3Src
+						this.videoSrc = this.$util.tryParseJson(detailData.data).video
 						let imgList = this.$util.tryParseJson(detailData.data).imgList
 						if (imgList.length > 0) {
 							this.mp3Img = imgList[0].src
@@ -785,23 +790,19 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		height: 100%;
-	}
+<style lang="scss" scoped>
 
 	.content {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
 		background: #fff;
+		padding-bottom: 90upx;
 	}
 
 	.scroll {
 		flex: 1;
 		position: relative;
 		background-color: #f8f8f8;
-		height: 0;
 	}
 
 	.scroll-content {
@@ -888,14 +889,18 @@
 
 	/* 底部 */
 	.bottom {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		background-color: #FFFFFF;
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
 		height: 90upx;
 		padding: 0 30upx;
 		box-shadow: 0 -1px 3px rgba(0, 0, 0, .04);
-		position: relative;
 		z-index: 1;
+		box-sizing: border-box;
 
 		.input-box {
 			display: flex;
@@ -1016,6 +1021,11 @@
 		margin-top: $box-margin-top;
 		font-size: $list-info;
 		color: $list-title-color;
+
+		video {
+			width: 690upx;
+			height: 388upx;
+		}
 	}
 
 	.remark {

@@ -138,26 +138,42 @@
 							uni.showLoading({
 								title: '绑定中'
 							})
+							console.log(res)
 							let openId = res.authResult.openid
-							let cnt = {
-								moduleId: this.$constData.module, // String 模块编号
-								id: uni.getStorageSync('userId'), // Long 用户id
-								openId: openId, // String openid
-							}
-							this.$api.bindingwx(cnt, (res) => {
-								if (res.data.rc == this.$util.RC.SUCCESS) {
-									uni.setStorageSync('openId', openId)
-									this.openId = openId
-									uni.showToast({
-										title: '绑定成功！'
-									})
-								} else {
-									uni.showToast({
-										title: res.data.rm,
-										icon: 'none'
+							uni.getUserInfo({
+								success: (userInfo) => {
+									console.log(userInfo)
+									let head = userInfo.userInfo.avatarUrl
+									if (head.substr(0, 5) != 'https') {
+										head = head.substr(0, 4) + 's' + head.substr(4)
+									}
+									console.log(head)
+									let cnt = {
+										moduleId: this.$constData.module, // String 模块编号
+										id: uni.getStorageSync('userId'), // Long 用户id
+										openId: openId, // String openid
+										head: head, // String 微信头像
+									}
+									this.$api.bindingwx(cnt, (res) => {
+										if (res.data.rc == this.$util.RC.SUCCESS) {
+											let headSrc = this.$util.tryParseJson(res.data.c).head
+											this.head = headSrc
+											uni.setStorageSync('userHead', headSrc)
+											uni.setStorageSync('openId', openId)
+											this.openId = openId
+											uni.showToast({
+												title: '绑定成功！'
+											})
+										} else {
+											uni.showToast({
+												title: res.data.rm,
+												icon: 'none'
+											})
+										}
 									})
 								}
 							})
+
 						},
 						fail: (err) => {
 							console.log('login fail:', err);
