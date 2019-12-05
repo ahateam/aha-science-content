@@ -1,7 +1,9 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			评论管理
+			<el-col :span="18">评论管理</el-col>
+			<el-col :span="3"> <el-button type="warning" plain @click="goSenssitivewordReply">敏感评论审核</el-button></el-col>
+			<el-col :span="2"> <el-button type="danger" plain @click="goSenssitivewordList">敏感词词库</el-button></el-col>
 		</el-row>
 		<el-row style="padding: 10px;">
 			<el-col :span="18">
@@ -96,6 +98,18 @@
 					hour12: false
 				})
 				return dataTime
+			},
+			goSenssitivewordReply(){
+				this.$router.push({
+					path: '/SenssitivewordReply',
+					name: 'SenssitivewordReply',
+				})
+			},
+			goSenssitivewordList(){
+				this.$router.push({
+					path: '/StringFilterList',
+					name: 'StringFilterList',
+				})
 			},
 			/*获取评论列表*/
 			getContents(cnt) {

@@ -19,6 +19,10 @@ const contentListByDraft = () => import('./views/content/contentListByDraft')
 const replyList = () => import('./views/reply/replyList')
 const replyInfo = () => import('./views/reply/replyInfo')
 const commentList = () => import('./views/reply/commentList')
+const SenssitivewordReply = () => import('./views/reply/SenssitivewordReply')
+const SenssitivewordComment = () => import('./views/reply/SenssitivewordComment')
+
+
 //栏目
 const svipList = () => import('./views/svip/svipList')
 const svipInfoList = () => import('./views/svip/svipInfoList')
@@ -176,6 +180,16 @@ export default new Router({
 					path: '/commentList',
 					name: 'commentList',
 					component: commentList
+				},
+				{
+					path: '/SenssitivewordReply',
+					name: 'SenssitivewordReply',
+					component: SenssitivewordReply
+				},
+				{
+					path: '/SenssitivewordComment',
+					name: 'SenssitivewordComment',
+					component: SenssitivewordComment
 				},
 				//用户
 				{

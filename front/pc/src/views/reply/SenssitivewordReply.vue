@@ -1,24 +1,25 @@
 <template>
 	<div>
 		<el-row class="title-box">
-			评论管理
+			敏感评论审核管理-敏感评论
+			<el-button type="primary" @click="goComment" round>查看敏感回复</el-button>
 		</el-row>
 		<el-row class="content-box">
 		</el-row>
 		<el-row class="table-box">
 			<el-table :data="tableData" style="width: 100%;margin-bottom: 20px;">
-				<el-table-column prop="name" label="用户名" width="200">
-				</el-table-column>
 				<el-table-column prop="text" label="评论">
 				</el-table-column>
-				<el-table-column prop="appraiseCount" label="点赞数">
+				<el-table-column prop="contitle" label="原文标题">
 				</el-table-column>
-				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
+				<el-table-column prop="createTime" label="评论日期" :formatter="timeFliter">
+				</el-table-column>
+				<el-table-column prop="name" label="发布者">
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<el-button @click="delBtn(scope.row)" type="text" style="color: red;" size="small">删除</el-button>
-						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看回复</el-button>
+						<el-button @click="delBtn(scope.row)" type="text" style="color: red;" size="small">不通过</el-button>
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">通过</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -40,7 +41,7 @@
 		  	</el-table-column>
 		  	<el-table-column prop="appraiseCount" label="点赞数">
 		  	</el-table-column>
-		  	<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
+		  	<el-table-column prop="createTime" label="评论日期" :formatter="timeFliter">
 		  	</el-table-column>
 		  	<el-table-column label="操作" width="200">
 		  		<template slot-scope="scope">
@@ -54,10 +55,9 @@
 
 <script>
 	export default {
-		name: "contentList",
+		name: "SenssitivewordReply",
 		data() {
 			return {
-				replyInfo:'',
 				dialogTableVisible:false,
 				tableData: [],
 				tableData1:[],
@@ -74,11 +74,19 @@
 				})
 				return dataTime
 			},
+			goComment(){
+				this.$router.push({
+					path: '/SenssitivewordComment',
+					name: 'SenssitivewordComment',
+				})
+			},
 			/*获取评论列表*/
 			getContents(cnt) {
-				this.$api.getReplyList(cnt, (res) => {
+				cnt.type = 1
+				this.$api.getReplyListByStatus(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
+						console.log(this.tableData)
 					} else {
 						this.tableData = []
 					}
@@ -101,8 +109,28 @@
 				this.getContents(cnt)
 			},
 			infoBtn(info){
-				this.tableData1=info.comment
-				this.dialogTableVisible = true
+				let cnt = {
+					id:info.sequenceId,
+				}
+				this.$api.updateReply(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.$message({
+							type: 'success',
+							message: '操作成功!'
+						});
+						let cnt = {
+							type:1,
+							count: this.count,
+							offset: (this.page - 1) * this.count
+						}
+						this.getContents(cnt)
+					} else {
+						this.$message({
+							type: 'error',
+							message: '操作失败!'
+						});
+					}
+				})
 			},
 			//删除回复
 			delCommentBtn(info,index){
@@ -139,7 +167,7 @@
 			},
 			/* 删除内容*/
 			delBtn(info) {
-				this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+				this.$confirm('永久删除该条评论, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
@@ -156,8 +184,6 @@
 								message: '删除成功!'
 							});
 							let cnt = {
-								ownerId: this.replyInfo.id,
-								orderDesc: true,
 								count: this.count,
 								offset: (this.page - 1) * this.count
 							}
@@ -178,11 +204,8 @@
 			},
 		},
 		mounted() {
-			let info = this.$route.params.info
-			this.replyInfo = info
 			let cnt = {
-				ownerId: info.id,
-				orderDesc: true,
+				type:1,
 				count: this.count,
 				offset: (this.page - 1) * this.count
 			}

@@ -84,6 +84,23 @@ api.getReplyList = function (cnt, callback) {
 api.delReply = function (cnt, callback) {
     util.call(baseUrl + '/ZskpReply/delReply', cnt, callback)
 }
+//修改评论
+api.updateReply = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/updateReply', cnt, callback)
+}
+//获取审核回复
+api.getCommentListByStatus = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/getCommentListByStatus', cnt, callback)
+}
+//修改审核回复
+api.updateComment = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/updateComment', cnt, callback)
+}
+//获取敏感评论
+api.getReplyListByStatus = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/getReplyListByStatus', cnt, callback)
+}
+
 //huifu
 api.getReplyListByReplyId = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/getReplyListByReplyId', cnt, callback)
@@ -133,10 +150,23 @@ api.resUserPwd = function (cnt, callback) {
 api.setUserauthority = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/setUserauthority', cnt, callback)
 }
-//读取文件
-api.getFilterText = function (cnt, callback) {
-    util.call(baseUrl + '/ZskpUserService/getFilterText', cnt, callback)
+//创建敏感词
+api.createSensitiveWord = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/createSensitiveWord', cnt, callback)
 }
+//删除敏感词
+api.delSensitiveWord = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/delSensitiveWord', cnt, callback)
+}
+//查询敏感词
+api.getFilterText = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/getFilterText', cnt, callback)
+}
+//修改敏感词
+api.updateSensitiveWord = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/updateSensitiveWord', cnt, callback)
+}
+
 //写入文件
 api.readFilterText = function (cnt, callback) {
     util.call(baseUrl + '/ZskpUserService/readFilterText', cnt, callback)
