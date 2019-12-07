@@ -2,8 +2,8 @@
     "name" : "掌上科普",
     "appid" : "__UNI__DAAB002",
     "description" : "",
-    "versionName" : "1.0.8",
-    "versionCode" : 108,
+    "versionName" : "1.0.9",
+    "versionCode" : 109,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -55,7 +55,8 @@
                     "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
-                ]
+                ],
+                "schemes" : [ "zskpsharelink" ]
             },
             /* ios打包配置 */
             "ios" : {},

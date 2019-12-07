@@ -12,8 +12,9 @@
 		data() {
 			return {
 				adList: [],
-				time: 3,
-				imgSrc: 'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/a660ce095e8f553a9ed1515265f4e9fc.jpg?thumb=1&w=234&h=300&f=webp&q=90'
+				time: 5,
+				imgSrc: 'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/a660ce095e8f553a9ed1515265f4e9fc.jpg?thumb=1&w=234&h=300&f=webp&q=90',
+				timeInterval:Function,
 			};
 		},
 		onLoad() {
@@ -27,7 +28,9 @@
 			this.setTime()
 		},
 		methods: {
-			linkSrc(){
+
+
+			linkSrc() {
 				let url = this.adList[0].linkSrc
 				if (url) {
 					let key = url.indexOf('http://')
@@ -36,19 +39,19 @@
 						plus.runtime.openURL(url)
 					} else {
 						uni.showToast({
-							title: '直播地址错误',
+							title: '地址错误',
 							icon: 'none'
 						})
 					}
-				
+
 				} else {
 					uni.showToast({
-						title: '暂无直播地址',
+						title: '暂无地址',
 						icon: 'none'
 					})
 				}
 			},
-			
+
 			getAdverts(cnt) {
 				this.$api.getAdverts(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -60,17 +63,18 @@
 				})
 			},
 			setTime() {
-				let time = setInterval(() => {
+				this.timeInterval = setInterval(() => {
 					this.time = this.time - 1
 					if (this.time == 0) {
-						clearInterval(time)
+						clearInterval(this.timeInterval)
 						this.navHome()
 					}
 				}, 1000)
 			},
-			navHome(){
+			navHome() {
+				clearInterval(this.timeInterval)
 				uni.switchTab({
-					url:'/pages/index/index'
+					url: '/pages/index/index'
 				})
 			}
 		}

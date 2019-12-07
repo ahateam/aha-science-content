@@ -134,6 +134,10 @@
 			this.$commen.getNewReplay()
 		},
 		onLoad() {
+			// #ifdef APP-PLUS
+			this.navToContent()
+			// #endif
+
 			let cnt = {
 				moduleId: this.constData.module, // String 隶属
 				// status: this.constData.tagStatus[1].key, // Byte 标签状态
@@ -161,6 +165,24 @@
 			this.getLocation()
 		},
 		methods: {
+			navToContent() {
+				let args = plus.runtime.arguments;
+				if (args) {
+					args = args.substr(args.indexOf('://') + 3)
+					console.log(args)
+					let obj = this.$util.tryParseJson(args)
+					if (obj.type == this.$constData.contentType[1].key) {
+						uni.navigateTo({
+							url: `/pages/index/videoView/videoView?id=${obj.id}`
+						})
+					} else if (obj.type == this.$constData.contentType[2].key) {
+						uni.navigateTo({
+							url: `/pages/index/articleView/articleView?id=${obj.id}`
+						})
+					}
+				}
+			},
+
 			changeCity() {
 				console.log('我不想动')
 			},
@@ -694,8 +716,8 @@
 			let cnt1 = {
 				moduleId: this.$constData.module, // Long 模块编号
 				type: this.$constData.adData[0].key, // Byte <选填> 类型
-				count: 10, // int 
-				offset: 0, // int 
+				count: this.count, // int 
+				offset: this.offset, // int 
 			}
 			this.getAdverts(cnt1)
 			let index = this.tabCurrentIndex

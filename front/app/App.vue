@@ -9,32 +9,61 @@
 		},
 		onLaunch: function() {
 			console.log('App Launch')
+
 			this.getVersion()
-			
+
 			this.setStorage()
-			
+
 			this.getLocation()
 		},
 		onShow: function() {
 			console.log('App Show')
+			this.navToContent()
 		},
 		onHide: function() {
 			console.log('App Hide')
+			plus.runtime.arguments = ''
+			console.log(plus.runtime.arguments)
 		},
 		methods: {
-			getLocation(){
+			navToContent() {
+				console.log('1111')
+				let pages = getCurrentPages()
+				if (pages.length > 0) {
+					let page = (pages[pages.length - 1]).route
+					if (page != 'pages/ADview/ADview') {
+						let args = plus.runtime.arguments;
+						if (args) {
+							args = args.substr(args.indexOf('://') + 3)
+							console.log(args)
+							let obj = this.$util.tryParseJson(args)
+							if (obj.type == this.$constData.contentType[1].key) {
+								uni.navigateTo({
+									url: `/pages/index/videoView/videoView?id=${obj.id}`
+								})
+							} else if (obj.type == this.$constData.contentType[2].key) {
+								uni.navigateTo({
+									url: `/pages/index/articleView/articleView?id=${obj.id}`
+								})
+							}
+						}
+					}
+				}
+			},
+
+			getLocation() {
 				plus.geolocation.getCurrentPosition(this.getSuccess, this.getError)
 			},
-			
-			getSuccess(res){
+
+			getSuccess(res) {
 				console.log(res)
 			},
-			
-			getError(err){
+
+			getError(err) {
 				console.log(err)
 			},
-			
-			setStorage(){
+
+			setStorage() {
 				uni.getStorage({
 					key: 'search_cache',
 					fail: () => {
@@ -56,7 +85,7 @@
 					}
 				})
 			},
-			
+
 			getVersion() {
 				this.$api.getVersion({}, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {

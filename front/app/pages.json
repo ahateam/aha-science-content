@@ -108,7 +108,8 @@
 			"path": "pages/follow/channel/channel",
 			"style": {
 				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 10
 			}
 		}, {
 			"path": "pages/user/shopping/shopping",
@@ -152,14 +153,14 @@
 			"path": "pages/index/special/special",
 			"style": {
 				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 10
 			}
+		}, {
+			"path": "pages/index/activity/helpCenter/helpCenter",
+			"style": {}
 		}
-	    ,{
-            "path" : "pages/index/activity/helpCenter/helpCenter",
-            "style" : {}
-        }
-    ],
+	],
 	"tabBar": {
 		"color": "#C0C4CC",
 		"selectedColor": "#fb7299",

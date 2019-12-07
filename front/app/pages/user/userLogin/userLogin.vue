@@ -334,11 +334,17 @@
 				uni.getUserInfo({
 					provider: 'weixin',
 					success: (infoRes) => {
+						let head = infoRes.userInfo.avatarUrl
+
+						if (head.indexOf('https://') == -1) {
+							head = 'https' + head.substr(4)
+						}
+
 						let cnt = {
 							name: infoRes.userInfo.nickName,
 							moduleId: this.$constData.module, // String 模块编号
 							openid: openId, // String openid
-							head: infoRes.userInfo.avatarUrl, // String 头像
+							head: head, // String 头像
 						}
 						this.wxLoginEnd(cnt)
 					}

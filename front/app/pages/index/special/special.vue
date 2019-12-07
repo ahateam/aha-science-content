@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<navBar type="transparentFixed" transparentFixedFontColor="#FFF" ></navBar>
+		<navBar type="transparentFixed" transparentFixedFontColor="#FFF"></navBar>
 		<view class="topBox">
 			<view class="bannerBox">
 				<image :src="channelInfo.data.img" mode="aspectFill"></image>
@@ -67,7 +67,7 @@
 
 				count: 10,
 				offset: 0,
-				page: 0,
+				page: 1,
 
 				pageStatus: 'loading',
 				pageOver: false,
@@ -174,10 +174,10 @@
 			tryDataList(list) {
 				let index = this.tabCurrentIndex
 				if (list.length < this.count) { //判断长度是否为等于设定this.count，是则可能还有剩余数据，否则无
-					this.pageStatus = true //结束拉取
+					this.pageOver = true //结束拉取
 					this.pageStatus = 'nomore'
 				} else {
-					this.pageStatus = false
+					this.pageOver = false
 					this.pageStatus = 'more'
 				}
 
@@ -220,6 +220,21 @@
 			}
 			this.contents = []
 			this.getChannlById(cnt1)
+		},
+		onReachBottom() {
+			if (!this.pageOver) {
+				this.page += 1
+				this.pageStatus = 'loading'
+				let cnt = {
+					module: this.$constData.module, // String 所属模块
+					status: parseInt(this.$constData.contentStatus[4].key),
+					upChannelId: this.id,
+					count: this.count,
+					offset: (this.page - 1) * this.count,
+					power: this.$constData.contentPaid[0].key
+				}
+				this.getContents(cnt)
+			}
 		}
 	}
 </script>
