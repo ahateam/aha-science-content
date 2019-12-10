@@ -11,7 +11,7 @@
 				 @click="getContentsByCheck(item.id,0,index)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
-				<el-input placeholder="请输入内容" v-model="keyword">
+				<el-input placeholder="请输入内容" v-model="keyword" @input="changeSearch">
 					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
 				</el-input>
 			</el-col>
@@ -27,7 +27,7 @@
 			<el-col :span="6">
 				<el-button plain @click="getContentsBtn">默认列表</el-button>
 				<el-button type="primary" plain @click="createContent" style="float: right;">发布图文</el-button>
-				<el-button  plain @click="draftContent" style="float: right;">草稿箱</el-button>
+				<el-button plain @click="draftContent" style="float: right;">草稿箱</el-button>
 			</el-col>
 		</el-row>
 
@@ -40,15 +40,12 @@
 		</el-row>
 
 		<el-row class="table-box">
-				<el-table
-				    :data="tableData"
-				    style="width: 100%"
-				    >
+			<el-table :data="tableData" style="width: 100%">
 				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="pageView"   label="显示浏览量">
+				<el-table-column prop="pageView" label="显示浏览量">
 				</el-table-column>
-				<el-table-column prop="truePageView"   label="浏览量">
+				<el-table-column prop="truePageView" label="浏览量">
 				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
@@ -143,7 +140,7 @@
 			/*获取内容列表*/
 			getContents(cnt) {
 				cnt.re = 'admin'
-				cnt.status=this.$constData.statusList[3].value
+				cnt.status = this.$constData.statusList[3].value
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
@@ -208,18 +205,14 @@
 				this.vipCurr = -1
 				this.channelCurr = -1
 				this.keyWordCurr = -1
-
+				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
 					type: this.typeList[0].value,
 					count: this.count,
 					offset: (this.page - 1) * this.count,
 				}
-				if(cnt.offset != 0){
-					cnt.offset = 0;
-				}
 				if (this.keyword == '') {
-					this.getContents(cnt)
 					return
 				}
 				cnt.keyword = this.keyword
@@ -235,6 +228,17 @@
 						this.pageOver = false
 					}
 				})
+			},
+			changeSearch() {
+				if (this.keyword == '') {
+					let cnt = {
+						module: this.$constData.module,
+						type: this.typeList[0].value,
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
+				}
 			},
 			/* 删除内容*/
 			delBtn(info) {
@@ -317,7 +321,7 @@
 			createContent() {
 				this.$router.push('/addContent')
 			},
-			draftContent(){
+			draftContent() {
 				this.$router.push('/contentListByDraft')
 			},
 			getSvip() {

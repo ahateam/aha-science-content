@@ -6,29 +6,35 @@
 		<el-row class="content-box">
 			<el-col :span="12">
 				<span style="font-size: 18px;color: #0086B3;">直接过滤*敏感词：</span>
+				<el-input placeholder="请输入要搜索的敏感词" v-model="searchSensitive" style="width: 90%;margin: 8px" @input= "getDefault(0)">
+					<el-button plain style="width:80px;" slot="append" icon="el-icon-search" @click= "search"></el-button>
+				</el-input>
 				<div style="width:90%; height:500px; overflow:auto; border:1px solid #000000;margin-bottom: 15px;">
 					<el-checkbox-group v-model="checkList">
 						<el-checkbox :label="item.wordId" v-for="(item ,index) in tableData" :key="index">{{item.badword}}</el-checkbox>
 					</el-checkbox-group>
 				</div>
 				<el-button type="primary" plain icon="el-icon-arrow-left" :disabled="page==1" @click="load(0)">上一页</el-button>
-				<el-button type="primary" plain @click="load(1)">下一页<i :disabled="pageOver" class="el-icon-arrow-right el-icon--right"></i></el-button>
+				<el-button type="primary" plain @click="load(1)" :disabled="pageOver">下一页<i class="el-icon-arrow-right el-icon--right"></i></el-button>
 				<div style="margin-top: 15px;">
 					<el-button type="primary" plain @click="dialogVisible = true">添加敏感词</el-button>
 					<el-button type="danger" plain @click="delSensitive">选中删除</el-button>
-					<el-button plain @click="moveRight">选中移动到右边<i :disabled="pageOver" class="el-icon-arrow-right el-icon--right"></i></el-button>
+					<el-button plain @click="moveRight">选中移动到右边<i class="el-icon-arrow-right el-icon--right"></i></el-button>
 				</div>
 			</el-col>
 			<!-- ====================================== -->
 			<el-col :span="12">
 				<span style="font-size: 18px;color: #0086B3;">争议敏感词：</span>
+				<el-input placeholder="请输入要搜索的敏感词" v-model="searchSensitiveByExamine" style="width: 90%;margin: 8px" @input= "getDefault(1)">
+					<el-button plain style="width:80px;" slot="append" icon="el-icon-search" @click= "searchByExamine"></el-button>
+				</el-input>
 				<div style="width:90%; height:500px; overflow:auto; border:1px solid #000000;margin-bottom: 15px;">
 					<el-checkbox-group v-model="checkListByExamine">
 						<el-checkbox :label="item.wordId" v-for="(item ,index) in tableDataByExamine" :key="index">{{item.badword}}</el-checkbox>
 					</el-checkbox-group>
 				</div>
 				<el-button type="primary" plain icon="el-icon-arrow-left" :disabled="pageByExamine==1" @click="loadByexamine(0)">上一页</el-button>
-				<el-button type="primary" plain @click="loadByexamine(1)">下一页<i :disabled="pageOverByExmine" class="el-icon-arrow-right el-icon--right"></i></el-button>
+				<el-button type="primary" plain @click="loadByexamine(1)" :disabled="pageOverByExmine">下一页<i class="el-icon-arrow-right el-icon--right"></i></el-button>
 				<div style="margin-top: 15px;">
 					<el-button plain icon="el-icon-arrow-left" @click="moveLeft">选中移动到左边</el-button>
 					<el-button type="danger" plain @click="delSensitiveByExamine">选中删除</el-button>
@@ -59,6 +65,8 @@
 		name: "StringFilterList",
 		data() {
 			return {
+				searchSensitiveByExamine: '',
+				searchSensitive: '',
 				pageOver: true,
 				pageOverByExmine: true,
 				checkList: [],
@@ -76,6 +84,62 @@
 			}
 		},
 		methods: {
+			getDefault(e){
+				if(this.searchSensitiveByExamine == ''){
+					let cnt = {
+						type: 1,
+						count: this.countByExamine,
+						offset: (this.pageByExamine - 1) * this.countByExamine
+					}
+					this.getSensitiveWordByexamine(cnt)
+				}
+				if(this.searchSensitive == ''){
+					let cnt = {
+						type: '0',
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
+				}
+			},
+			searchByExamine(){
+				if(this.searchSensitiveByExamine == ''){
+					return
+				}
+				let cnt = {
+					type:1,
+					badword:this.searchSensitiveByExamine
+				}
+				this.$api.searchSensitiveWord(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableDataByExamine = this.$util.tryParseJson(res.data.c)
+					}
+					if (this.tableDataByExamine.length < this.count) {
+						this.pageOverByExmine = true
+					} else {
+						this.pageOverByExmine = false
+					}
+				})
+			},
+			search(){
+				if(this.searchSensitive == ''){
+					return
+				}
+				let cnt = {
+					type:'0',
+					badword:this.searchSensitive
+				}
+				this.$api.searchSensitiveWord(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableData = this.$util.tryParseJson(res.data.c)
+					}
+					if (this.tableData.length < this.count) {
+						this.pageOver = true
+					} else {
+						this.pageOver = false
+					}
+				})
+			},
 			load(e) {
 				if (e) {
 					this.page += 1
@@ -157,7 +221,7 @@
 				})
 			},
 			delSensitive() {
-				if(this.checkList == ''){
+				if (this.checkList == '') {
 					this.$message({
 						type: 'warning',
 						message: '请至少选择一个敏感词!'
@@ -206,7 +270,7 @@
 
 			},
 			delSensitiveByExamine() {
-				if(this.checkListByExamine == ''){
+				if (this.checkListByExamine == '') {
 					this.$message({
 						type: 'warning',
 						message: '请至少选择一个敏感词!'
@@ -254,7 +318,7 @@
 				});
 			},
 			moveLeft() {
-				if(this.checkListByExamine == ''){
+				if (this.checkListByExamine == '') {
 					this.$message({
 						type: 'warning',
 						message: '请至少选择一个敏感词!'
@@ -304,7 +368,7 @@
 
 			},
 			moveRight() {
-				if(this.checkList == ''){
+				if (this.checkList == '') {
 					this.$message({
 						type: 'warning',
 						message: '请至少选择一个敏感词!'

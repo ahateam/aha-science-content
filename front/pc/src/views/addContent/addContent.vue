@@ -327,7 +327,6 @@
 					contentSource: this.contentSource,
 					contentAuthor: this.contentAuthor,
 				}
-				console.log(cnt)
 				if (that.upChannelId != '') {
 					cnt.upChannelId = parseInt(that.upChannelId)
 				}
@@ -337,7 +336,13 @@
 							message: '添加成功',
 							type: 'success'
 						});
-						localStorage.setItem('tempContent', '')
+						this.title=''
+						this.pageView=''
+						this.contentRemark=''
+						this.contentSource=''
+						this.contentAuthor=''
+						localStorage.setItem('tempContent', '');
+						localStorage.setItem("tempContentHtml", '');
 						that.$router.push('/contentList')
 					} else {
 						this.$message({

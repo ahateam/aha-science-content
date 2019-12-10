@@ -111,10 +111,6 @@ const supermenu = [{
 		child: [{
 				path: '/interestTagList',
 				title: '用户兴趣标签'
-			},
-			{
-				path: '/enrollList',
-				title: '活动报名'
 			}
 		]
 	},
@@ -228,10 +224,6 @@ const menu = [{
 		child: [{
 				path: '/interestTagList',
 				title: '用户兴趣标签'
-			},
-			{
-				path: '/enrollList',
-				title: '活动报名'
 			}
 		]
 	},

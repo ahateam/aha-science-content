@@ -142,7 +142,7 @@
 					offset: (this.page - 1) * this.count
 				}
 				if (this.searchData.status) {
-					cnt.status = this.searchData.status
+						cnt.status = this.searchData.status
 				}
 				this.getContents(cnt)
 			},
@@ -247,8 +247,8 @@
 				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
-					count: this.count,
 					type:'0',
+					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
 				this.getContents(cnt)

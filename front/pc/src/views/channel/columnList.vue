@@ -107,6 +107,7 @@
 			},
 			/*获取专栏列表*/
 			getContents(cnt) {
+					console.log(cnt)
 				this.$api.getChannels(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
@@ -142,7 +143,7 @@
 					type:'1',
 				}
 				if (this.searchData.status) {
-					cnt.status = this.searchData.status
+					cnt.status = this.searchData.status 
 				}
 				this.getContents(cnt)
 			},

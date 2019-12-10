@@ -98,8 +98,16 @@
 			<el-col :span="20">
 				<span class="title-box"> 口播MP3：</span>
 				<input @change="getMP3($event)" type="file" class="upload" />
+				<el-button size="mini" round @click="delmp4src('mp3')">取消mp3</el-button>
 				</el-input>
 				<audio :src="mp3Src" controls="controls" ref='audio'></audio>
+			</el-col>
+			<el-col :span="20">
+				<span class="title-box"> 上传视频：</span>
+				<input @change="getMP4($event)" ref="mp4pathClear" type="file" class="upload" />
+				<el-button size="mini" round @click="delmp4src('mp4')">取消视频</el-button>
+				</el-input>
+				<video :src="mp4Src" controls="controls" style="width: 20%;"></video>
 			</el-col>
 		</el-row>
 		<el-row style="margin-bottom: 10px">
@@ -132,6 +140,7 @@
 		name: "addContent",
 		data() {
 			return {
+				mp4Src: '',
 				statusInfo:'',
 				mp3Src:'',
 				contentRemark: '',
@@ -174,6 +183,16 @@
 			}
 		},
 		methods: {
+			delmp4src(e) {
+				if (e == 'mp3') {
+					this.mp3Src = ''
+					this.$refs.mp3pathClear.value = ''
+				}
+				if (e == 'mp4') {
+					this.mp4Src = ''
+					this.$refs.mp4pathClear.value = ''
+				}
+			},
 			statusFliter(val) {
 				let statusList = this.statusList
 				for (let i = 0; i < statusList.length; i++) {
@@ -181,6 +200,10 @@
 						return statusList[i].name
 					}
 				}
+			},
+			getMP4() {
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg)
 			},
 			getMP3() {
 				if(event.target.files[0].type != 'audio/mp3'){
@@ -192,6 +215,13 @@
 				}
 				this.mechGrantImg = event.target.files[0]
 				this.doUpload2(this.mechGrantImg)
+			},
+			doUpload(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+				this.multipartUpload(tmpName, file, 0)
 			},
 			doUpload2(file) {
 				let date = new Date()
@@ -220,7 +250,7 @@
 							src = address.substring(0, _index)
 						}
 						if (val == 0) {
-							this.src = src
+							this.mp4Src = src
 						} else if (val == 1) {
 							this.mp3Src = src
 						}
@@ -273,7 +303,8 @@
 						value: text
 					}],
 					show: this.show,
-					imgList: this.imgList
+					imgList: this.imgList,
+					video: this.mp4Src,
 				}
 				let tags = {
 					homeCotent: this.value
@@ -461,6 +492,7 @@
 			this.getChannelById(info.upChannelId)
 			this.viewradio = info.isPageView + ''
 			this.mp3Src = info.mp3Src
+			this.mp4Src = JSON.parse(info.data).video
 			this.contentRemark = info.contentRemark
 			this.contentSource = info.contentSource
 			this.contentAuthor = info.contentAuthor

@@ -13,7 +13,7 @@
 				 @click="getContentsByCheck(item.id,0,index)">{{item.title}}</el-button>
 			</el-col>
 			<el-col :span="6">
-				<el-input placeholder="请输入内容" v-model="keyword">
+				<el-input placeholder="请输入内容" v-model="keyword"  @input = "changeSearch">
 					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
 				</el-input>
 			</el-col>
@@ -127,13 +127,13 @@
 				})
 			},
 			search() {
+				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
-					offset: 0
+					offset: (this.page - 1) * this.count,
 				}
 				if (this.keyword == '') {
-					this.getContents(cnt)
 					return
 				}
 				cnt.keyword = this.keyword
@@ -150,6 +150,16 @@
 					}
 				})
 			},
+			changeSearch(){
+				if(this.keyword == ''){
+					let cnt = {
+						module: this.$constData.module,
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
+				}
+			},
 			/* 分页*/
 			changePage(e) {
 				if (e) {
@@ -163,6 +173,12 @@
 					module: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count
+				}
+				if (this.tag) {
+					cnt.tags = this.tag
+				}
+				if (this.channelId) {
+					cnt.upChannelId = this.channelId
 				}
 				this.getContents(cnt)
 			},

@@ -2,19 +2,8 @@
 	<div>
 		<el-row class="content-box">
 			<el-row>
-				<el-col :span="18">
-					<el-form label-width="80px">
-						<el-form-item label="状态查询:">
-							<el-select v-model="searchData.status" placeholder="请选择状态">
-								<el-option v-for="(item,index) in statusList" :key="index" :label="item.name" :value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
-					<el-button type="primary" @click="searchBtn">查询</el-button>
-					<el-button type="primary" @click="getContentsBtn">默认列表</el-button>
-				</el-col>
 				<el-col :span="6">
-					<el-input placeholder="请输入内容" v-model="keyword">
+					<el-input placeholder="请输入内容" v-model="keyword" @input="changeSearch">
 						<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
 					</el-input>
 				</el-col>
@@ -32,7 +21,7 @@
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
-						<!-- <el-button @click="infoBtn(scope.row)" type="text" size="small">查看详情</el-button> -->
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看报名情况</el-button>
 						<el-button @click="updateBtn(scope.row)"  type="text" size="small">编辑</el-button>
 						<el-button @click="delBtn(scope.row)" style="color: red;" type="text" size="small">删除</el-button>
 					</template>
@@ -178,8 +167,8 @@
 			//查看 详情
 			infoBtn(info) {
 				this.$router.push({
-					path: '/contentInfo',
-					name: 'contentInfo',
+					path: '/enrollList',
+					name: 'enrollList',
 					params: {
 						info: info
 					}
@@ -196,17 +185,14 @@
 				})
 			},
 			search() {
+				this.page = 1
 				let cnt = {
 					module: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count,
 					type: this.typeList[3].value, // Byte <选填> 类型
 				}
-				if(cnt.offset != 0){
-					cnt.offset = 0;
-				}
 				if (this.keyword == '') {
-					this.getContents(cnt)
 					return
 				}
 				cnt.keyword = this.keyword
@@ -222,6 +208,17 @@
 						this.pageOver = false
 					}
 				})
+			},
+			changeSearch() {
+				if (this.keyword == '') {
+					let cnt = {
+						module: this.$constData.module,
+						count: this.count,
+						offset: (this.page - 1) * this.count,
+						type: this.typeList[3].value, // Byte <选填> 类型
+					}
+					this.getContents(cnt)
+				}
 			},
 			//获取默认列表
 			getContentsBtn() {

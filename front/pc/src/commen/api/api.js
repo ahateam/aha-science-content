@@ -166,6 +166,11 @@ api.getFilterText = function (cnt, callback) {
 api.updateSensitiveWord = function (cnt, callback) {
     util.call(baseUrl + '/ZskpReply/updateSensitiveWord', cnt, callback)
 }
+//搜索敏感词
+api.searchSensitiveWord = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/searchSensitiveWord', cnt, callback)
+}
+
 
 //写入文件
 api.readFilterText = function (cnt, callback) {
@@ -220,7 +225,10 @@ api.getInterestTags = function (cnt, callback) {
 api.getEnrolls = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/getEnrolls', cnt, callback)
 }
-
+//查询报名用户名称
+api.searchEnrollsUserName = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpOtherContent/searchEnrollsUserName', cnt, callback)
+}
 //修改专栏
 api.editChannel = function (cnt, callback) {
     util.call(baseUrl + '/channel/editChannel', cnt, callback)
@@ -263,6 +271,9 @@ api.delKeyword = function (cnt, callback) {
 api.getAllInterestTag = function (cnt, callback) {
     util.call(baseUrl + '/ZskpKeyword/getAllInterestTag', cnt, callback)
 }
-
+//搜索所有兴趣标签
+api.searchAllInterestTag = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpKeyword/searchAllInterestTag', cnt, callback)
+}
 export default api
 

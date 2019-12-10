@@ -2,11 +2,21 @@
 	<div>
 		<el-row class="title-box">
 			用户兴趣标签
+			
 		</el-row>
 		<el-row class="content-box">
+			<el-col :span="6">
+				<el-input placeholder="搜索用户名或者标签" v-model="keyword" @input = "changeSearch">
+					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
+				</el-input>
+			</el-col>
 		</el-row>
+		
 		<el-row class="table-box">
+			
 			<el-table :data="tableData" border style="width: 100%">
+				<el-table-column prop="userId" label="用户id">
+				</el-table-column>
 				<el-table-column label="头像">
 					<template scope="scope">
 						<img :src="scope.row.head" width="40" height="40" class="head_pic" />
@@ -14,9 +24,7 @@
 				</el-table-column>
 				<el-table-column prop="name" label="用户名" width="200">
 				</el-table-column>
-				<el-table-column prop="keyword" label="兴趣标签">
-				</el-table-column>
-				<el-table-column prop="pageView" label="浏览数量">
+				<el-table-column prop="tags" label="兴趣标签">
 				</el-table-column>
 			</el-table>
 		</el-row>
@@ -35,6 +43,7 @@
 		name: "interestTagList",
 		data() {
 			return {
+				keyword:'',
 				tableData: [],
 				count: 10,
 				page: 1,
@@ -49,10 +58,41 @@
 				})
 				return dataTime
 			},
+			changeSearch(){
+				if(this.keyword ==''){
+					let cnt = {
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
+				}
+			},
+			search(){
+				this.page = 1
+				let cnt = {
+					name:this.keyword,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				if (this.keyword == '') {
+					return
+				}
+				this.$api.searchAllInterestTag(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableData = this.$util.tryParseJson(res.data.c)
+					} else {
+						this.tableData = []
+					}
+					if (this.tableData.length < this.count) {
+						this.pageOver = true
+					} else {
+						this.pageOver = false
+					}
+				})
+			},
 			/*获取评论列表*/
 			getContents(cnt) {
 				this.$api.getAllInterestTag(cnt, (res) => {
-					console.log(res)
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
 					} else {

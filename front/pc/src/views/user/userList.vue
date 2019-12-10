@@ -5,7 +5,7 @@
 		</el-row>
 		<el-row class="content-box">
 			<el-col :span="6">
-				<el-input placeholder="搜索全部用户名称或者手机号" v-model="keyword">
+				<el-input placeholder="搜索全部用户名称或者手机号" v-model="keyword"  @input="changeSearch">
 					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
 				</el-input>
 			</el-col>
@@ -57,19 +57,31 @@
 		},
 		methods: {
 			search(){
+				this.page = 1
 				let cnt = {
 					moduleId: this.$constData.module,
 					name:this.keyword,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
-				if(cnt.offset != 0){
-					cnt.offset = 0;
+				if (this.keyword == '') {
+					return
 				}
 				this.$api.searchUsers(cnt, (res) => {
 				if (res.data.rc == this.$util.RC.SUCCESS) {
 					this.tableData = this.$util.tryParseJson(res.data.c)
 				}})
+			},
+			changeSearch() {
+				if (this.keyword == '') {
+					let cnt = {
+						moduleId: this.$constData.module,
+						authority:1,
+						count: this.count,
+						offset: (this.page - 1) * this.count
+					}
+					this.getContents(cnt)
+				}
 			},
 			timeFliter(row, col, val) {
 				let timer = new Date(val)
