@@ -10,11 +10,11 @@
 		<view class="autoInput">
 			<input type="text" v-model="phone" placeholder="请填写电话号码" />
 		</view>
-		
+
 		<view class="autoInput">
 			<input type="text" v-model="people" placeholder="参与人数" />
 		</view>
-		
+
 		<view class="fixBox">
 			<view class="info">*报名后可在报名中心查看哦*</view>
 			<wButton text="报 名" :rotate="isRotate" @click.native="signUp" style="margin-top: 96upx;"></wButton>
@@ -38,43 +38,50 @@
 				name: '',
 				phone: uni.getStorageSync('phone'),
 				people: '',
-				title:'',
-				
+				title: '',
+
 				isRotate: false,
 			}
 		},
-		
+
 		onLoad(res) {
 			this.contentId = res.id
 			this.title = res.title
 		},
-		
+
 		methods: {
 			signUp() {
-				let cnt = {
-					moduleId: this.$constData.module, // Long 模块编号
-					contenId: this.contentId, // Long 内容id
-					userId: uni.getStorageSync('userId'), // Long 用户id
-					name: this.name, // String 用户名
-					contentName: this.title, // String 内容标题
-					phone: this.phone, // String 手机号
-					number:this.people,//String 报名人数
-				}
-				this.$api.createEnroll(cnt, (res) => {
-					if (res.data.rc == this.$util.RC.SUCCESS) {
-						uni.reLaunch({
-							url:'/pages/user/shopping/shopping'
-						})
-						uni.showToast({
-							title:'报名成功'
-						})
-					} else {
-						uni.showToast({
-							title:'服务器错误',
-							icon:'none'
-						})
+				if (this.name == '' || this.people == '' || this.title == '') {
+					uni.showToast({
+						title: '请将资料填写完整',
+						icon: 'none'
+					})
+				} else {
+					let cnt = {
+						moduleId: this.$constData.module, // Long 模块编号
+						contenId: this.contentId, // Long 内容id
+						userId: uni.getStorageSync('userId'), // Long 用户id
+						name: this.name, // String 用户名
+						contentName: this.title, // String 内容标题
+						phone: this.phone, // String 手机号
+						number: this.people, //String 报名人数
 					}
-				})
+					this.$api.createEnroll(cnt, (res) => {
+						if (res.data.rc == this.$util.RC.SUCCESS) {
+							uni.reLaunch({
+								url: '/pages/user/shopping/shopping'
+							})
+							uni.showToast({
+								title: '报名成功'
+							})
+						} else {
+							uni.showToast({
+								title: '服务器错误',
+								icon: 'none'
+							})
+						}
+					})
+				}
 			},
 		}
 	}
@@ -126,8 +133,8 @@
 		bottom: 20upx;
 		width: 100%;
 	}
-	
-	.info{
+
+	.info {
 		text-align: center;
 		font-size: $list-info;
 		color: #AAAAAA;

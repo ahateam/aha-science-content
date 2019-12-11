@@ -957,4 +957,9 @@
 	.contentBox {
 		padding: $box-margin-top $box-margin-left;
 	}
+
+	.swiper-box {
+		height: 40vw;
+		width: 100vw;
+	}
 </style>

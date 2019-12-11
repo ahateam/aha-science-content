@@ -122,6 +122,7 @@
 				this.$api.getEnrolls(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						let list = this.$util.tryParseJson(res.data.c)
+						console.log(list)
 						if (list.length == 0) {
 							this.shopStatus = false
 						} else {
@@ -261,14 +262,6 @@
 
 			//跳转报名
 			signUp() {
-				if (this.shopStatus == true) {
-					uni.showToast({
-						title: '您已报名',
-						icon: 'none'
-					})
-					return
-				}
-
 				let user = uni.getStorageSync('userId')
 				if (user == '' || user == '1234567890') {
 					uni.showToast({
@@ -276,9 +269,17 @@
 						icon: 'none'
 					})
 				} else {
-					uni.navigateTo({
-						url: `/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
-					})
+					if (this.shopStatus == true) {
+						uni.showToast({
+							title: '您已报名',
+							icon: 'none'
+						})
+
+					} else {
+						uni.navigateTo({
+							url: `/pages/index/activity/signUp?id=${this.contentId}&title=${this.activityTitle}`
+						})
+					}
 				}
 			},
 		}

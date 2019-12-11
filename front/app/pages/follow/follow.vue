@@ -1,6 +1,6 @@
 <template>
 	<view class="body">
-		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF">推荐</navBar>
+		<navBar bgColor="#FB7299" :back="false" fontColor="#FFF">关注</navBar>
 		<!-- 顶部选项卡 -->
 		<view v-if="loginStatus">
 			<view v-if="pageLoading">
