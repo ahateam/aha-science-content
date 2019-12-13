@@ -51,7 +51,7 @@
 		
 		<el-row>
 			<el-col :span="4">
-				<div class="title-box">专题图片:</div>
+				<div class="title-box">专题图片 320x320:</div>
 			</el-col>
 			<el-col :span="18">
 				<img width="500" :src="imgSrc" v-if="imgSrc">

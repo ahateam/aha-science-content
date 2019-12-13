@@ -43,7 +43,7 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<h2> 你选择的广告类别:【APP主页广告】</h2>
-				<h1 style="font-size: 16px;">APP主页广告图片建议：（横屏图片）比如：高度固定为固定高度150px,长度建议最低320px</h1>
+				<h1 style="font-size: 16px;">APP主页广告图片建议：比列5:2（横屏图片）比如：高度固定为固定高度128px,长度建议最低320px</h1>
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px" v-if="this.advertType == '1' ">
@@ -54,7 +54,7 @@
 					<el-option v-for="item in channelList" :key="item.id" :label="item.title" :value="item.id">
 					</el-option>
 				</el-select>
-				<h1 style="font-size: 16px;">科普栏目广告图片建议：（横屏图片）比如：高度185px左右,长度建议400px左右</h1>
+				<h1 style="font-size: 16px;">科普栏目广告图片建议：比列20:9（横屏图片）比如：高度144px左右,长度建议320px左右</h1>
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px" v-if="this.advertType == '2' ">

@@ -296,6 +296,13 @@
 				this.editorBtn()
 			},
 			editorBtn() {
+				if(this.title == ''){
+					this.$message({
+						message: "请填入标题",
+						type: 'warning'
+					});
+					return
+				}
 				let that = this
 				let text = this.editor.txt.html()
 				let data = {

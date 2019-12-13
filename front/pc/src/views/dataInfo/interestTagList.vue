@@ -13,7 +13,7 @@
 		</el-row>
 
 		<el-row class="table-box">
-
+			<p>查询条数：{{num}}</p>
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="userId" label="用户id">
 				</el-table-column>
@@ -40,14 +40,14 @@
 				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(page+1)">下一页</el-button>
 			</el-col>
 		</el-row>
-		<el-dialog title="详情" :visible.sync="dialogVisible"  width="30%">
+		<el-dialog title="详情" :visible.sync="dialogVisible" width="30%">
 			<el-table :data="tableData2" border style="width: 100%">
 				<el-table-column prop="keyword" label="兴趣标签">
 				</el-table-column>
 				<el-table-column prop="pageView" label="浏览数" width="200">
 				</el-table-column>
 			</el-table>
-			<span slot="footer" class="dialog-footer" >
+			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
 				<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
 			</span>
@@ -60,7 +60,8 @@
 		name: "interestTagList",
 		data() {
 			return {
-				dialogVisible:false,
+				num: '',
+				dialogVisible: false,
 				keyword: '',
 				tableData: [],
 				tableData2: [],
@@ -84,6 +85,7 @@
 						offset: (this.page - 1) * this.count
 					}
 					this.getContents(cnt)
+					this.num = ''
 				}
 			},
 			search() {
@@ -99,6 +101,8 @@
 				this.$api.searchAllInterestTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)
+						this.num = this.tableData[this.tableData.length - 1]
+						this.tableData.splice(this.tableData.length - 1, 1)
 					} else {
 						this.tableData = []
 					}
@@ -109,7 +113,6 @@
 					}
 				})
 			},
-			/*获取评论列表*/
 			getContents(cnt) {
 				this.$api.getAllInterestTag(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -139,7 +142,7 @@
 			infoBtn(info) {
 				this.dialogVisible = true
 				let cnt = {
-					userId:info.userId,
+					userId: info.userId,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}

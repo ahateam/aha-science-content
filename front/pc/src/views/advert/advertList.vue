@@ -109,6 +109,12 @@
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
+				if(this.status != ''){
+					cnt.status = this.status
+				}
+				if(this.type != ''){
+					cnt.type = this.type
+				}
 				this.getContents(cnt)
 			},
 			delBtn(info) {
@@ -239,6 +245,7 @@
 				this.getContents(cnt)
 			},
 			getAdvertsByType(info, index) {
+				this.page = 1
 				this.check = index
 				this.type = info
 				let cnt = {
@@ -255,6 +262,7 @@
 				this.getContents(cnt)
 			},
 			getAdvertsByStatus(info,index) {
+				this.page = 1
 				this.checkStatus = index
 				this.status = index
 				let cnt = {
