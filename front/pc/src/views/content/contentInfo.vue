@@ -20,6 +20,7 @@
 			<p>修改时间：{{updateTime}}</p>
 			<p>创建时间：{{createTime}}</p>
 			<p>口播mp3：<audio :src="mp3Src" controls="controls" ref='audio'></audio></p>
+			<p>视频：<video :src="mp4Src" controls="controls" style="width: 20%;"></video></p>
 			<p>作者：{{contentAuthor}}</p>
 			<p>来源：{{contentSource}}</p>
 			<p>摘要：{{contentRemark}}</p>
@@ -55,6 +56,7 @@
 		name: "contetnInfo",
 		data() {
 			return {
+				mp4Src:'',
 				mp3Src:'',
 				contentRemark: '',
 				contentSource: '',
@@ -171,6 +173,7 @@
 			this.updateTime = this.timeFliter(this.contentInfo.updateTime)
 			this.createTime = this.timeFliter(this.contentInfo.createTime)
 			this.mp3Src = this.contentInfo.mp3Src
+			this.mp4Src = JSON.parse(this.contentInfo.data).video
 			this.contentRemark = this.contentInfo.contentRemark
 			this.contentSource = this.contentInfo.contentSource
 			this.contentAuthor = this.contentInfo.contentAuthor

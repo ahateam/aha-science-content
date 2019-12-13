@@ -44,6 +44,7 @@
 			<el-col :span="10">
 				<span class="title-box"> 活动封面图：</span>
 				<input @change="getMechData1($event)" type="file" class="upload" />
+				<img height="120" :src="imgSrc">
 			</el-col>
 			<el-col :span="10">
 				<span class="title-box"> 直播时间：</span>(可暂时不设置)
@@ -67,10 +68,6 @@
 				交
 			</el-button>
 		</el-row>
-		<el-col :span="10" v-if="imgSrc">
-			<div class="title-box" style="float: left;"> 封面图缩略图：</div>
-			<img height="120" :src="imgSrc">
-		</el-col>
 	</div>
 </template>
 

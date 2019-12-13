@@ -59,6 +59,14 @@
 				</el-date-picker>
 			</el-col>
 		</el-row>
+		<el-row style="margin-top: 50px;">
+			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="18">
+				<span class="title-box"> 活动封面图：</span>
+				原封面图：<img height="100" :src="imgSrcTemp" />
+				修改后封面图：<img height="100" :src="imgSrc" />
+			</el-col>
+		</el-row>
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -72,26 +80,20 @@
 			<el-col :span="4" style="min-height: 20px"></el-col>
 			<el-button type="primary" @click="subBtn()" style="margin-bottom: 150px;">提交修改</el-button>
 		</el-row>
-		<el-col :span="10" v-if="imgSrc">
-			<div class="title-box" style="float: left;"> 封面图缩略图：</div>
-			<img height="120" :src="imgSrc">
-		</el-col>
-<el-col :span="10" v-if="imgSrc">
-			<div class="title-box" style="float: left;"> 封面图缩略图：</div>
-			<img height="120" :src="imgSrc">
-		</el-col>
 	</div>
 </template>
 
 <script>
 	import wangEditor from 'wangeditor'
 	import ossAuth from '@/commen/oss/ossAuth.js'
-	
+
 	let client = ossAuth.client
 	export default {
 		name: "editActivity",
 		data() {
 			return {
+				imgSrcTemp: '',
+				imgSrc: '',
 				uptime: '',
 				place: '',
 				placeList: '',
@@ -144,6 +146,53 @@
 				let s = date.getSeconds();
 				return Y + M + D + this.timeparse(h) + ':' + this.timeparse(m) + ':' + this.timeparse(s);
 			},
+			getMechData1() {
+				this.imgList = []
+				this.mechGrantImg = event.target.files[0]
+				this.doUpload(this.mechGrantImg)
+			},
+			
+			doUpload(file) {
+				let date = new Date()
+				this.size = file.size
+				let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					encodeURIComponent(file.name)
+			
+			
+				this.multipartUpload(tmpName, file)
+			},
+			
+			multipartUpload(upName, upFile) {
+				//Vue中封装的分片上传方法（详见官方文档）
+				let _this = this
+				try {
+					let result = client.multipartUpload(upName, upFile, {
+						meta: {
+							year: 2017,
+							people: 'test'
+						}
+					}).then(res => {
+						//取出存好的url
+						let address = res.res.requestUrls[0]
+						let _index = address.indexOf('?')
+						console.log(_index)
+						if (_index == -1) {
+							_this.imgSrc = address
+						} else {
+							_this.imgSrc = address.substring(0, _index)
+						}
+					}).catch(err => {
+						console.log(err)
+					})
+			
+				} catch (e) {
+					// 捕获超时异常
+					if (e.code === 'ConnectionTimeoutError') {
+						console.log("Woops,超时啦!");
+					}
+					console.log(e)
+				}
+			},
 			timeparse(str) {
 				if (str < 10) {
 					str = '0' + str;
@@ -151,24 +200,19 @@
 				return str
 			},
 			subBtn() {
+				console.log(this.imgSrc)
+				if (this.imgSrc != '') {
+					let imgSrc = {
+						src: this.imgSrc
+					}
+					this.imgList.push(imgSrc)
+				}
 				if (this.time == '') {
 					this.time = '长期'
 				}
 				let that = this
-				let a = this.editor.txt.getJSON()
-				for (let i = 0; i < a.length; i++) {
-					let b = a[i].children
-					if (b) {
-						for (let n = 0; n < b.length; n++) {
-							if (b[n] instanceof Object && b[n].tag == 'img') {
-								let imgSrc = {
-									src: b[n].attrs[0].value
-								}
-								that.imgList.push(imgSrc)
-							}
-						}
-					}
-
+				let imgSrc = {
+					src: this.imgSrc
 				}
 				this.editorBtn()
 			},
@@ -210,7 +254,7 @@
 					imgList: this.imgList,
 					place: this.place,
 					address: this.address,
-					time: this.time == '长期'?this.time:this.newTime,
+					time: this.time == '长期' ? this.time : this.newTime,
 					info: text,
 					live: this.live,
 				}
@@ -278,7 +322,7 @@
 					}).catch(err => {
 						console.log(err)
 					})
-			
+
 				} catch (e) {
 					// 捕获超时异常
 					if (e.code === 'ConnectionTimeoutError') {
@@ -291,6 +335,8 @@
 			this.cotentHtml = JSON.parse(info.data).info
 			this.editor.txt.html(this.cotentHtml)
 			this.imgList = JSON.parse(info.data).imgList
+			console.log(JSON.parse(info.data).imgList)
+			this.imgSrcTemp = JSON.parse(info.data).imgList[0].src
 			this.address = JSON.parse(info.data).address
 			this.time = JSON.parse(info.data).time
 			this.live = JSON.parse(info.data).live

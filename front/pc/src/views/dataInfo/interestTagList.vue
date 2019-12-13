@@ -2,18 +2,18 @@
 	<div>
 		<el-row class="title-box">
 			用户兴趣标签
-			
+
 		</el-row>
 		<el-row class="content-box">
 			<el-col :span="6">
-				<el-input placeholder="搜索用户名或者标签" v-model="keyword" @input = "changeSearch">
+				<el-input placeholder="搜索用户名或者标签" v-model="keyword" @input="changeSearch">
 					<el-button slot="append" icon="el-icon-search" @click="search">搜索</el-button>
 				</el-input>
 			</el-col>
 		</el-row>
-		
+
 		<el-row class="table-box">
-			
+
 			<el-table :data="tableData" border style="width: 100%">
 				<el-table-column prop="userId" label="用户id">
 				</el-table-column>
@@ -26,6 +26,11 @@
 				</el-table-column>
 				<el-table-column prop="tags" label="兴趣标签">
 				</el-table-column>
+				<el-table-column label="操作" width="200">
+					<template slot-scope="scope">
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看</el-button>
+					</template>
+				</el-table-column>
 			</el-table>
 		</el-row>
 		<el-row style="height: 80px;">
@@ -35,6 +40,18 @@
 				<el-button type="primary" size="small" :disabled="pageOver" @click="changePage(page+1)">下一页</el-button>
 			</el-col>
 		</el-row>
+		<el-dialog title="详情" :visible.sync="dialogVisible"  width="30%">
+			<el-table :data="tableData2" border style="width: 100%">
+				<el-table-column prop="keyword" label="兴趣标签">
+				</el-table-column>
+				<el-table-column prop="pageView" label="浏览数" width="200">
+				</el-table-column>
+			</el-table>
+			<span slot="footer" class="dialog-footer" >
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+			</span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -43,8 +60,10 @@
 		name: "interestTagList",
 		data() {
 			return {
-				keyword:'',
+				dialogVisible:false,
+				keyword: '',
 				tableData: [],
+				tableData2: [],
 				count: 10,
 				page: 1,
 				pageOver: true,
@@ -58,8 +77,8 @@
 				})
 				return dataTime
 			},
-			changeSearch(){
-				if(this.keyword ==''){
+			changeSearch() {
+				if (this.keyword == '') {
 					let cnt = {
 						count: this.count,
 						offset: (this.page - 1) * this.count
@@ -67,10 +86,10 @@
 					this.getContents(cnt)
 				}
 			},
-			search(){
+			search() {
 				this.page = 1
 				let cnt = {
-					name:this.keyword,
+					name: this.keyword,
 					count: this.count,
 					offset: (this.page - 1) * this.count
 				}
@@ -118,11 +137,22 @@
 			},
 			//查看 详情
 			infoBtn(info) {
-				this.$router.push({
-					path: '/userInfo',
-					name: 'userInfo',
-					params: {
-						info: info
+				this.dialogVisible = true
+				let cnt = {
+					userId:info.userId,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				this.$api.getInterestTags(cnt, (res) => {
+					if (res.data.rc == this.$util.RC.SUCCESS) {
+						this.tableData2 = this.$util.tryParseJson(res.data.c)
+					} else {
+						this.tableData = []
+					}
+					if (this.tableData.length < this.count) {
+						this.pageOver = true
+					} else {
+						this.pageOver = false
 					}
 				})
 			},

@@ -37,7 +37,8 @@
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
 				<span class="title-box"> 基地封面图：</span>
-				<img height="100" :src="imgSrc" v-if="imgSrc">
+				原封面图：<img height="100" :src="imgSrcTemp" v-if="imgSrcTemp">
+				修改后封面图：<img height="100" :src="imgSrc" v-if="imgSrc">
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
@@ -83,7 +84,8 @@
 		name: "editTourBase",
 		data() {
 			return {
-				isChangeAddress:false,
+				textimgSrc: '',
+				isChangeAddress: false,
 				id: '',
 				forAddress: '',
 				detail_address: '',
@@ -91,6 +93,7 @@
 				homeTagName: '',
 				homeTag: '',
 				imgSrc: '',
+				imgSrcTemp: '',
 				imgList: [],
 				tag: '',
 				time: [new Date(2019, 10, 20, 8, 30), new Date(2019, 10, 20, 17, 30)],
@@ -173,6 +176,7 @@
 			},
 
 			doUpload(file) {
+				this.imgList = []
 				let date = new Date()
 				this.size = file.size
 				let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
@@ -223,7 +227,9 @@
 
 			editorBtn() {
 				let that = this
-				this.imgList.push(this.imgSrc)
+				if (this.imgSrc != '') {
+					this.imgList.push(this.imgSrc)
+				}
 				if (this.time != '长期') {
 					let time1 = new Date(this.time[0])
 					let time2 = new Date(this.time[1])
@@ -246,7 +252,7 @@
 				if (this.address == '') {
 					cnt.address = this.province + '' + this.city + '' + this.area + '' + this.detail_address
 				}
-				if(this.isChangeAddress){
+				if (this.isChangeAddress) {
 					cnt.address = this.forAddress
 				}
 				that.$api.updateTourBase(cnt, (res => {
@@ -306,11 +312,11 @@
 						console.log(address)
 						let _index = address.indexOf('?')
 						if (_index == -1) {
-							_this.imgSrc = address
+							_this.textimgSrc = address
 						} else {
-							_this.imgSrc = address.substring(0, _index)
+							_this.textimgSrc = address.substring(0, _index)
 						}
-						insert(_this.imgSrc)
+						insert(_this.textimgSrc)
 					}).catch(err => {
 						console.log(err)
 					})
@@ -333,6 +339,7 @@
 			this.address = info.address
 			this.forAddress = info.address
 			this.imgList = JSON.parse(info.data).img
+			this.imgSrcTemp = JSON.parse(info.data).img
 			this.workTime = JSON.parse(info.data).workTime
 		}
 	}

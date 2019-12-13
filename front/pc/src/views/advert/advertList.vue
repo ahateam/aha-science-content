@@ -4,10 +4,17 @@
 			广告管理
 		</el-row>
 		<el-row class="content-box">
-			<el-col :span="18">
+			<el-col :span="12">
 				<span style="font-size: 16px;">广告类别：</span>
-				<el-button size="mini" round @click = "getAdvertsByType('all')">全部</el-button>
-				<el-button size="mini" round @click = "getAdvertsByType(item.id)" v-for="item in advertTypeList" :key="item.id">{{item.name}}</el-button>
+				<el-button :type="check == -1?'primary':'text'" size="mini" round @click="getDefault(0)">全部</el-button>
+				<el-button :type="check == index?'primary':'text'" size="mini" round @click="getAdvertsByType(item.id,index)" v-for="(item,index) in advertTypeList"
+				 :key="item.id">{{item.name}}</el-button>
+			</el-col>
+			<el-col :span="12">
+				<span style="font-size: 16px;">广告状态：</span>
+				
+				<el-button :type="checkStatus == index?'primary':'text'" size="mini" round @click="getAdvertsByStatus(item.value,index)" v-for="(item,index) in generalStatus"
+				 :key="item.id">{{item.name}}</el-button>
 			</el-col>
 		</el-row>
 		<el-row class="table-box">
@@ -50,11 +57,16 @@
 		name: "advertList",
 		data() {
 			return {
+				type:'',
+				status:'',
+				checkStatus:0,
+				check: -1,
 				tableData: [],
 				count: 10,
 				page: 1,
 				pageOver: true,
 				advertTypeList: this.$constData.advertTypeList,
+				generalStatus:this.$constData.generalStatus,
 			}
 		},
 		methods: {
@@ -178,11 +190,11 @@
 				});
 
 			},
-			updateStatusBtn(info,val){
+			updateStatusBtn(info, val) {
 				let cnt = {
 					moduleId: this.$constData.module,
 					id: info.id,
-					status:val,
+					status: val,
 				}
 				this.$api.updateAdvert(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -205,15 +217,56 @@
 					this.getContents(cnt)
 				})
 			},
-			getAdvertsByType(info) {
+			getDefault(e){
+				if(e == 0){
+					this.check = -1
+					this.type = ''
+				}else{
+					this.checkStatus = -1
+					this.status = ''
+				}
 				let cnt = {
 					moduleId: this.$constData.module,
 					count: this.count,
 					offset: (this.page - 1) * this.count,
-					type:info,
 				}
-				if(info == 'all'){
-					cnt.type = ''
+				if(this.status != ''){
+					cnt.status = this.status
+				}
+				if(this.type != ''){
+					cnt.type = this.type
+				}
+				this.getContents(cnt)
+			},
+			getAdvertsByType(info, index) {
+				this.check = index
+				this.type = info
+				let cnt = {
+					moduleId: this.$constData.module,
+					count: this.count,
+					offset: (this.page - 1) * this.count,
+				}
+				if(this.status != ''){
+					cnt.status = this.status
+				}
+				if(this.type != ''){
+					cnt.type = this.type
+				}
+				this.getContents(cnt)
+			},
+			getAdvertsByStatus(info,index) {
+				this.checkStatus = index
+				this.status = index
+				let cnt = {
+					moduleId: this.$constData.module,
+					count: this.count,
+					offset: (this.page - 1) * this.count,
+				}
+				if(this.status != ''){
+					cnt.status = this.status
+				}
+				if(this.type != ''){
+					cnt.type = this.type
 				}
 				this.getContents(cnt)
 			},

@@ -82,6 +82,7 @@
 		name: "addTourBase",
 		data() {
 			return {
+				textimgSrc:'',
 				detail_address: '',
 				editor: {},
 				homeTagName: '',
@@ -327,11 +328,11 @@
 						console.log(address)
 						let _index = address.indexOf('?')
 						if (_index == -1) {
-							_this.imgSrc = address
+							_this.textimgSrc = address
 						} else {
-							_this.imgSrc = address.substring(0, _index)
+							_this.textimgSrc = address.substring(0, _index)
 						}
-						insert(_this.imgSrc)
+						insert(_this.textimgSrc)
 					}).catch(err => {
 						console.log(err)
 					})

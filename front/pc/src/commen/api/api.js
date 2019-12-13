@@ -199,7 +199,7 @@ api.updateUserInfo = function (cnt, callback) {
 }
 //用户登录
 api.login = function (cnt, callback) {
-    util.call(baseUrl + '/ZskpUserService/login', cnt, callback)
+    util.call(baseUrl + '/ZskpUserService/loginByAdmin', cnt, callback)
 }
 //创建广告
 api.createAdvert = function (cnt, callback) {
@@ -223,7 +223,7 @@ api.getInterestTags = function (cnt, callback) {
 }
 //查询报名
 api.getEnrolls = function (cnt, callback) {
-    util.call(baseUrl + '/ZskpOtherContent/getEnrolls', cnt, callback)
+    util.call(baseUrl + '/ZskpOtherContent/getEnrollsByAdmin', cnt, callback)
 }
 //查询报名用户名称
 api.searchEnrollsUserName = function (cnt, callback) {
