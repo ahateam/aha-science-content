@@ -9,9 +9,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -28,7 +28,6 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonArray;
 
 import zyxhj.cms.domian.Content;
 import zyxhj.cms.repository.ContentRepository;
@@ -116,7 +115,7 @@ public class ZskpOtherContent extends Controller{
 		if(tags !=null && tags.size()>0) {
 			exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
 		}
-		exp.append("ORDER BY page_view asc");
+		exp.append("ORDER BY page_view desc,create_time desc");
 		try (DruidPooledConnection conn = ds.getConnection()) {			
 			List<Content> list = contentRepository.getList(conn,exp, count, offset);
 			if(list == null && list.size()<=0) {
@@ -206,7 +205,7 @@ public class ZskpOtherContent extends Controller{
 		@P(t = "图片地址") String imgSrc,
 		@P(t = "详情链接") String linkSrc,
 		@P(t = "排序大小",r= false) int sortSize,
-		@P(t = "备注") String remake,
+		@P(t = "备注",r= false) String remake,
 		@P(t = "类型",r= false) Byte type,
 		@P(t = "所属专栏",r= false) Long channelId,
 		@P(t = "状态",r= false) Byte status
@@ -247,13 +246,14 @@ public class ZskpOtherContent extends Controller{
 	public List<AdvertInfo> getAdverts(
 		@P(t = "模块编号") Long moduleId,
 		@P(t = "类型",r= false) Byte type,
+		@P(t = "状态",r= false) Byte status,
 		@P(t = "所属专栏",r= false) Long channelId,
 		int count,
 		int offset
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
 			return advertInfoRepository.getList(conn, EXP.INS(false).key("module_id", moduleId).andKey("type", type).andKey("channel_id", channelId)
-					.andKey("status", AdvertInfo.STATUS_OPEN).append("order by sort_size desc"), count, offset);
+					.andKey("status",status== null?AdvertInfo.STATUS_OPEN:status).append("order by sort_size desc"), count, offset);
 		}
 	}
 	@POSTAPI(//
@@ -511,6 +511,46 @@ public class ZskpOtherContent extends Controller{
 					andKey("module_id", moduleId).andKey("user_id", userId), count, offset);
 		}
 	}
+	@POSTAPI(//
+			path = "getEnrollsByAdmin", 
+			des = "后台查询报名", 
+			ret = "" 
+		)
+		public APIResponse getEnrollsByAdmin(
+			@P(t = "模块编号") Long moduleId,
+			@P(t = "用户id",r =false) Long userId,
+			@P(t = "内容id",r =false) Long contenId,
+			int count,
+			int offset
+		)  throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				JSONObject num = enrollRepository.getCount(conn,contenId);
+				JSONObject userNum = enrollRepository.getNumberCount(conn,contenId);
+				List<Enroll> list =  enrollRepository.getList(conn, EXP.INS(false).key("conten_id", contenId).
+						andKey("module_id", moduleId).andKey("user_id", userId), count, offset);
+				JSONArray json = new JSONArray();
+				json.add(list);
+				json.add(num);
+				json.add(userNum);
+				return APIResponse.getNewSuccessResp(json);
+			}
+		}
+	@POSTAPI(//
+			path = "searchEnrollsUserName", 
+			des = "查询报名用户名称", 
+			ret = "" 
+		)
+		public List<Enroll> getEnrolls(
+			@P(t = "模块编号") Long moduleId,
+			@P(t = "名称",r =false) String name,
+			@P(t = "内容id",r =false) Long contenId,
+			int count,
+			int offset
+		)  throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				return enrollRepository.getList(conn, EXP.INS().key("module_id", moduleId).andKey("conten_id", contenId).and(EXP.INS().LIKE("name", name)), count, offset);
+			}
+		}
 	/**
 	 * 删除报名
 	 */
@@ -571,6 +611,8 @@ public class ZskpOtherContent extends Controller{
 					ZskpUser user = new ZskpUser();
 					user.authority = ZskpUser.AUTHORITY_TWO;//申请通过后变更权限
 					userRepository.update(conn, EXP.INS().key("id",userId).andKey("module_id", moduleId), user,true);
+				}else {
+					applyAuthorityRepository.delete(conn, EXP.INS().key("id", id).andKey("module_id", moduleId));
 				}
 				applyAuthorityRepository.update(conn, EXP.INS().key("id", id).andKey("module_id", moduleId), ap,true);
 			}
@@ -643,7 +685,7 @@ public class ZskpOtherContent extends Controller{
 		try (DruidPooledConnection conn = ds.getConnection()) {
 			JSONArray json = replyRepository.getReplyList(conn,ownerId, upUserId, null, orderDesc, toUserId,  count, offset);
 			JSONArray returnJson = new JSONArray();
-			Map<Long, Long> map = new HashMap<Long, Long>();
+			Map<Long, Long> map = new LinkedHashMap<Long, Long>();
 			int index = json.size();
 			if(time != null) {//如果有时间，按照时间筛选返回
 				for(int i= 0 ;i<index ;i++) {
@@ -754,8 +796,20 @@ public class ZskpOtherContent extends Controller{
 		}
 				
 	}
+	@POSTAPI(//
+			path = "getReplyListByStatus", //
+			des = "状态获取敏感评论列表" //
+	)
+	public JSONArray getReplyListByStatus(//
+			Integer count, Integer offset//
+	) throws Exception {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			return replyRepository.getReplyListByStatus(conn,count,offset);
+		}
+				
+	}
 	/*
-	 * 修改评论状态
+	 * 修改评论状态:用户提醒是否已读
 	 */
 	public void updateReply(Long id) throws ServerException, SQLException {
 		Comment c = new Comment();

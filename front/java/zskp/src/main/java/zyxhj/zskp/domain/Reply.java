@@ -65,11 +65,11 @@ public class Reply {
 	/////////////////////////////////////////////
 	/////////////////////////////////////////////
 
-	@AnnDicField(alias = "未审核")
-	public static final Byte STATUS_UNEXAMINED = 0;
-
 	@AnnDicField(alias = "已通过")
-	public static final Byte STATUS_ACCEPT = 1;
+	public static final Byte STATUS_ACCEPT = 0;
+
+	@AnnDicField(alias = "未审核")
+	public static final Byte STATUS_UNEXAMINED = 1;
 
 	@AnnDicField(alias = "已回绝")
 	public static final Byte STATUS_REJECT = 2;

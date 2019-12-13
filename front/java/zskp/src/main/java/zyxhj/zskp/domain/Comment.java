@@ -66,9 +66,9 @@ public class Comment {
 
 	/////////////////////////////////////////////
 
-	@AnnDicField(alias = "未审核")
-	public static final Byte STATUS_UNEXAMINED = 0;
-
+	
 	@AnnDicField(alias = "已通过")
-	public static final Byte STATUS_ACCEPT = 1;
+	public static final Byte STATUS_ACCEPT = 0;
+	@AnnDicField(alias = "未审核")
+	public static final Byte STATUS_UNEXAMINED = 1;
 }

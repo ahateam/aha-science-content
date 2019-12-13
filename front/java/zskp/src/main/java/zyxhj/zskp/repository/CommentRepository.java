@@ -30,4 +30,12 @@ public class CommentRepository extends RDSRepository<Comment>{
 		exp.toSQL(sql, params);
 		return this.sqlGetJSONArray(conn, sql.toString(), params, count, offset);
 	}
+
+	public JSONArray getCommentListByStatus(DruidPooledConnection conn,Integer count, Integer offset) throws ServerException {
+		StringBuffer sql = new StringBuffer("SELECT com.*,us.id,us.name FROM tb_zskt_comment com LEFT JOIN tb_zskt_user us on com.up_user_id =us.id  WHERE com.status = 1 ");
+		List<Object> params = new ArrayList<Object>();
+		return this.sqlGetJSONArray(conn, sql.toString(), params, count, offset);
+	}
+
+	
 }

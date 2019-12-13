@@ -14,6 +14,7 @@ import zyxhj.zskp.domain.Enroll;
 import zyxhj.zskp.domain.InterestTag;
 import zyxhj.zskp.domain.Isread;
 import zyxhj.zskp.domain.Reply;
+import zyxhj.zskp.domain.SensitiveWord;
 import zyxhj.zskp.domain.TourBases;
 import zyxhj.zskp.domain.UserFavorites;
 import zyxhj.zskp.domain.ZskpKeyword;
@@ -34,7 +35,7 @@ public class Test {
 			DruidDataSource dds = DataSource.getDruidDataSource("rdsDefault.prop");
 			SyncClient client = DataSource.getTableStoreSyncClient("tsDefault.prop");
 //			RDSUtils.dropTableByEntity(dds, InterestTag.class);
-//			RDSUtils.createTableByEntity(dds, AdvertInfo.class);
+			RDSUtils.createTableByEntity(dds, SensitiveWord.class);
 //			RDSUtils.createTableByEntity(dds, ApplyAuthority.class);
 //			RDSUtils.createTableByEntity(dds, Enroll.class);
 //			RDSUtils.createTableByEntity(dds, InterestTag.class);

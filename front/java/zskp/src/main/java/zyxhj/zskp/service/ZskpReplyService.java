@@ -2,12 +2,14 @@ package zyxhj.zskp.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.alibaba.fastjson.JSONArray;
 
 import zyxhj.cms.domian.Content;
 import zyxhj.cms.repository.ContentRepository;
@@ -23,10 +25,12 @@ import zyxhj.utils.data.EXP;
 import zyxhj.zskp.domain.Comment;
 import zyxhj.zskp.domain.Isread;
 import zyxhj.zskp.domain.Reply;
+import zyxhj.zskp.domain.SensitiveWord;
 import zyxhj.zskp.domain.ZskpUser;
 import zyxhj.zskp.repository.CommentRepository;
 import zyxhj.zskp.repository.IsreadRepository;
 import zyxhj.zskp.repository.ReplyRepository;
+import zyxhj.zskp.repository.SensitiveWordRepository;
 import zyxhj.zskp.repository.UserRepository;
 import zyxhj.zskp.util.SensitivewordFilter;
 
@@ -41,6 +45,7 @@ public class ZskpReplyService extends Controller {
 	private ReplyRepository replyRepository;
 	private CommentRepository commentRepository;
 	private SensitivewordFilter sensitivewordFilter;
+	private SensitiveWordRepository sensitiveWordRepository;
 	public ZskpReplyService(String node) {
 		super(node);
 		try {
@@ -51,6 +56,7 @@ public class ZskpReplyService extends Controller {
 			replyRepository = Singleton.ins(ReplyRepository.class);
 			commentRepository = Singleton.ins(CommentRepository.class);
 			sensitivewordFilter = Singleton.ins(SensitivewordFilter.class);
+			sensitiveWordRepository = Singleton.ins(SensitiveWordRepository.class);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -74,19 +80,23 @@ public class ZskpReplyService extends Controller {
 			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
 			if ("5".equals(c.status.toString())) {
 				return APIResponse.getNewFailureResp(new RC("fail", "该内容下已被设置为不可评论"));
-			} else if ("1".equals(user.id.toString())) {
+			} else if ("1".equals(user.status.toString())) {
 				return APIResponse.getNewFailureResp(new RC("fail", "你已被禁言"));
 			}
 			Reply reply = new Reply();
 			reply.sequenceId = IDUtils.getSimpleId();
 			reply.ownerId = ownerId;
 			reply.createTime = new Date();
-			reply.status = Reply.STATUS_UNEXAMINED;
+			reply.status = Reply.STATUS_ACCEPT;
 			reply.upUserId = upUserId;
 			reply.atUserId = atUserId;
 			reply.atUserName = atUserName;
 			reply.title = title;
-			reply.text = sensitivewordFilter.StringFilterMain(text);
+			String temp = sensitivewordFilter.StringFilterMain(text);
+			if(temp.equals(text)) {//如果是争议敏感词
+				reply.status = (byte)sensitivewordFilter.StringFilterMainByExamine(text);
+			}
+			reply.text = temp;
 			reply.ext = "1";
 			replyRepository.insert(conn, reply);
 			return APIResponse.getNewSuccessResp(reply);
@@ -109,18 +119,22 @@ public class ZskpReplyService extends Controller {
 	) throws ServerException, SQLException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
 			ZskpUser user = userRepository.get(conn, EXP.INS().key("id", upUserId));
-			if ("1".equals(user.id.toString())) {
+			if ("1".equals(user.status.toString())) {
 				return APIResponse.getNewFailureResp(new RC("fail", "你已被禁言"));
 			}
 			Comment c = new Comment();
 			c.sequenceId = IDUtils.getSimpleId();
 			c.replyId = replyId;
 			c.createTime = new Date();
-			c.status = Reply.STATUS_UNEXAMINED;
+			c.status = Reply.STATUS_ACCEPT;
 			c.upUserId = upUserId;
 			c.upUserHead = upUserHead;
 			c.upUserName = upUserName;
-			c.text = text;
+			String temp = sensitivewordFilter.StringFilterMain(text);
+			if(temp.equals(text)) {//如果是争议敏感词
+				c.status = (byte)sensitivewordFilter.StringFilterMainByExamine(text);
+			}
+			c.text = temp;
 			c.ext = "0";
 			if(toUserId != null && toUserName != null) {
 				c.toUserId = toUserId;
@@ -140,7 +154,20 @@ public class ZskpReplyService extends Controller {
 			return APIResponse.getNewSuccessResp(c);
 		}
 	}
-	
+	@POSTAPI(//
+			path = "updateReply", //
+			des = "修改评论", //
+			ret = "" //
+	)
+	public void updateReply(//
+			@P(t = "评论id") Long id //
+	) throws ServerException, SQLException {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			Reply r = new Reply();
+			r.status = Reply.STATUS_ACCEPT;
+			replyRepository.update(conn, EXP.INS().key("sequence_id", id),r,true);
+		}
+	}
 
 	@POSTAPI(//
 			path = "getIsRead", //
@@ -174,4 +201,107 @@ public class ZskpReplyService extends Controller {
 			}
 		}
 	}
+	@POSTAPI(//
+			path = "getCommentListByStatus", //
+			des = "状态获取敏感回复列表" //
+	)
+	public JSONArray getCommentListByStatus(//
+			Integer count, Integer offset//
+	) throws Exception {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			return commentRepository.getCommentListByStatus(conn,count,offset);
+		}
+	}
+	@POSTAPI(//
+			path = "updateComment", //
+			des = "修改回复" //
+	)
+	public int updateComment(//
+			Long id
+	) throws Exception {
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			Comment c = new Comment();
+			c.status = Comment.STATUS_ACCEPT;
+			return commentRepository.update(conn, EXP.INS().key("sequence_id", id),c,true);
+		}
+	}
+	
+	@POSTAPI(//
+			path = "getFilterText", 
+			des = "读取敏感词", 
+			ret = "" 
+		)
+		public List<SensitiveWord> getFilterText(
+				@P(t = "类型") Byte type,
+				Integer count,
+				Integer offset
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				List<SensitiveWord> list =  sensitiveWordRepository.getList(conn, EXP.INS().key("type", type),count,offset);
+				return list;
+			}
+		}
+	
+	@POSTAPI(//
+		path = "createSensitiveWord", 
+		des = "创建", 
+		ret = "" 
+	)
+	public SensitiveWord createSensitiveWord(
+			@P(t = "类型") Byte type,
+			@P(t = "名称") String badword
+	) throws ServerException, SQLException {
+		try(DruidPooledConnection conn = ds.getConnection()){
+			SensitiveWord s = new SensitiveWord();
+			s.wordId = IDUtils.getSimpleId();
+			s.badword = badword;
+			s.type = type;
+			sensitiveWordRepository.insert(conn, s);
+			return s;
+		}
+	}
+	@POSTAPI(//
+		path = "updateSensitiveWord", 
+		des = "修改", 
+		ret = "" 
+	)
+	public SensitiveWord updateSensitiveWord(
+			@P(t = "id") JSONArray ids,
+			@P(t = "名称", r= false) String badword,
+			@P(t = "类型", r= false) Byte type
+	) throws ServerException, SQLException {
+		try(DruidPooledConnection conn = ds.getConnection()){
+			SensitiveWord s = new SensitiveWord();
+			s.badword = badword;
+			s.type = type;
+			sensitiveWordRepository.update(conn, EXP.INS().IN("word_id", ids),s,true);
+			return s;
+		}
+	}
+
+	@POSTAPI(//
+		path = "delSensitiveWord", 
+		des = "删除", 
+		ret = "" 
+	)
+	public int delSensitiveWord(
+			@P(t = "id") JSONArray ids
+	) throws ServerException, SQLException {
+		try(DruidPooledConnection conn = ds.getConnection()){
+			return sensitiveWordRepository.delete(conn, EXP.INS().IN("word_id", ids));
+		}
+	}
+	@POSTAPI(//
+			path = "searchSensitiveWord", 
+			des = "搜索", 
+			ret = "" 
+		)
+		public List<SensitiveWord> searchSensitiveWord(
+				@P(t = "类型") Byte type,
+				@P(t = "搜字符") String badword
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				return sensitiveWordRepository.getList(conn, EXP.INS().key("type", type).and(EXP.INS().LIKE("badword", badword)),null,null);
+			}
+		}
 }

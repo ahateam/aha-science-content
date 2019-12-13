@@ -87,7 +87,7 @@ public class ZskpUser {
 	public static final Byte AUTHORITY_TWO = 2;
 	@AnnDicField(alias = "权限等级3")
 	public static final Byte AUTHORITY_THREE = 3;
-	@AnnDicField(alias = "权限等级3")
+	@AnnDicField(alias = "权限等级4")
 	public static final Byte AUTHORITY_FOUR = 4;
 	
 	@AnnDicField(alias = "正常")

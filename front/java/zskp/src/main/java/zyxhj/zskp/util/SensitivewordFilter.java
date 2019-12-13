@@ -67,7 +67,17 @@ public class SensitivewordFilter {
         // ------------------------替换敏感字end----------------------
         return filterText;
     }
+    public int StringFilterMainByExamine(String filterText) {
 
+    	sensitiveWordMap = new SensitiveWordInit().initKeyWordByExamine();
+        Set<String> set = getSensitiveWord(filterText, 1);
+        if(set.size()>0) {
+        	return 1;
+        }else {
+        	return 0;
+        }
+        
+    }
     /**
      * 构造函数，初始化敏感词库
      */

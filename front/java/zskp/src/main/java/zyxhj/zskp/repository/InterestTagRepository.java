@@ -35,7 +35,14 @@ public class InterestTagRepository extends RDSRepository<InterestTag>{
 	}
 	public JSONArray getAllInterestTag(Integer count,Integer offset) throws SQLException, ServerException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			String sql = "SELECT inter.*,user.`name`,user.head FROM tb_zskt_interesttag inter LEFT JOIN tb_zskt_user user on inter.user_id = user.id";
+			String sql = "SELECT inter.*,user.`name`,user.head,GROUP_CONCAT(inter.keyword) tags FROM tb_zskt_interesttag inter LEFT JOIN tb_zskt_user user on inter.user_id = user.id GROUP BY inter.user_id";
+			List<Object> params = new ArrayList<Object>();
+			return this.sqlGetJSONArray(conn, sql, params, count, offset);
+		}
+	}
+	public JSONArray searchAllInterestTag(String name, Integer count, Integer offset) throws SQLException, ServerException{
+		try (DruidPooledConnection conn = ds.getConnection()) {
+			String sql = "SELECT  inter.*,user.`name`,user.head,GROUP_CONCAT(inter.keyword) tags FROM tb_zskt_interesttag inter LEFT JOIN tb_zskt_user user on inter.user_id = user.id  WHERE user.`name` LIKE '%"+name+"%' or inter.keyword  LIKE '%"+name+"%' GROUP BY inter.user_id";
 			List<Object> params = new ArrayList<Object>();
 			return this.sqlGetJSONArray(conn, sql, params, count, offset);
 		}

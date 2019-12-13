@@ -3,6 +3,7 @@ package zyxhj.zskp.service;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,7 @@ public class ZskpKeywordService extends Controller{
 			}
 			JSONArray json = null;
 			JSONArray temp = null;
-			Map<Long, Object> map = new HashMap<Long, Object>();
+			Map<Long, Object> map = new LinkedHashMap<Long, Object>();
 			JSONArray ja = new JSONArray();
 			JSONObject tag = null;
 			for(int i = 0;i<index;i++) {
@@ -126,7 +127,6 @@ public class ZskpKeywordService extends Controller{
 			for(Long key:map.keySet()) {
 				ja.add(map.get(key));
 			}
-//			ja = otherContent.getContents(module, null, (byte)4, null, null, null, tag, 15, offset);
 			return ja;
 		}
 	}
@@ -215,7 +215,7 @@ public class ZskpKeywordService extends Controller{
 		int offset
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
-			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId), count, offset);
+			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), null, null);
 			return list;
 		}
 	}
@@ -230,6 +230,23 @@ public class ZskpKeywordService extends Controller{
 		) throws ServerException, SQLException {
 			try(DruidPooledConnection conn = ds.getConnection()){
 				return interestTagRepository.getAllInterestTag(count, offset);
+			}
+		}
+	@POSTAPI(//
+			path = "searchAllInterestTag", 
+			des = "搜索用户和兴趣标签", 
+			ret = "" 
+		)
+		public JSONArray searchAllInterestTag(
+			@P(t = "搜索字符",r = false) String name,
+			int count,
+			int offset
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				JSONArray json =  interestTagRepository.searchAllInterestTag(name,count, offset);
+				JSONArray num = interestTagRepository.searchAllInterestTag(name,null, null);
+				json.add(num.size());
+				return json;
 			}
 		}
 }

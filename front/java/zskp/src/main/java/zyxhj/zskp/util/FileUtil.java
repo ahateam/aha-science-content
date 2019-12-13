@@ -90,7 +90,6 @@ public class FileUtil {
                 e.printStackTrace();
             }
         }
-        System.out.println("-----------------------------------");
         try {
             is = new FileInputStream(file);
             byte[] tempbyte = new byte[1000];

@@ -2,6 +2,7 @@ package zyxhj.zskp.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,9 +28,11 @@ import zyxhj.utils.api.ServerException;
 import zyxhj.utils.data.DataSource;
 import zyxhj.utils.data.EXP;
 import zyxhj.zskp.domain.ApplyAuthority;
+import zyxhj.zskp.domain.SensitiveWord;
 import zyxhj.zskp.domain.UserFavorites;
 import zyxhj.zskp.domain.ZskpUser;
 import zyxhj.zskp.repository.ApplyAuthorityRepository;
+import zyxhj.zskp.repository.SensitiveWordRepository;
 import zyxhj.zskp.repository.UserFavoritesRepository;
 import zyxhj.zskp.repository.UserRepository;
 import zyxhj.zskp.util.FileUtil;
@@ -40,8 +43,6 @@ public class ZskpUserService extends Controller{
 	private ApplyAuthorityRepository applyAuthorityRepository;
 	private UserFavoritesRepository favoritesRepository;
 	private ContentRepository contentRepository;
-	private FileUtil fileUtil;
-	private SensitiveWordInit sensitiveWordInit;
 	private DruidDataSource ds;
 	public ZskpUserService(String node) {
 		super(node);
@@ -51,8 +52,6 @@ public class ZskpUserService extends Controller{
 			applyAuthorityRepository = Singleton.ins(ApplyAuthorityRepository.class);
 			favoritesRepository = Singleton.ins(UserFavoritesRepository.class);
 			contentRepository = Singleton.ins(ContentRepository.class);
-			fileUtil = Singleton.ins(FileUtil.class);
-			sensitiveWordInit = Singleton.ins(SensitiveWordInit.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -78,10 +77,32 @@ public class ZskpUserService extends Controller{
 				user.pwd ="***";
 				return APIResponse.getNewSuccessResp(user);
 			}else {
-				return APIResponse.getNewFailureResp(new RC("fail", "登录失败"));
+				return APIResponse.getNewFailureResp(new RC("fail", "信息错误，登录失败"));
 			}
 		}
 	}
+	@POSTAPI(//
+			path = "loginByAdmin", 
+			des = "后台登录", 
+			ret = "" 
+		)
+		public APIResponse loginByAdmin(
+			@P(t = "模块编号") String moduleId,
+			@P(t = "手机号") String phone,
+			@P(t = "密码") String pwd
+		) throws ServerException, SQLException {
+			try(DruidPooledConnection conn = ds.getConnection()){
+				ZskpUser user = userRepository.get(conn, EXP.INS().key("phone", phone).andKey("pwd", pwd).andKey("module_id",moduleId));
+				if(user != null && !ZskpUser.AUTHORITY_ONE.equals(user.authority)) {
+					user.pwd ="***";
+					return APIResponse.getNewSuccessResp(user);
+				}else if(ZskpUser.AUTHORITY_ONE.equals(user.authority)) {
+					return APIResponse.getNewFailureResp(new RC("fail", "你没有登陆权限"));
+				}else {
+					return APIResponse.getNewFailureResp(new RC("fail", "信息错误，登录失败"));
+				}
+			}
+		}
 	@POSTAPI(//
 			path = "setNewPwd", 
 			des = "设置新密码", 
@@ -299,11 +320,16 @@ public class ZskpUserService extends Controller{
 			user.phone = phone;
 			user.updateTime = new Date();
 			ZskpUser temp = userRepository.get(conn, EXP.INS().key("phone", phone).andKey("module_id",moduleId));
-			if(temp != null) {
-				return APIResponse.getNewFailureResp(new RC("fail", "手机号重复"));
-			}
-			userRepository.update(conn, EXP.INS().key("id",id).andKey("module_id",moduleId), user,true);
 			ZskpUser returnUser = userRepository.get(conn, EXP.INS().key("id", id).andKey("module_id",moduleId));
+			if(temp != null && temp.openId == null) {//以前已经注册过手机的
+				userRepository.delete(conn, EXP.INS().key("id",id).andKey("module_id",moduleId));
+				ZskpUser loginUser = new ZskpUser();
+				loginUser.head = returnUser.head;
+				loginUser.openId = returnUser.openId;
+				userRepository.update(conn, EXP.INS().key("id",temp.id).andKey("module_id",moduleId), loginUser,true);
+			}else {//手机是新手机号
+				userRepository.update(conn, EXP.INS().key("id",id).andKey("module_id",moduleId), user,true);
+			}
 			return APIResponse.getNewSuccessResp(returnUser);
 		}
 	}
@@ -319,11 +345,11 @@ public class ZskpUserService extends Controller{
 			@P(t = "微信头像") String head
 		) throws ServerException, SQLException {
 			try(DruidPooledConnection conn = ds.getConnection()){
-				ZskpUser temp = userRepository.get(conn, EXP.INS().key("open_id", openId).andKey("module_id",moduleId));
-				if(temp != null) {
-					return APIResponse.getNewFailureResp(new RC("fail", "微信号重复"));
-				}
+//				ZskpUser temp = userRepository.get(conn, EXP.INS().key("open_id", openId).andKey("module_id",moduleId));
 				ZskpUser returnUser = userRepository.get(conn, EXP.INS().key("id", id).andKey("module_id",moduleId));
+				if(returnUser.openId != null) {
+					return APIResponse.getNewFailureResp(new RC("fail", "已绑定过微信"));
+				}
 				ZskpUser user = new ZskpUser();
 				user.openId = openId;
 				if("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131055185&di=4fc467c4531fc69f310817c26c4457dd&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F69ad7a731f43d4b8729f1a2fbe65c43801ca0f033250-EV1vMf_fw658".equals(returnUser.head)) {
@@ -441,6 +467,9 @@ public class ZskpUserService extends Controller{
 						user.authority = authority;
 						user.updateTime = new Date();
 						userRepository.update(conn, EXP.INS().key("id",userId).andKey("module_id",moduleId), user,true);
+						if(ZskpUser.AUTHORITY_ONE.equals(authority)) {
+							applyAuthorityRepository.delete(conn, EXP.INS().key("user_id", userId));							
+						}
 						return APIResponse.getNewSuccessResp();					
 					}else {
 						return APIResponse.getNewFailureResp(new RC("fail", "你不是管理员，没有权限重置用户权限"));
@@ -652,8 +681,8 @@ public class ZskpUserService extends Controller{
 		@P(t = "模块编号") String moduleId,
 		@P(t = "用户id") Long userId,
 		@P(t = "被关注用户id") Long concernId,
-		int count,
-		int offset
+		Integer count,
+		Integer offset
 	) throws ServerException, SQLException {
 		try(DruidPooledConnection conn = ds.getConnection()){
 			UserFavorites temp = favoritesRepository.get(conn, EXP.INS().key("concern_id", concernId).andKey("user_id", userId).andKey("module_id",moduleId));
@@ -667,54 +696,4 @@ public class ZskpUserService extends Controller{
 			return json;
 		}
 	}
-	@POSTAPI(//
-		path = "getFilterText", 
-		des = "读取文件", 
-		ret = "" 
-	)
-	public String getFilterText(
-	) throws ServerException, SQLException {
-		String ciname = StringUtils.join("configs/", "filterText.txt");
-		return fileUtil.ReadFileByLine(ciname).toString();
-	}
-	@POSTAPI(//
-		path = "readFilterText", 
-		des = "写入文件", 
-		ret = "" 
-	)
-	public void readFilterText(
-			String txt
-	) throws ServerException, SQLException {
-		String ciname = StringUtils.join("configs/", "filterText.txt");
-		fileUtil.fileChaseFW(ciname,txt);
-	}
-	@POSTAPI(//
-			path = "delFilterText", 
-			des = "删除文件", 
-			ret = "" 
-		)
-		public APIResponse delFilterText(
-				String txt
-		) throws ServerException, SQLException {
-		String ciname = StringUtils.join("configs/", "filterText.txt");
-			try {
-				Set<String> StringSet = sensitiveWordInit.readSensitiveWordFile();
-				if(!StringSet.remove(txt)) {
-					return APIResponse.getNewFailureResp(new RC("fail", "没有这个敏感词，请检查后重新输入"));
-				}
-				Iterator<String> it = StringSet.iterator();  
-//				fileUtil.clearInfoForFile(ciname); 
-				StringBuffer sb = new StringBuffer();
-				while (it.hasNext()) {  
-				  String str = it.next();  
-				  sb.append(str+"\r\n");
-				}  
-				fileUtil.fileChaseFW2(ciname,sb.toString());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return APIResponse.getNewSuccessResp();
-		}
-	
 }
