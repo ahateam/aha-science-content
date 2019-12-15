@@ -22,6 +22,7 @@
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
 						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看报名情况</el-button>
+						<el-button @click="goReply(scope.row)"  type="text" size="small">问答中心</el-button>
 						<el-button @click="updateBtn(scope.row)"  type="text" size="small">编辑</el-button>
 						<el-button @click="delBtn(scope.row)" style="color: red;" type="text" size="small">删除</el-button>
 					</template>
@@ -84,6 +85,15 @@
 						return statusList[i].name
 					}
 				}
+			},
+			goReply(info){
+				this.$router.push({
+					path: '/activityReply',
+					name: 'activityReply',
+					params: {
+						info: info
+					}
+				})
 			},
 			/*获取内容列表*/
 			getContents(cnt) {

@@ -80,6 +80,14 @@ api.getTags = function (cnt, callback) {
 api.getReplyList = function (cnt, callback) {
     util.call(baseUrl + '/ZskpOtherContent/getReplyList', cnt, callback)
 }
+//创建评论
+api.createReply = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/createReply', cnt, callback)
+}
+//创建回复
+api.createComment = function (cnt, callback) {
+    util.call(baseUrl + '/ZskpReply/createComment', cnt, callback)
+}
 //删除评论
 api.delReply = function (cnt, callback) {
     util.call(baseUrl + '/ZskpReply/delReply', cnt, callback)

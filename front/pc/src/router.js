@@ -21,6 +21,8 @@ const replyInfo = () => import('./views/reply/replyInfo')
 const commentList = () => import('./views/reply/commentList')
 const SenssitivewordReply = () => import('./views/reply/SenssitivewordReply')
 const SenssitivewordComment = () => import('./views/reply/SenssitivewordComment')
+const activityReply = () => import('./views/reply/activityReply')
+
 
 
 //栏目
@@ -190,6 +192,11 @@ export default new Router({
 					path: '/SenssitivewordComment',
 					name: 'SenssitivewordComment',
 					component: SenssitivewordComment
+				},
+				{
+					path: '/activityReply',
+					name: 'activityReply',
+					component: activityReply
 				},
 				//用户
 				{
