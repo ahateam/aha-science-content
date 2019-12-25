@@ -55,6 +55,7 @@
 				this.loading = true
 				if (this.username == '' || this.password == '') {
 					this.$message.error('请将账号密码输入完整')
+					this.loading = false
 				} else {
 					let cnt = {
 						moduleId: this.$constData.module,

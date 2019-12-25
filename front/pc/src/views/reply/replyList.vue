@@ -89,6 +89,7 @@
 				page: 1,
 				pageOver: true,
 				typeList: this.$constData.typeList,
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 			}
 		},
 		methods: {
@@ -113,6 +114,7 @@
 			},
 			/*获取评论列表*/
 			getContents(cnt) {
+				cnt.upUserId = this.userId
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)

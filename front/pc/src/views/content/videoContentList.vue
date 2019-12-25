@@ -91,7 +91,7 @@
 					power: '',
 					tags: '',
 				},
-
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
 				powerList: this.$constData.powerList,
@@ -133,6 +133,7 @@
 			},
 			/*获取内容列表*/
 			getContents(cnt) {
+				cnt.upUserId = this.userId
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)

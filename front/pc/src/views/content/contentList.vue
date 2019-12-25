@@ -40,14 +40,14 @@
 		</el-row>
 
 		<el-row class="table-box">
-			<el-table :data="tableData" style="width: 100%">
+			<el-table :data="tableData" style="width: 100%" @sort-change="sortChange">
 				<el-table-column prop="title" label="标题" width="400">
 				</el-table-column>
-				<el-table-column prop="pageView" label="显示浏览量">
+				<el-table-column prop="pageView" label="显示浏览量" sortable='custom'>
 				</el-table-column>
 				<el-table-column prop="truePageView" label="浏览量">
 				</el-table-column>
-				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
+				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter" sortable='custom'>
 				</el-table-column>
 				<el-table-column label="操作" width="200">
 					<template slot-scope="scope">
@@ -83,11 +83,10 @@
 
 				channelList: [],
 				channelCurr: -1,
-
 				keyword: '',
 				keywordList: [],
 				keyWordCurr: -1,
-
+				sortInfo: '',
 				tableData: [],
 				count: 8,
 				page: 1,
@@ -98,13 +97,36 @@
 					power: '',
 					tags: '',
 				},
-
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
 				powerList: this.$constData.powerList,
 			}
 		},
 		methods: {
+			sortChange(column, prop, order) {
+				let cnt = {
+					module: this.$constData.module,
+					type: this.typeList[0].value,
+					count: this.count,
+					offset: (this.page - 1) * this.count
+				}
+				if (this.channelId != '') {
+					cnt.upChannelId = this.channelId
+				}
+				if ('ascending' == column.order && 'pageView' == column.prop) {
+					this.sortInfo = 'ORDER BY page_view asc'
+				} else if ('descending' == column.order && 'pageView' == column.prop) {
+					this.sortInfo = 'ORDER BY page_view desc'
+				} else if ('descending' == column.order && 'createTime' == column.prop) {
+					this.sortInfo = 'ORDER BY create_time desc'
+				} else if ('ascending' == column.order && 'createTime' == column.prop) {
+					this.sortInfo = 'ORDER BY create_time asc'
+				} else {
+					this.sortInfo = ''
+				}
+				this.getContents(cnt)
+			},
 			/** 过滤器*/
 			typeFliter(row, col, val) {
 				let typeList = this.typeList
@@ -141,6 +163,10 @@
 			getContents(cnt) {
 				cnt.re = 'admin'
 				cnt.status = this.$constData.statusList[3].value
+				cnt.upUserId = this.userId
+				if (this.sortInfo != '') {
+					cnt.sort = this.sortInfo
+				}
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)

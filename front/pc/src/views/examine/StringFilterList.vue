@@ -6,8 +6,8 @@
 		<el-row class="content-box">
 			<el-col :span="12">
 				<span style="font-size: 18px;color: #0086B3;">直接过滤*敏感词：</span>
-				<el-input placeholder="请输入要搜索的敏感词" v-model="searchSensitive" style="width: 90%;margin: 8px" @input= "getDefault(0)">
-					<el-button plain style="width:80px;" slot="append" icon="el-icon-search" @click= "search"></el-button>
+				<el-input placeholder="请输入要搜索的敏感词" v-model="searchSensitive" style="width: 90%;margin: 8px" @input="getDefault(0)">
+					<el-button plain style="width:80px;" slot="append" icon="el-icon-search" @click="search"></el-button>
 				</el-input>
 				<div style="width:90%; height:500px; overflow:auto; border:1px solid #000000;margin-bottom: 15px;">
 					<el-checkbox-group v-model="checkList">
@@ -25,8 +25,8 @@
 			<!-- ====================================== -->
 			<el-col :span="12">
 				<span style="font-size: 18px;color: #0086B3;">争议敏感词：</span>
-				<el-input placeholder="请输入要搜索的敏感词" v-model="searchSensitiveByExamine" style="width: 90%;margin: 8px" @input= "getDefault(1)">
-					<el-button plain style="width:80px;" slot="append" icon="el-icon-search" @click= "searchByExamine"></el-button>
+				<el-input placeholder="请输入要搜索的敏感词" v-model="searchSensitiveByExamine" style="width: 90%;margin: 8px" @input="getDefault(1)">
+					<el-button plain style="width:80px;" slot="append" icon="el-icon-search" @click="searchByExamine"></el-button>
 				</el-input>
 				<div style="width:90%; height:500px; overflow:auto; border:1px solid #000000;margin-bottom: 15px;">
 					<el-checkbox-group v-model="checkListByExamine">
@@ -84,31 +84,35 @@
 			}
 		},
 		methods: {
-			getDefault(e){
-				if(this.searchSensitiveByExamine == ''){
-					let cnt = {
-						type: 1,
-						count: this.countByExamine,
-						offset: (this.pageByExamine - 1) * this.countByExamine
+			getDefault(e) {
+				if (e == 1) {
+					if (this.searchSensitiveByExamine == '') {
+						let cnt = {
+							type: 1,
+							count: this.countByExamine,
+							offset: (this.pageByExamine - 1) * this.countByExamine
+						}
+						this.getSensitiveWordByexamine(cnt)
 					}
-					this.getSensitiveWordByexamine(cnt)
 				}
-				if(this.searchSensitive == ''){
-					let cnt = {
-						type: '0',
-						count: this.count,
-						offset: (this.page - 1) * this.count
+				if (e == 0) {
+					if (this.searchSensitive == '') {
+						let cnt = {
+							type: '0',
+							count: this.count,
+							offset: (this.page - 1) * this.count
+						}
+						this.getContents(cnt)
 					}
-					this.getContents(cnt)
 				}
 			},
-			searchByExamine(){
-				if(this.searchSensitiveByExamine == ''){
+			searchByExamine() {
+				if (this.searchSensitiveByExamine == '') {
 					return
 				}
 				let cnt = {
-					type:1,
-					badword:this.searchSensitiveByExamine
+					type: 1,
+					badword: this.searchSensitiveByExamine
 				}
 				this.$api.searchSensitiveWord(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
@@ -121,13 +125,13 @@
 					}
 				})
 			},
-			search(){
-				if(this.searchSensitive == ''){
+			search() {
+				if (this.searchSensitive == '') {
 					return
 				}
 				let cnt = {
-					type:'0',
-					badword:this.searchSensitive
+					type: '0',
+					badword: this.searchSensitive
 				}
 				this.$api.searchSensitiveWord(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {

@@ -6,6 +6,7 @@
 					<p><img :src="this.head" width="40" height="40" class="head_pic" /></p>
 					<p>用户id：{{this.id}}</p>
 					<p>用户昵称：{{this.name}}</p>
+					<p>微信名：{{this.weixinName}}</p>
 					<p>用户密码： <el-button type="danger" icon="el-icon-question" v-if="!showPwd" circle @click="showPwdFun"></el-button>
 						<span v-if="showPwd">{{this.pwd}}</span>
 						<el-button type="danger" plain @click="dialogVisible = true">重置密码</el-button>
@@ -69,6 +70,7 @@
 				id: '',
 				head: '',
 				name: '',
+				weixinName:'',
 				pwd: '',
 				company: '',
 				phone: '',
@@ -181,6 +183,7 @@
 			this.id = info.id
 			this.head = info.head
 			this.name = info.name
+			this.weixinName = info.weixinName
 			this.pwd = info.pwd
 			this.company = info.company
 			this.phone = info.phone

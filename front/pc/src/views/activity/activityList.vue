@@ -17,13 +17,11 @@
 				</el-table-column>
 				<el-table-column prop="createTime" label="发布日期" :formatter="timeFliter">
 				</el-table-column>
-				<el-table-column prop="status" label="状态" :formatter="statusFliter">
-				</el-table-column>
-				<el-table-column label="操作" width="200">
+				<el-table-column label="操作">
 					<template slot-scope="scope">
-						<el-button @click="infoBtn(scope.row)" type="text" size="small">查看报名情况</el-button>
-						<el-button @click="goReply(scope.row)"  type="text" size="small">问答中心</el-button>
-						<el-button @click="updateBtn(scope.row)"  type="text" size="small">编辑</el-button>
+						<el-button @click="infoBtn(scope.row)" type="text" size="small">报名情况</el-button>
+						<el-button @click="goReply(scope.row)" type="text" size="small">问答中心</el-button>
+						<el-button @click="updateBtn(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button @click="delBtn(scope.row)" style="color: red;" type="text" size="small">删除</el-button>
 					</template>
 				</el-table-column>
@@ -55,7 +53,7 @@
 					power: '',
 					tags: '',
 				},
-
+				userId: this.$util.tryParseJson(localStorage.getItem('loginUser')).id,
 				typeList: this.$constData.typeList,
 				statusList: this.$constData.statusList,
 				powerList: this.$constData.powerList,
@@ -86,7 +84,7 @@
 					}
 				}
 			},
-			goReply(info){
+			goReply(info) {
 				this.$router.push({
 					path: '/activityReply',
 					name: 'activityReply',
@@ -97,6 +95,7 @@
 			},
 			/*获取内容列表*/
 			getContents(cnt) {
+				cnt.upUserId = this.userId
 				this.$api.getContents(cnt, (res) => {
 					if (res.data.rc == this.$util.RC.SUCCESS) {
 						this.tableData = this.$util.tryParseJson(res.data.c)

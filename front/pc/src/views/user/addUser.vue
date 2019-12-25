@@ -21,7 +21,6 @@
 				<el-input placeholder="请输入" v-model="pwd" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-
 		<el-row style="margin-top: 20px;padding-bottom: 10px">
 			<el-col :span="4" style="min-height: 20px"></el-col>
 			<el-button type="primary" @click="addBtn" style=";padding: 15px 50px">提交
@@ -43,6 +42,10 @@
 			}
 		},
 		methods: {
+			a(){
+				let url = client.signatureUrl("zskpDownload/zskp.apk");
+				console.log(url)
+			},
 			addBtn() {
 				let that = this
 				let cnt = {
