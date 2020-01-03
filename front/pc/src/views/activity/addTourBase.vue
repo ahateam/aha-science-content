@@ -47,7 +47,13 @@
 				<el-input placeholder="请输入购票链接" v-model="shopLink" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-
+		<el-row style="margin-top: 10px">
+			<el-col :span="24">
+				<p style="font-size: 15px;"><span style="color: red;font-size: 15px;">(注：</span>1.如是从word里复制的文本请 <span style="color: red;">"鼠标右键"</span>>选择
+					<span style="color: red;">"粘贴为纯文本"</span>,避免APP端无法正常显示。2.从网页复制的文本可直接粘贴，图片请点击"图片图标">选择"100%"</p>
+				<p style="font-size: 15px;">3.如没有鼠标"右键">选择 "粘贴为纯文本"功能，推荐使用谷歌，360,QQ,搜狗等浏览器...</p>
+			</el-col>
+		</el-row>
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
@@ -82,7 +88,7 @@
 		name: "addTourBase",
 		data() {
 			return {
-				textimgSrc:'',
+				textimgSrc: '',
 				detail_address: '',
 				editor: {},
 				homeTagName: '',
@@ -261,7 +267,7 @@
 				let data = {
 					info: this.editor.txt.html(),
 					img: this.imgList,
-					workTime: this.time == '长期'?this.time:this.newTime,
+					workTime: this.time == '长期' ? this.time : this.newTime,
 				}
 				let cnt = {
 					moduleId: this.$constData.module,

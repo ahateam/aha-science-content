@@ -95,7 +95,7 @@
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="摘要">
-						<el-input type="textarea" maxlength="30" show-word-limit v-model="contentRemark" placeholder="请输入(最大30个字符)"></el-input>
+						<el-input type="textarea" maxlength="100" show-word-limit v-model="contentRemark" placeholder="请输入(最大100个字符)"></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -115,7 +115,14 @@
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
-			<el-col :span="2" style="min-height: 20px"></el-col>
+			<el-col :span="24">
+				<p style="font-size: 15px;"><span style="color: red;font-size: 15px;">(注：</span>1.如是从word里复制的文本请 <span style="color: red;">"鼠标右键"</span>>选择  <span style="color: red;">"粘贴为纯文本"</span>,避免APP端无法正常显示。2.从网页复制的文本可直接粘贴，图片请点击"图片图标">选择"100%"</p>
+				<p style="font-size: 15px;">3.如没有鼠标"右键">选择  "粘贴为纯文本"功能，推荐使用谷歌，360,QQ,搜狗等浏览器...</p>
+			</el-col>
+		</el-row>
+		<el-row style="margin-top: 10px">
+			<el-col :span="2" style="min-height: 20px">
+			</el-col>
 			<el-col :span="20">
 				<div id="editor"></div>
 			</el-col>
@@ -126,11 +133,10 @@
 				</el-button>
 			</el-col>
 			<el-col :span="12">
-				<el-button  @click="subBtnByDraft" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">存入草稿箱
+				<el-button @click="subBtnByDraft" style="margin: 0 auto 100px auto;display: block;padding: 15px 50px">存入草稿箱
 				</el-button>
 			</el-col>
 		</el-row>
-
 	</div>
 </template>
 
@@ -291,12 +297,12 @@
 				}
 				this.editorBtn()
 			},
-			subBtnByDraft(){
+			subBtnByDraft() {
 				this.status = 1
 				this.editorBtn()
 			},
 			editorBtn() {
-				if(this.title == ''){
+				if (this.title == '') {
 					this.$message({
 						message: "请填入标题",
 						type: 'warning'
@@ -343,17 +349,17 @@
 							message: '添加成功',
 							type: 'success'
 						});
-						this.title=''
-						this.pageView=''
-						this.contentRemark=''
-						this.contentSource=''
-						this.contentAuthor=''
+						this.title = ''
+						this.pageView = ''
+						this.contentRemark = ''
+						this.contentSource = ''
+						this.contentAuthor = ''
 						localStorage.setItem('tempContent', '');
 						localStorage.setItem("tempContentHtml", '');
 						that.$router.push('/contentList')
 					} else {
 						this.$message({
-							message: res.data.rm,
+							message: "创建失败，发生未知错误",
 							type: 'error'
 						});
 						that.imgList = []
@@ -488,8 +494,7 @@
 				contentAuthor: this.contentAuthor,
 			}
 			localStorage.setItem("tempContent", JSON.stringify(this.tempDate));
-		}
-
+		},
 	}
 </script>
 
