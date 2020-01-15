@@ -7,9 +7,6 @@
 				<el-input placeholder="请输入标题" v-model="title" style="display: inline-block;width: 400px"></el-input>
 			</el-col>
 		</el-row>
-
-
-
 		<el-row style="padding: 20px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="10">
@@ -55,8 +52,9 @@
 		</el-row>
 		<el-row style="margin-top: 10px">
 			<el-col :span="24">
-				<p style="font-size: 15px;"><span style="color: red;font-size: 15px;">(注：</span>1.如是从word里复制的文本请 <span style="color: red;">"鼠标右键"</span>>选择  <span style="color: red;">"粘贴为纯文本"</span>,避免APP端无法正常显示。2.从网页复制的文本可直接粘贴，图片请点击"图片图标">选择"100%"</p>
-				<p style="font-size: 15px;">3.如没有鼠标"右键">选择  "粘贴为纯文本"功能，推荐使用谷歌，360,QQ,搜狗等浏览器...</p>
+				<p style="font-size: 15px;"><span style="color: red;font-size: 15px;">(注：</span>1.如是从word里复制的文本请 <span style="color: red;">"鼠标右键"</span>>选择
+					<span style="color: red;">"粘贴为纯文本"</span>,避免APP端无法正常显示。2.从网页复制的文本可直接粘贴，图片请点击"图片图标">选择"100%"</p>
+				<p style="font-size: 15px;">3.如没有鼠标"右键">选择 "粘贴为纯文本"功能，推荐使用谷歌，360,QQ,搜狗等浏览器...</p>
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px">
@@ -64,6 +62,7 @@
 			<el-col :span="20">
 				<div class="title-box" style="float: left;"> 活动简介：</div>
 				<el-col :span="20">
+					<div id="toolbar"></div>
 					<div id="editor"></div>
 				</el-col>
 			</el-col>
@@ -97,7 +96,7 @@
 				tag: '',
 				time: '',
 				workTime: '',
-				newTime:'',
+				newTime: '',
 				address: '',
 				place: '',
 				placeList: [],
@@ -220,7 +219,7 @@
 					imgList: this.imgList,
 					place: this.place,
 					address: this.address,
-					time: this.time == '长期'?this.time:this.newTime,
+					time: this.time == '长期' ? this.time : this.newTime,
 					info: text,
 					live: this.zhibo,
 				}
@@ -271,7 +270,7 @@
 		},
 		mounted() {
 			this.getPlace()
-			this.editor = new wangEditor('#editor')
+			this.editor = new wangEditor('#toolbar', '#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {

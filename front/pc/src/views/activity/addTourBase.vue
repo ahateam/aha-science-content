@@ -61,6 +61,7 @@
 				<el-row style="margin-bottom: 10px">
 					<el-col :span="2" style="min-height: 20px"></el-col>
 					<el-col :span="20">
+						<div id="toolbar"></div>
 						<div id="editor"></div>
 					</el-col>
 				</el-row>
@@ -315,7 +316,7 @@
 			},
 		},
 		mounted() {
-			this.editor = new wangEditor('#editor')
+			this.editor = new wangEditor('#toolbar','#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {

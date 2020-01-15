@@ -11,16 +11,6 @@
 		</el-row>
 
 		<el-row>
-			<!-- <el-col :span="8">
-				<el-form label-width="80px">
-					<el-form-item label="状态">
-						<el-select v-model="status" placeholder="请选择" style="margin-right: 10px;">
-							<el-option v-for="item in statusList" :key="item.value" :label="item.name" :value="item.value">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-form>
-			</el-col> -->
 			<el-col :span="8">
 				<el-form label-width="80px">
 					<el-form-item label="显示">
@@ -108,6 +98,7 @@
 				<el-button size="mini" round @click="delmp4src('mp4')">取消视频</el-button>
 				</el-input>
 				<video :src="mp4Src" controls="controls" style="width: 20%;"></video>
+				<el-progress :percentage="uploadpropress"></el-progress>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
@@ -119,8 +110,8 @@
 		<el-row style="margin-bottom: 10px">
 			<el-col :span="2" style="min-height: 20px"></el-col>
 			<el-col :span="20">
-				<div id="editor">
-				</div>
+				<div id="toolbar"></div>
+				<div id="editor"></div>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 20px">
@@ -146,6 +137,7 @@
 		name: "addContent",
 		data() {
 			return {
+				uploadpropress:0,
 				mp4Src: '',
 				statusInfo:'',
 				mp3Src:'',
@@ -241,6 +233,9 @@
 				let _this = this
 				try {
 					let result = client.multipartUpload(upName, upFile, {
+						progress: function(p) { //获取进度条的值
+							_this.uploadpropress =  parseInt(p*100)
+						},
 						meta: {
 							year: 2017,
 							people: 'test'
@@ -438,7 +433,7 @@
 			}
 		},
 		mounted() {
-			this.editor = new wangEditor('#editor')
+			this.editor = new wangEditor('#toolbar','#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {

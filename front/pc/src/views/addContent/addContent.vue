@@ -112,18 +112,21 @@
 				<el-button size="mini" round @click="delmp4src('mp4')">取消视频</el-button>
 				</el-input>
 				<video :src="mp4Src" controls="controls" style="width: 20%;"></video>
+				<el-progress :percentage="uploadpropress"></el-progress>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
 			<el-col :span="24">
-				<p style="font-size: 15px;"><span style="color: red;font-size: 15px;">(注：</span>1.如是从word里复制的文本请 <span style="color: red;">"鼠标右键"</span>>选择  <span style="color: red;">"粘贴为纯文本"</span>,避免APP端无法正常显示。2.从网页复制的文本可直接粘贴，图片请点击"图片图标">选择"100%"</p>
-				<p style="font-size: 15px;">3.如没有鼠标"右键">选择  "粘贴为纯文本"功能，推荐使用谷歌，360,QQ,搜狗等浏览器...</p>
+				<p style="font-size: 15px;"><span style="color: red;font-size: 15px;">(注：</span>1.如是从word里复制的文本请 <span style="color: red;">"鼠标右键"</span>>选择
+					<span style="color: red;">"粘贴为纯文本"</span>,避免APP端无法正常显示。2.从网页复制的文本可直接粘贴，图片请点击"图片图标">选择"100%"</p>
+				<p style="font-size: 15px;">3.如没有鼠标"右键">选择 "粘贴为纯文本"功能，推荐使用谷歌，360,QQ,搜狗等浏览器...</p>
 			</el-col>
 		</el-row>
 		<el-row style="margin-top: 10px">
 			<el-col :span="2" style="min-height: 20px">
 			</el-col>
 			<el-col :span="20">
+				<div id="toolbar"></div>
 				<div id="editor"></div>
 			</el-col>
 		</el-row>
@@ -149,6 +152,7 @@
 		name: "addContent",
 		data() {
 			return {
+				uploadpropress:0,
 				tempDate: {},
 				mp4Src: '',
 				mp3Src: '',
@@ -244,10 +248,13 @@
 				let _this = this
 				try {
 					let result = client.multipartUpload(upName, upFile, {
+						progress: function(p) { //获取进度条的值
+							_this.uploadpropress = parseInt(p*100)
+						},
 						meta: {
 							year: 2017,
 							people: 'test'
-						}
+						},
 					}).then(res => {
 						//取出存好的url
 						let address = res.res.requestUrls[0]
@@ -432,7 +439,7 @@
 			this.getChannels()
 			this.getKeyword()
 			this.getUser()
-			this.editor = new wangEditor('#editor')
+			this.editor = new wangEditor('#toolbar','#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {
@@ -440,15 +447,12 @@
 					let date = new Date()
 					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
 						encodeURIComponent(files[0].name)
-					console.log('---------tmpName--------------------')
-					console.log(tmpName)
 					client.multipartUpload(tmpName, files[0], {
 						meta: {
 							year: 2017,
 							people: 'test'
 						}
 					}).then(res => {
-						console.log('--------res-------------------')
 						console.log(res)
 						//取出存好的url
 						let address = res.res.requestUrls[0]

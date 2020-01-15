@@ -78,6 +78,7 @@
 			<el-col :span="20">
 				<div class="title-box" style="float: left;"> 活动简介：</div>
 				<el-col :span="20">
+					<div id="toolbar"></div>
 					<div id="editor"></div>
 				</el-col>
 			</el-col>
@@ -301,7 +302,7 @@
 			this.power = info.power
 			this.show = JSON.parse(info.data).show
 			this.contentType = info.type
-			this.editor = new wangEditor('#editor')
+			this.editor = new wangEditor('#toolbar', '#editor')
 			this.editor.customConfig.zIndex = 1
 			let _this = this
 			this.editor.customConfig.customUploadImg = function(files, insert) {

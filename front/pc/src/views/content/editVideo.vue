@@ -22,6 +22,7 @@
 				<span class="title-box"> 视频地址：</span>
 				<input @change="getMechData1($event)" type="file" class="upload"  />
 				</el-input>
+				<el-progress :percentage="uploadpropress"></el-progress>
 			</el-col>
 		</el-row>
 		<el-row style="padding: 20px">
@@ -110,6 +111,7 @@
 		name: "addVideoContent",
 		data() {
 			return {
+				uploadpropress:0,
 				id:'',
 				isShowpage:false,
 				pageView:'',
@@ -179,6 +181,9 @@
 				let _this = this
 				try {
 					let result = client.multipartUpload(upName, upFile, {
+						progress: function(p) { //获取进度条的值
+							_this.uploadpropress =  parseInt(p*100)
+						},
 						meta: {
 							year: 2017,
 							people: 'test'
