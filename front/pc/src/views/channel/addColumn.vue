@@ -54,7 +54,7 @@
 				<div class="title-box">专题图片 320x320:</div>
 			</el-col>
 			<el-col :span="18">
-				<img width="500" :src="imgSrc" v-if="imgSrc">
+				<img style="height: 160px;"  :src="imgSrc" v-if="imgSrc">
 				<input @change="getMechData1($event)" type="file" class="upload" />
 			</el-col>
 		</el-row>
