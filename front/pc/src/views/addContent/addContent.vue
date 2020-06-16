@@ -232,14 +232,14 @@
 			doUpload2(file) {
 				let date = new Date()
 				this.size = file.size
-				let tmpName = 'zskp/MP3/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+				let tmpName = 'zskp/MP3/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +(new Date()).valueOf()+"_"+
 					encodeURIComponent(file.name)
 				this.multipartUpload(tmpName, file, 1)
 			},
 			doUpload(file) {
 				let date = new Date()
 				this.size = file.size
-				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +(new Date()).valueOf()+"_"+
 					encodeURIComponent(file.name)
 				this.multipartUpload(tmpName, file, 0)
 			},
@@ -445,7 +445,7 @@
 			this.editor.customConfig.customUploadImg = function(files, insert) {
 				try {
 					let date = new Date()
-					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+					let tmpName = 'zskp/image/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +(new Date()).valueOf()+"_"+
 						encodeURIComponent(files[0].name)
 					client.multipartUpload(tmpName, files[0], {
 						meta: {

@@ -165,14 +165,14 @@
 			doUpload(file) {
 				let date = new Date()
 				this.size = file.size
-				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+				let tmpName = 'zskp/video/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +(new Date()).valueOf()+"_"+
 					encodeURIComponent(file.name)
 				this.multipartUpload(tmpName, file, 0)
 			},
 			doUpload2(file) {
 				let date = new Date()
 				this.size = file.size
-				let tmpName = 'zskp/img/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +
+				let tmpName = 'zskp/img/' + date.getFullYear() + '' + (1 * date.getMonth() + 1) + '' + date.getDate() + '/' +(new Date()).valueOf()+"_"+
 					encodeURIComponent(file.name)
 				this.multipartUpload(tmpName, file, 1)
 			},
