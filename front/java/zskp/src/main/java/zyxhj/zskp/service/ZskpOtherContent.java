@@ -107,31 +107,42 @@ public class ZskpOtherContent extends Controller{
 		@P(t = "上传用户编号",r = false)Long upUserId,
 		@P(t = "上传专栏编号",r = false)Long upChannelId,
 		@P(t = "标签",r = false)JSONObject tags, 
+		@P(t = "排序",r = false)String sort, 
 		int count, 
 		int offset
 	)
 	throws Exception {
-		EXP exp = EXP.INS(false).key("org_module", module).andKey("type", type).andKey("status", status).andKey("power", power).andKey("up_user_id", upUserId).andKey("up_channel_id", upChannelId);
-		if(tags !=null && tags.size()>0) {
-			exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
-		}
-		exp.append("ORDER BY page_view desc,create_time desc");
 		try (DruidPooledConnection conn = ds.getConnection()) {			
-			List<Content> list = contentRepository.getList(conn,exp, count, offset);
-			if(list == null && list.size()<=0) {
-				return null;
+			EXP exp = EXP.INS(false).key("org_module", module).andKey("type", type).andKey("status", status).andKey("power", power).andKey("up_channel_id", upChannelId);
+			if(upUserId != null) {			
+				ZskpUser auUser = userRepository.get(conn, EXP.INS().key("id", upUserId));
+				if(ZskpUser.AUTHORITY_TWO.equals(auUser.authority)) {
+					exp.andKey("up_user_id", upUserId);
+				}
 			}
-			String temp = JSON.toJSONString(list);
-			JSONArray json = JSONArray.parseArray(temp);
-			int index = json.size();
-			List<Long> ids = new LinkedList<Long>();
-			for (int i = 0; i < index; i++) {
-				ids.add(list.get(i).upUserId);
+			if(tags !=null && tags.size()>0) {
+				exp.and(EXP.JSON_CONTAINS_JSONOBJECT(tags, "tags"));
 			}
-			if(ids == null && ids.size()<=0) {
-				return null;
+			if(sort != null && sort.length()>0) {
+				exp.append(sort);
+			}else {
+				exp.append("ORDER BY create_time desc,page_view desc");				
 			}
-			return getUserInfo(module,ids,json);
+				List<Content> list = contentRepository.getList(conn,exp, count, offset);
+				if(list == null && list.size()<=0) {
+					return null;
+				}
+				String temp = JSON.toJSONString(list);
+				JSONArray json = JSONArray.parseArray(temp);
+				int index = json.size();
+				List<Long> ids = new LinkedList<Long>();
+				for (int i = 0; i < index; i++) {
+					ids.add(list.get(i).upUserId);
+				}
+				if(ids == null && ids.size()<=0) {
+					return null;
+				}
+				return getUserInfo(module,ids,json);
 		}
 	}
 	@POSTAPI(
@@ -171,7 +182,7 @@ public class ZskpOtherContent extends Controller{
 		}
 	public JSONArray getUserInfo(String module,List<Long> list,JSONArray json) throws SQLException, ServerException {
 		try (DruidPooledConnection conn = ds.getConnection()) {
-			if(list.size()<=0) {
+			if(list==null || list.size()<=0) {
 				return null;
 			}
 			ZskpUser zskpUser = null;
@@ -659,8 +670,10 @@ public class ZskpOtherContent extends Controller{
 		String version = p.getProperty("version");
 		JSONObject json = new JSONObject();
 		json.put("version", version);
-		json.put("android", "http://weapp.datanc.cn/science/app/"+version+"/android/zskp.apk");
-		json.put("ios", "http://weapp.datanc.cn/science/app/"+version+"/ios/zskp.ipa");
+//		json.put("android", "http://weapp.datanc.cn/science/app/"+version+"/android/zskp.apk");
+//		json.put("ios", "http://weapp.datanc.cn/science/app/"+version+"/ios/zskp.ipa");
+		json.put("android", "http://dzkx-kepu.oss-cn-chengdu.aliyuncs.com/zskpDownload/"+version+"/zskp.apk");
+		json.put("ios",  "http://dzkx-kepu.oss-cn-chengdu.aliyuncs.com/zskpDownload/"+version+"/zskp.ipa");
 		return json;
 	}
 	

@@ -35,6 +35,11 @@ public class ZskpUser {
 	@RDSAnnField(column = RDSAnnField.TEXT_NAME)
 	public String name;
 	/**
+	 * 微信昵称
+	 */
+	@RDSAnnField(column = RDSAnnField.TEXT_NAME)
+	public String weixinName;
+	/**
 	 * 学校/单位
 	 */
 	@RDSAnnField(column = RDSAnnField.TEXT_TITLE)

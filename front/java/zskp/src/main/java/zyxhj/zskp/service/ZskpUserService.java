@@ -208,6 +208,7 @@ public class ZskpUserService extends Controller{
 					loginUser.moduleId = moduleId;
 					loginUser.id = IDUtils.getSimpleId();
 					loginUser.name = name;
+					loginUser.weixinName = name;
 					loginUser.status = ZskpUser.STATUS_NORMAL;
 					loginUser.head = head;
 					loginUser.openId = openid;
@@ -342,16 +343,20 @@ public class ZskpUserService extends Controller{
 			@P(t = "模块编号") String moduleId,
 			@P(t = "用户id") Long id,
 			@P(t = "openid") String openId,
+			@P(t = "名称", r= false) String name,
 			@P(t = "微信头像") String head
 		) throws ServerException, SQLException {
 			try(DruidPooledConnection conn = ds.getConnection()){
 //				ZskpUser temp = userRepository.get(conn, EXP.INS().key("open_id", openId).andKey("module_id",moduleId));
 				ZskpUser returnUser = userRepository.get(conn, EXP.INS().key("id", id).andKey("module_id",moduleId));
-				if(returnUser.openId != null) {
+				if(returnUser.openId != null && returnUser.openId.length()>0) {
 					return APIResponse.getNewFailureResp(new RC("fail", "已绑定过微信"));
 				}
 				ZskpUser user = new ZskpUser();
 				user.openId = openId;
+				if (name != null) {
+					user.weixinName = name;					
+				}
 				if("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571131055185&di=4fc467c4531fc69f310817c26c4457dd&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F69ad7a731f43d4b8729f1a2fbe65c43801ca0f033250-EV1vMf_fw658".equals(returnUser.head)) {
 					user.head = head;
 					returnUser.head = head;

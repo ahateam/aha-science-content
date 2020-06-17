@@ -101,12 +101,12 @@ public class ZskpKeywordService extends Controller{
 		int offset) throws Exception {
 		try(DruidPooledConnection conn = ds.getConnection()){
 			if(userId ==null) {
-				return otherContent.getContents(module, null, (byte)4, null, null, null, null, count, offset);
+				return otherContent.getContents(module, null, (byte)4, null, null, null, null,null, count, offset);
 			}
 			List<InterestTag> list = interestTagRepository.getList(conn, EXP.INS(false).andKey("user_id", userId).append("order by page_view desc"), 3, 0);
 			int index = list.size();
 			if(index <= 0 || list==null) {
-				return otherContent.getContents(module, null, (byte)4, null, null, null, null, count, offset);
+				return otherContent.getContents(module, null, (byte)4, null, null, null, null,null, count, offset);
 			}
 			JSONArray json = null;
 			JSONArray temp = null;
@@ -119,9 +119,11 @@ public class ZskpKeywordService extends Controller{
 				temp = new JSONArray();
 				json.add(list.get(i).keyword);
 				tag.put("homeCotent", json);
-				temp = otherContent.getContents(module, null, (byte)4, null, null, null, tag, count, offset);
-				for(int j=0;j<temp.size();j++) {
-					map.put(temp.getJSONObject(j).getLong("id"),temp.get(j));
+				temp = otherContent.getContents(module, null, (byte)4, null, null, null, tag,null, count, offset);
+				if (temp!=null && temp.size()>0) {
+					for(int j=0;j<temp.size();j++) {
+						map.put(temp.getJSONObject(j).getLong("id"),temp.get(j));
+					}
 				}
 			}
 			for(Long key:map.keySet()) {

@@ -3,6 +3,7 @@ package zyxhj.zskp.service;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +97,7 @@ public class ZskpReplyService extends Controller {
 			if(temp.equals(text)) {//如果是争议敏感词
 				reply.status = (byte)sensitivewordFilter.StringFilterMainByExamine(text);
 			}
-			reply.text = temp;
+			reply.text = Pattern.compile("\\d{4}").matcher(temp).replaceAll("****");
 			reply.ext = "1";
 			replyRepository.insert(conn, reply);
 			return APIResponse.getNewSuccessResp(reply);
@@ -134,7 +135,7 @@ public class ZskpReplyService extends Controller {
 			if(temp.equals(text)) {//如果是争议敏感词
 				c.status = (byte)sensitivewordFilter.StringFilterMainByExamine(text);
 			}
-			c.text = temp;
+			c.text = Pattern.compile("\\d{4}").matcher(temp).replaceAll("****");
 			c.ext = "0";
 			if(toUserId != null && toUserName != null) {
 				c.toUserId = toUserId;
